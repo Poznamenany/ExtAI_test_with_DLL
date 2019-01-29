@@ -1,2 +1,2 @@
-# ExtAI_test_with_DLL
-Test interface (Delphi) for communication with DLLs (Delphi, C++)
+# Test of ExtAI with DLL and optional multithreading
+This is repository for testing of External AI in the simple GUI.
