@@ -45,19 +45,19 @@ begin
   inherited Create();
   fOnLog := aLog;
   fExtAIThread := TList.Create();
-  Log('  CommDLL-Create');
+  Log('  TExtAICommDLL-Create');
 end;
 
 destructor TExtAICommDLL.Destroy();
 var
   K: si32;
 begin
-  Log('  CommDLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
+  Log('  TExtAICommDLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
 
   for K := 0 to fExtAIThread.Count-1 do
     if (TExtAIThread(fExtAIThread[K]).State = tsRun) then
     begin
-      Log('  CommDLL-Destroy: Wait for thread ID = ' + IntToStr(TExtAIThread(fExtAIThread[K]).ID));
+      Log('  TExtAICommDLL-Destroy: Wait for thread ID = ' + IntToStr(TExtAIThread(fExtAIThread[K]).ID));
       TExtAIThread(fExtAIThread[K]).State := tsTerminate;
       TExtAIThread(fExtAIThread[K]).WaitFor;
     end;
@@ -84,7 +84,7 @@ begin
     fLibHandle := SafeLoadLibrary( aDLLPath );
     if (fLibHandle <> 0) then
     begin
-      Log('  CommDLL-LinkDLL: DLL file detected, last error (should be 0): ' + IntToStr( GetLastError() ));
+      Log('  TExtAICommDLL-LinkDLL: DLL file detected, last error (should be 0): ' + IntToStr( GetLastError() ));
       Result := True;
 
       fOnInitDLL := GetProcAddress(fLibHandle, 'InitDLL');
@@ -107,14 +107,14 @@ begin
         SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
         Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
         fDLLConfig.Version := Config.Version;
-        Log('  CommDLL-LinkDLL: DLL detected, DLL Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
+        Log('  TExtAICommDLL-LinkDLL: DLL detected, DLL Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
       end;
     end
     else
-      Log('  CommDLL-LinkDLL: library was NOT loaded, error: ' + IntToStr( GetLastError() ));
+      Log('  TExtAICommDLL-LinkDLL: library was NOT loaded, error: ' + IntToStr( GetLastError() ));
   end
   else
-    Log('  CommDLL-LinkDLL: DLL file was NOT found');
+    Log('  TExtAICommDLL-LinkDLL: DLL file was NOT found');
 end;
 
 
@@ -159,7 +159,7 @@ begin
     except
       on E: Exception do
       begin
-        Log('  CommDLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
+        Log('  TExtAICommDLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
         Readln;
       end;
     end;

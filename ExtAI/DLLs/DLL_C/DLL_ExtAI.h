@@ -57,16 +57,54 @@ void TExtAI::OnMissionStart()
 void TExtAI::OnTick(ui32 aTick)
 {
 	//Log(L"    TExtAI-OnTick");
+	// Test Actions
+	Actions->GroupOrderAttackUnit(11,22);
+	Actions->GroupOrderWalk(1,50,50,1);
+	// Test states
+	ui8 feedback = States->State1(11);
+	if (feedback != 11)
+	{
+		std::wstringstream wss;
+		wss << L"    TExtAI-OnTick: wrong state feedback = " << std::to_wstring(feedback);
+		std::wstring txt = wss.str();
+		Log(txt.c_str());
+	}	
+	pui32 pFirstElem;
+	si32 mapLen;
+	if  (States->MapTerrain(ID,pFirstElem,mapLen) == true)
+	{
+		pui32 Map = new ui32[mapLen];
+		memcpy(Map, pFirstElem, mapLen * sizeof(Map[0]));
+		for (ui32 K = 0; K < mapLen-1; K++)
+		{
+			if (Map[K] >= Map[K+1])
+			{
+				std::wstringstream wss;
+				wss << L"    TExtAI-OnTick: problem in testing map, val: " << std::to_wstring(Map[K]);
+				wss << L" vs " << std::to_wstring(Map[K+1]);
+				std::wstring txt = wss.str();
+				Log(txt.c_str());
+				break;
+			}
+		}
+		delete [] Map;
+	}
 }
 
 void TExtAI::OnPlayerDefeated(si8 aPlayer)
 {
-	Log(L"    TExtAI-OnPlayerDefeated");
+	std::wstringstream wss;
+	wss << L"    TExtAI-OnPlayerDefeated: ID = " << std::to_wstring(ID);
+	std::wstring txt = wss.str();
+	Log(txt.c_str());
 }
 
 void TExtAI::OnPlayerVictory(si8 aPlayer)
 {
-	Log(L"    TExtAI-OnPlayerDefeated");
+	std::wstringstream wss;
+	wss << L"    TExtAI-OnPlayerVictory ID = " << std::to_wstring(ID);
+	std::wstring txt = wss.str();
+	Log(txt.c_str());
 }
 
 // Log

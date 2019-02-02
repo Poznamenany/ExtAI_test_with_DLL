@@ -6,7 +6,7 @@ uses
   ExtAIQueueEvents, ExtAIUtils, ExtAIDataTypes;
 
 const
-  SLEEP_BEFORE_RUN = 10;
+  SLEEP_BEFORE_RUN = 1;
   SLEEP_BEFORE_NEXT_TICK = 1;
 
 type

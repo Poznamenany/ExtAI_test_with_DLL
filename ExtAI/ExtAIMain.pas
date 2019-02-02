@@ -16,7 +16,8 @@ type
     procedure Log(aLog: wStr);
     function IndexOf(aDLLPath: wStr): si32;
   public
-    property ListDLL: TExtAIListDLL read fListDLL write fListDLL;
+    property ListDLL: TExtAIListDLL read fListDLL;
+    property QueueStates: TExtAIQueueStates read fQueueStates;
 
     constructor Create(aLog: TLog); reintroduce;
     destructor Destroy(); override;

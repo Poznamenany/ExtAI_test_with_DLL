@@ -3,7 +3,7 @@ unit TestDLLWin;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, StrUtils,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView.Types,
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView,
@@ -118,6 +118,7 @@ type
     procedure Log(aLog: wStr);
     procedure ClearLog();
     procedure LogProgress(aID: ui8; aTick: ui32; aState: TExtAIThreadStates);
+    procedure Overview();
   public
     { Public declarations }
   end;
@@ -207,6 +208,7 @@ begin
   Offset := si32(NOT chckbClosed.IsChecked);
   Range := fcbAI[1].Count - Offset;
   for K := Low(fcbAI) to High(fcbAI) do
+    //fcbAI[K].ItemIndex := 1;
     fcbAI[K].ItemIndex := Round(Offset+Random(Range));
 end;
 
@@ -302,6 +304,7 @@ begin
   InitSimulation(Sender);
   RefreshListDLL(Sender);
   RefreshSimButtons(Sender);
+  Overview();
 end;
 
 procedure TPPLWin.RefreshSimButtons(Sender: TObject);
@@ -378,6 +381,50 @@ begin
     tsTerminate: fedAI[aID].Text := 'Terminate';
   end;
   fpbAI[aID].Value := aTick/fMainThread.MaxTick;
+end;
+
+procedure TPPLWin.Overview();
+const
+  LENG_EXTAI = 6;
+type
+  TOverview = record
+    Init,Termin: b;
+    ID: ui8;
+    Name: wStr;
+  end;
+var
+  K: si32;
+  str: wStr;
+  Actions, Events, Hands, Threads: array[1..MAX_AI_CNT] of TOverview;
+  Stats: TOverview;
+begin
+  for K := ListBoxLog.Count-1 downto 0 do
+  begin
+    str := ListBoxLog.Items[K];
+    if      AnsiPos('TExtAIThread-Create: ID =', str) > 0 then        Threads[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIThread-Destroy: ID =', str) > 0 then       Threads[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueActions-Create: ID =', str) > 0 then  Actions[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIQueueActions-Destroy: ID =', str) > 0 then Actions[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueEvents-Create: ID =', str) > 0 then   Events[  StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIQueueEvents-Destroy: ID =', str) > 0 then  Events[  StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIHand-Create: ID =', str) > 0 then          Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIHand-Destroy: ID =', str) > 0 then         Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueStates-Create', str) > 0 then         Stats.Init := True
+    else if AnsiPos('TExtAIQueueStates-Destroy', str) > 0 then        Stats.Termin := True;
+  end;
+  for K := Low(Actions) to High(Actions) do
+  begin
+    if (Threads[K].Init OR Threads[K].Termin) <> (Threads[K].Init AND Threads[K].Termin) then
+    Log('WARNING: Init/Termin THREAD: '+IntToStr(K));
+    if (Actions[K].Init OR Actions[K].Termin) <> (Actions[K].Init AND Actions[K].Termin) then
+    Log('WARNING: Init/Termin ACTION: '+IntToStr(K));
+    if (Events[K].Init OR Events[K].Termin) <> (Events[K].Init AND Events[K].Termin) then
+    Log('WARNING: Init/Termin EVENT: '+IntToStr(K));
+    if (Hands[K].Init OR Hands[K].Termin) <> (Hands[K].Init AND Hands[K].Termin) then
+    Log('WARNING: Init/Termin HANS: '+IntToStr(K));
+  end;
+  if (Stats.Init OR Stats.Termin) <> (Stats.Init AND Stats.Termin) then
+    Log('WARNING: Init/Termin STATS');
 end;
 
 end.

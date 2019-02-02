@@ -26,6 +26,7 @@ private
   fID: ui8;
   fStartAct: pAct;
   fEndAct: pAct;
+  fLiveActionsCnt: si32;
   // IActions
   procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
   procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
@@ -53,7 +54,9 @@ begin
   inherited Create();
   fID := aID;
   OnLog := aLog;
+  fLiveActionsCnt := 0;
   New(fStartAct);  // 1 Action is empty and divides start and end pointer
+  Inc(fLiveActionsCnt);
   fStartAct.Next := nil;
   fEndAct := fStartAct;
   Log('  TExtAIQueueActions-Create: ID = '+IntToStr(fID));
@@ -73,7 +76,13 @@ begin
     end;
   end;
   if (fStartAct <> nil) then // Last Action
+  begin
     Dispose(fStartAct);
+    Dec(fLiveActionsCnt);
+  end;
+  if (fLiveActionsCnt <> 0) then
+    Log('  TExtAIQueueActions-Destroy: Actions termination error, ID = ' + IntToStr(fID) + '; cnt = '+IntToStr(fLiveActionsCnt));
+
   inherited;
 end;
 
@@ -83,6 +92,7 @@ var
   newAct: pAct;
 begin
   New(newAct);
+  Inc(fLiveActionsCnt);
   newAct^.Next := nil;
   fEndAct^.ActType := aActType;
   fEndAct^.Ptr := aPtr;
@@ -103,6 +113,7 @@ begin
     tempAct := fStartAct;
     AtomicExchange(fStartAct, fStartAct^.Next);
     Dispose(tempAct);
+    Dec(fLiveActionsCnt);
   end;
 end;
 

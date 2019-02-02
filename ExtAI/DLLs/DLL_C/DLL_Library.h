@@ -47,7 +47,7 @@ interface IStates: IUnknown
 {
 public:
     virtual ui8 ADDCALL State1(ui32 aID) = 0;
-    virtual b ADDCALL MapTerrain(pui32 & aFirstElem, si32 & aLength) = 0;
+    virtual b ADDCALL MapTerrain(ui8 aID, pui32 & aFirstElem, si32 & aLength) = 0;
 };
 typedef IStates * pIStates;
 

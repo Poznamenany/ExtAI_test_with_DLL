@@ -30,6 +30,7 @@ private
   fID: ui8;
   fStartEv: pEv;
   fEndEv: pEv;
+  fLiveEventsCnt: si32;
   // IEvents
   procedure OnMissionStart(); StdCall;
   procedure OnTick(aTick: ui32); StdCall;
@@ -59,7 +60,9 @@ begin
   inherited Create();
   fID := aID;
   OnLog := aLog;
+  fLiveEventsCnt := 0;
   New(fStartEv); // 1 Event is empty and divides start and end pointer
+  Inc(fLiveEventsCnt);
   fStartEv.Next := nil;
   fEndEv := fStartEv;
   Log('  TExtAIQueueEvents-Create: ID = '+IntToStr(fID));
@@ -81,7 +84,13 @@ begin
     end;
   end;
   if (fStartEv <> nil) then // Last Event
+  begin
     Dispose(fStartEv);
+    Dec(fLiveEventsCnt);
+  end;
+  if (fLiveEventsCnt <> 0) then
+    Log('  TExtAIQueueEvents-Destroy: Events termination error, ID = ' + IntToStr(fID) + '; cnt = '+IntToStr(fLiveEventsCnt));
+
   inherited;
 end;
 
@@ -91,6 +100,7 @@ var
   newEv: pEv;
 begin
   New(newEv);
+  Inc(fLiveEventsCnt);
   newEv^.Next := nil;
   fEndEv^.EvType := aEvType;
   fEndEv^.Ptr := aPtr;
@@ -111,6 +121,7 @@ begin
     tempEv := fStartEv;
     AtomicExchange(fStartEv, fStartEv^.Next);
     Dispose(tempEv);
+    Dec(fLiveEventsCnt);
   end;
 end;
 
@@ -119,6 +130,7 @@ function TExtAIQueueEvents.CallEvent(var aTick: ui32): b;
 var
   EvType: TEvType;
   EvPtr: Pointer;
+  tckvptr: pRecOnTick;
 begin
   Result := GetEvent(EvType, EvPtr);
   if Result then
@@ -132,7 +144,8 @@ begin
         end;
       etOnTick:
         begin
-          with pRecOnTick(EvPtr)^ do
+          tckvptr := pRecOnTick(EvPtr);
+          with tckvptr^ do
           begin
             Events.OnTick(Tick);
             aTick := Tick;

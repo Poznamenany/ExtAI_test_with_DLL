@@ -8,6 +8,7 @@ uses
 type
 TExtAI = class(TInterfacedObject, IEvents)
   private
+    fMap: ui32Arr;
     // IInterface
     //procedure AfterConstruction; override;
     //procedure BeforeDestruction; override;
@@ -50,9 +51,31 @@ begin
 end;
 
 procedure TExtAI.OnTick(aTick: ui32);
+var
+  feedback: ui8;
+  Len, K: si32;
+  pFirstElem: pui32;
 begin
   //Log('    TExtAI-OnTick: ID = ' + IntToStr(ID));
-  //Actions.GroupOrderAttackUnit(1,1);
+  // Test actions
+  Actions.GroupOrderAttackUnit(11,22);
+  Actions.GroupOrderWalk(1,50,50,1);
+  // Test states
+  feedback := States.State1(11);
+  if (feedback <> 11) then
+    Log('    TExtAI-OnTick: wrong state feedback = ' + IntToStr(feedback));
+  if States.MapTerrain(ID,pFirstElem,Len) then
+  begin
+    if (Len <> Length(fMap)) then
+      SetLength(fMap,Len);
+    Move(pFirstElem^, fMap[0], SizeOf(fMap[0]) * Length(fMap));
+    for K := Low(fMap) to High(fMap)-1 do
+      if (fMap[K] >= fMap[K+1]) then
+      begin
+        Log('    TExtAI-OnTick: problem in testing map, val: ' + IntToSTr(fMap[K]) + ' vs ' + IntToSTr(fMap[K+1]));
+        break;
+      end;
+  end;
 end;
 
 procedure TExtAI.OnPlayerDefeated(aPlayer: si8);
@@ -69,35 +92,6 @@ procedure TExtAI.Log(aLog: wStr);
 begin
   Actions.LogDLL(Addr(aLog[1]), Length(aLog));
 end;
-
-{
-
-// Test all callbacks and events
-procedure TExtAI.Event1(aID: ui32);
-var
-  testVar, K: ui8;
-  pMap: pui32;
-  mapLen: si32;
-  Map: ui32Arr;
-begin
-  writeln('    TExtAI: Event1, class fID: ' + IntToStr(ID) + '; parameter aID: ' + IntToStr(aID)); // Show event 1
-  Actions.Action1(11,22); // Check callback
-  testVar := States.State1(22);
-  writeln('    TExtAI: Event1, class fID: ' + IntToStr(ID) + '; testVar: ' + IntToStr(testVar)); // Show test var from State 1
-  // Get array (pointer to first element) from Main program and copy memory so we can work with it
-  pMap := nil;
-  if States.State2(pMap, mapLen) then
-  begin
-    SetLength(Map,mapLen);
-    Move(pMap^, Map[0], SizeOf(Map[0]) * Length(Map));
-    write('    TExtAI: Event1, class fID: ' + IntToStr(ID) + '; log array:'); // Show values of array
-    for K := Low(Map) to High(Map) do
-      write(' ' + IntToStr(Map[K]));
-    writeln('');
-  end;
-end;
-
-}
 
 
 end.

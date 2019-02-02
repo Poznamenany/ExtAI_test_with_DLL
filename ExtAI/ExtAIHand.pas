@@ -53,16 +53,21 @@ end;
 procedure TExtAIHand.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32);
 begin
   // Check if parameters are correct and call action...
-  Log('  TExtAIHand-GroupOrderAttackUnit: ID = '+IntToStr(fID));
+  // For test check only if parameters are correct
+  if (aGroupID <> 11) OR (aUnitID <> 22) then
+    Log('  TExtAIHand-GroupOrderAttackUnit: wrong parameters, ID = '+IntToStr(fID));
 end;
 
 procedure TExtAIHand.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16);
 begin
   // Check if parameters are correct and call action...
+  // For test check only if parameters are correct
+  if (aGroupID <> 1) OR (aX <> 50) OR (aY <> 50) OR (aDirection <> 1) then
+    Log('  TExtAIHand-GroupOrderWalk: wrong parameters, ID = '+IntToStr(fID));
 end;
 
 
-// IEvents - calling of functions in the interface
+// IEvents - calling of functions in the interface (or delete this part and use directly public variable Events)
 procedure TExtAIHand.OnMissionStart();
 begin
   Events.OnMissionStart();
@@ -84,6 +89,7 @@ begin
 end;
 
 
+// Logs from DLL
 procedure TExtAIHand.LogDLL(apLog: pwStr; aLen: ui32);
 var
   Str: wStr;
