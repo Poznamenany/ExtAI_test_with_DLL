@@ -76,15 +76,18 @@ end;
 
 function TExtAICommDLL.LinkDLL(aDLLPath: wStr): b;
 var
+  Err: si32;
   Cfg: TDLLpConfig;
 begin
   Result := False;
-  if fileexists(aDLLPath) then
+  if FileExists(aDLLPath) then
   begin
     fLibHandle := SafeLoadLibrary( aDLLPath );
     if (fLibHandle <> 0) then
     begin
-      Log('  TExtAICommDLL-LinkDLL: DLL file detected, last error (should be 0): ' + IntToStr( GetLastError() ));
+      Err := GetLastError();
+      if (Err <> 0) then
+        Log('  TExtAICommDLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
       Result := True;
 
       fOnInitDLL := GetProcAddress(fLibHandle, 'InitDLL');
@@ -106,8 +109,8 @@ begin
         Move(Cfg.Description^, fDLLConfig.Description[1], Cfg.DescriptionLen * SizeOf(fDLLConfig.Description[1]));
         SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
         Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
-        fDLLConfig.Version := Config.Version;
-        Log('  TExtAICommDLL-LinkDLL: DLL detected, DLL Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
+        fDLLConfig.Version := Cfg.Version;
+        Log('  TExtAICommDLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
       end;
     end
     else
