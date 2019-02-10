@@ -20,7 +20,7 @@ var
 
 type
   TSimulationState = (ssCreated, ssInit, ssInProgress, ssPaused, ssTerminated);
-  TUpdateSimStatus = procedure () of object;
+  TUpdateSimStatus = procedure () of object; //@Martin: According to KP/Delphi conventions, this should be renamed to TUpdateSimStatusEvent
 
   // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
   TMainThread = class(TThread)
@@ -28,7 +28,7 @@ type
     fExtAI: TExtAIMain; // ExtAI DLL entry point
     fHands: TList; // ExtAI hand entry point
     fSimState: TSimulationState;
-    fUpdateSimStatus: TUpdateSimStatus;
+    fUpdateSimStatus: TUpdateSimStatus; //@Martin: According to Delphi conventions, this should be renamed to fOnUpdateSimStatus
     fOnLog: TLog;
     procedure Log(aLog: wStr);
   public
