@@ -3,6 +3,7 @@ program TestDLLWinPrj;
 uses
   System.StartUpCopy,
   FMX.Forms,
+  GameHand in 			  'GameHand.pas',
   GameThread in 			'GameThread.pas',
   TestDLLWin in 			'TestDLLWin.pas' {PPLWin},
   ExtAICommDLL in 			'ExtAI\ExtAICommDLL.pas',

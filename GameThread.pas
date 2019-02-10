@@ -2,7 +2,7 @@ unit GameThread;
 interface
 uses
   Windows, Classes, Generics.Collections,
-  System.Threading, System.Diagnostics, System.SysUtils,
+  System.Threading, System.Diagnostics, System.SysUtils, GameHand,
   ExtAIMain, ExtAIListDLL, ExtAIHand, ExtAIDataTypes, ExtAIUtils;
 
 const
@@ -27,7 +27,7 @@ type
   private
     // Game assets
     fExtAI: TExtAIMain; // ExtAI DLL entry point
-    fHands: TList<TExtAIHand>; // ExtAI hand entry point
+    fHands: TList<TGameHand>; // ExtAI hand entry point
 
     // Game properties (kind of testbed)
     fTick: Cardinal;
@@ -74,7 +74,7 @@ begin
   fUpdateSimStatus := aUpdateSimStatus;
   Log('TMainThread-Create');
   fExtAI := TExtAIMain.Create(Log);
-  fHands := TList<TExtAIHand>.Create;
+  fHands := TList<TGameHand>.Create;
 end;
 
 destructor TGameThread.Destroy();
@@ -99,23 +99,15 @@ begin
   fSimState := ssInit;
   for K := Low(aExtAIs) to High(aExtAIs) do
     if (CompareStr(aExtAIs[K],'') <> 0) then
-      fHands.Add(fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
+      //@MArtin here's a hand index mismatch. In KP hands are always going from 0 to N-1, without gaps.
+      fHands.Add(TGameHand.Create(K, fOnLog, fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress)));
 end;
 
 procedure TGameThread.StartSimulation(aTicks: Cardinal);
-var
-  L: si32;
 begin
   Log('TMainThread-StartSimulation');
 
   fMaxTick := aTicks;
-
-  for L := 0 to fHands.Count-1 do
-    if (fHands[L] <> nil) then
-    begin
-      fHands[L].OnMissionStart();
-      //...
-    end;
 
   Start;
 end;
@@ -146,10 +138,7 @@ begin
       // Call ExtAI (Hands)
       for K := 0 to fHands.Count-1 do
         if (fHands[K] <> nil) then
-        begin
-          fHands[K].OnTick(Tick);
-          //... and another events
-        end;
+          fHands[K].UpdateState(Tick);
     end
     else
       Sleep(SLEEP_BEFORE_RUN);
