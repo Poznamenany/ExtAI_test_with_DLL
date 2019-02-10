@@ -1,7 +1,5 @@
 unit TestDLLWin;
-
 interface
-
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, StrUtils,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
@@ -97,7 +95,7 @@ type
     procedure tbTicksChange(Sender: TObject);
     procedure btnAutoFillClick(Sender: TObject);
   private
-    fMainThread: TMainThread;
+    fGameThread: TGameThread;
     // DLL
     fListDLL: TListDLL;
     // Lobby
@@ -119,8 +117,6 @@ type
     procedure ClearLog();
     procedure LogProgress(aID: ui8; aTick: ui32; aState: TExtAIThreadStates);
     procedure Overview();
-  public
-    { Public declarations }
   end;
 
 var
@@ -150,7 +146,7 @@ begin
   if (CompareStr(Folders[0],edFolderDLL2.Text) <> 0) then // Do not load the same path 2x
     Folders[1] := edFolderDLL2.Text;
 
-  fListDLL := fMainThread.GetDLLs(Folders);
+  fListDLL := fGameThread.GetDLLs(Folders);
 
   listBoxDLLs.Items.Clear();
   for K := 0 to fListDLL.Count-1 do
@@ -240,7 +236,7 @@ end;
 // Simulation
 procedure TPPLWin.InitSimulation(Sender: TObject);
 begin
-  fMainThread := TMainThread.Create(Log,UpdateSimStatus);
+  fGameThread := TGameThread.Create(Log,UpdateSimStatus);
   tbTicksChange(Sender);
   RefreshSimButtons(Sender);
 end;
@@ -278,29 +274,29 @@ begin
   end;
   // Init ExtAI
   if (cnt > 0) then
-    fMainThread.InitSimulation(chckbMultithread.Ischecked,ExtAIs,LogProgress);
+    fGameThread.InitSimulation(chckbMultithread.Ischecked,ExtAIs,LogProgress);
   RefreshSimButtons(Sender);
 end;
 
 
 procedure TPPLWin.btnStartSimClick(Sender: TObject);
 begin
-  if (fMainThread.SimulationState = ssInit) then
+  if (fGameThread.SimulationState = ssInit) then
   begin
-    fMainThread.MaxTick := Round(tbTicks.Value);
-    fMainThread.StartSimulation(); // Start ExtAI threads
-    fMainThread.Start();
+    fGameThread.MaxTick := Round(tbTicks.Value);
+    fGameThread.StartSimulation(); // Start ExtAI threads
+    fGameThread.Start();
   end
   else
-    fMainThread.PauseSimulation();
+    fGameThread.PauseSimulation();
   RefreshSimButtons(Sender);
 end;
 
 procedure TPPLWin.btnTerminateClick(Sender: TObject);
 begin
-  fMainThread.TerminateSimulation();
+  fGameThread.TerminateSimulation();
   Sleep(SLEEP_EVERY_TICK*10);
-  fMainThread.Free();
+  fGameThread.Free();
   InitSimulation(Sender);
   RefreshListDLL(Sender);
   RefreshSimButtons(Sender);
@@ -314,7 +310,7 @@ begin
   btnStartSim.Text := 'Start';
   btnStartSim.Enabled := True;
   // Special
-  case fMainThread.SimulationState of
+  case fGameThread.SimulationState of
     ssCreated:
       begin
         btnInitSim.Enabled := True;
@@ -349,7 +345,7 @@ end;
 
 procedure TPPLWin.FormDestroy(Sender: TObject);
 begin
-  fMainThread.Free();
+  fGameThread.Free();
   fListDLL.Free();
 end;
 
@@ -357,7 +353,7 @@ end;
 // Log
 procedure TPPLWin.UpdateSimStatus();
 begin
-  pbSimulation.Value := fMainThread.Tick/fMainThread.MaxTick;
+  pbSimulation.Value := fGameThread.Tick / fGameThread.MaxTick;
   RefreshSimButtons(nil);
 end;
 
@@ -380,7 +376,7 @@ begin
     tsPause: fedAI[aID].Text := 'Pause';
     tsTerminate: fedAI[aID].Text := 'Terminate';
   end;
-  fpbAI[aID].Value := aTick/fMainThread.MaxTick;
+  fpbAI[aID].Value := aTick / fGameThread.MaxTick;
 end;
 
 procedure TPPLWin.Overview();

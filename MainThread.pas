@@ -23,7 +23,7 @@ type
   TUpdateSimStatus = procedure () of object; //@Martin: According to KP/Delphi conventions, this should be renamed to TUpdateSimStatusEvent
 
   // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
-  TMainThread = class(TThread)
+  TGameThread = class(TThread)
   private
     fExtAI: TExtAIMain; // ExtAI DLL entry point
     fHands: TList; // ExtAI hand entry point
@@ -51,8 +51,8 @@ type
 implementation
 
 
-{ TMainThread }
-constructor TMainThread.Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus);
+{ TGameThread }
+constructor TGameThread.Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -67,7 +67,7 @@ begin
   fHands := TList.Create();
 end;
 
-destructor TMainThread.Destroy();
+destructor TGameThread.Destroy();
 begin
   fExtAI.Free();
   fHands.Free(); // Items of list are Interfaces and will be freed automatically
@@ -75,13 +75,13 @@ begin
   inherited;
 end;
 
-function TMainThread.GetDLLs(aPaths: wStrArr): TListDLL;
+function TGameThread.GetDLLs(aPaths: wStrArr): TListDLL;
 begin
   fExtAI.ListDLL.SetDLLFolderPaths(aPaths);
   Result := fExtAI.ListDLL.List.Copy();
 end;
 
-procedure TMainThread.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
+procedure TGameThread.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
 var
   K: si32;
 begin
@@ -92,7 +92,7 @@ begin
       fHands.Add( fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
 end;
 
-procedure TMainThread.StartSimulation();
+procedure TGameThread.StartSimulation();
 var
   K,L: si32;
 begin
@@ -105,7 +105,7 @@ begin
     end;
 end;
 
-procedure TMainThread.Execute();
+procedure TGameThread.Execute();
 var
   K: si32;
 begin
@@ -145,7 +145,7 @@ begin
   Log('TMainThread-Execute: End');
 end;
 
-procedure TMainThread.PauseSimulation();
+procedure TGameThread.PauseSimulation();
 begin
   if (fSimState = ssPaused) then
     fSimState := ssInProgress
@@ -153,14 +153,14 @@ begin
     fSimState := ssPaused;
 end;
 
-procedure TMainThread.TerminateSimulation();
+procedure TGameThread.TerminateSimulation();
 begin
   Log('TMainThread-TerminateSimulation');
   fSimState := ssTerminated;
 end;
 
 
-procedure TMainThread.Log(aLog: wStr);
+procedure TGameThread.Log(aLog: wStr);
 begin
   Synchronize(
   procedure
