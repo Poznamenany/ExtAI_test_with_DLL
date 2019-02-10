@@ -24,32 +24,32 @@ type
     Next: pEv;
   end;
 
-// Queue of events for multithreading
-TExtAIQueueEvents = class(TInterfacedObject, IEvents)
-private
-  fID: ui8;
-  fStartEv: pEv;
-  fEndEv: pEv;
-  fLiveEventsCnt: si32;
-  // IEvents
-  procedure OnMissionStart(); StdCall;
-  procedure OnTick(aTick: ui32); StdCall;
-  procedure OnPlayerDefeated(aPlayer: si8); StdCall;
-  procedure OnPlayerVictory(aPlayer: si8); StdCall;
-  // Queue
-  procedure AddEvent(aEvType: TEvType; aPtr: Pointer);
-  function GetEvent(var aEvType: TEvType; var aPtr: Pointer): b;
-  // Log
-  procedure Log(aLog: wStr);
-public
-  OnLog: TLogEvent;
-  Events: IEvents;
-  QueueActions: TExtAIQueueActions;
-  constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
-  destructor Destroy(); override;
+  // Queue of events for multithreading
+  TExtAIQueueEvents = class(TInterfacedObject, IEvents)
+  private
+    fID: ui8;
+    fStartEv: pEv;
+    fEndEv: pEv;
+    fLiveEventsCnt: si32;
+    // IEvents
+    procedure OnMissionStart(); StdCall;
+    procedure OnTick(aTick: ui32); StdCall;
+    procedure OnPlayerDefeated(aPlayer: si8); StdCall;
+    procedure OnPlayerVictory(aPlayer: si8); StdCall;
+    // Queue
+    procedure AddEvent(aEvType: TEvType; aPtr: Pointer);
+    function GetEvent(var aEvType: TEvType; var aPtr: Pointer): b;
+    // Log
+    procedure Log(aLog: wStr);
+  public
+    OnLog: TLogEvent;
+    Events: IEvents;
+    QueueActions: TExtAIQueueActions;
+    constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
+    destructor Destroy(); override;
 
-  function CallEvent(var aTick: ui32): b;
-end;
+    function CallEvent(var aTick: ui32): b;
+  end;
 
 implementation
 

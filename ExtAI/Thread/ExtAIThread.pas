@@ -10,7 +10,7 @@ const
   SLEEP_BEFORE_NEXT_TICK = 1;
 
 type
-// Thread management for ExtAI (optional)
+  // Thread management for ExtAI (optional)
   TExtAIThread = class(TThread)
   private
     fID: ui8;

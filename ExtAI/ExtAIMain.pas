@@ -24,7 +24,7 @@ type
     procedure Release();
 
     function NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): TExtAIHand;
-end;
+  end;
 
 
 implementation

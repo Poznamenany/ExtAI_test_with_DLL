@@ -5,30 +5,29 @@ uses
   ExtAIStates, ExtAIUtils, ExtAIInterfaceDelphi, ExtAIDataTypes;
 
 type
+  // Queue of states for multithreading
+  TExtAIQueueStates = class(TInterfacedObject, IStates)
+  private
+    fStartStates: TExtAIStates;
+    fEndStates: TExtAIStates;
+    fLiveStatesCnt: si32;
+    fLastPointer: PTExtAIStates;
+    fClassLock: array [0..12] of TExtAIStates;
+    fOnLog: TLogEvent;
+    // Queue
+    procedure FreeUnused(aIgnoreLock: Boolean);
+    // IStates
+    function State1(aID: ui32): ui8; StdCall;
+    function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
+    // Log
+    procedure Log(aLog: wStr);
+  public
+    constructor Create(aLog: TLogEvent); reintroduce;
+    destructor Destroy(); override;
 
-// Queue of states for multithreading
-TExtAIQueueStates = class(TInterfacedObject, IStates)
-private
-  fStartStates: TExtAIStates;
-  fEndStates: TExtAIStates;
-  fLiveStatesCnt: si32;
-  fLastPointer: PTExtAIStates;
-  fClassLock: array [0..12] of TExtAIStates;
-  fOnLog: TLogEvent;
-  // Queue
-  procedure FreeUnused(aIgnoreLock: Boolean);
-  // IStates
-  function State1(aID: ui32): ui8; StdCall;
-  function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
-  // Log
-  procedure Log(aLog: wStr);
-public
-  constructor Create(aLog: TLogEvent); reintroduce;
-  destructor Destroy(); override;
-
-  // Extract states
-  procedure ExtractStates();
-end;
+    // Extract states
+    procedure ExtractStates();
+  end;
 
 implementation
 

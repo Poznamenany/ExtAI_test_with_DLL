@@ -20,30 +20,30 @@ type
     Next: pAct;
   end;
 
-// Queue of actions for multithreading
-TExtAIQueueActions = class(TInterfacedObject, IActions)
-private
-  fID: ui8;
-  fStartAct: pAct;
-  fEndAct: pAct;
-  fLiveActionsCnt: si32;
-  // IActions
-  procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
-  procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
-  procedure LogDLL(apLog: pwStr; aLen: ui32); StdCall;
-  // Queue
-  procedure AddAction(aActType: TActType; aPtr: Pointer);
-  function GetAction(var aActType: TActType; var aPtr: Pointer): b;
-  // Log
-  procedure Log(aLog: wStr);
-public
-  OnLog: TLogEvent;
-  Actions: IActions;
-  constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
-  destructor Destroy(); override;
+  // Queue of actions for multithreading
+  TExtAIQueueActions = class(TInterfacedObject, IActions)
+  private
+    fID: ui8;
+    fStartAct: pAct;
+    fEndAct: pAct;
+    fLiveActionsCnt: si32;
+    // IActions
+    procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
+    procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
+    procedure LogDLL(apLog: pwStr; aLen: ui32); StdCall;
+    // Queue
+    procedure AddAction(aActType: TActType; aPtr: Pointer);
+    function GetAction(var aActType: TActType; var aPtr: Pointer): b;
+    // Log
+    procedure Log(aLog: wStr);
+  public
+    OnLog: TLogEvent;
+    Actions: IActions;
+    constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
+    destructor Destroy(); override;
 
-  function CallAction(): b;
-end;
+    function CallAction(): b;
+  end;
 
 implementation
 
