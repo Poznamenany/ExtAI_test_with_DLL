@@ -12,25 +12,25 @@ type
     fListDLL: TExtAIListDLL;
     fQueueStates: TExtAIQueueStates;
 
-    fOnLog: TLog;
+    fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
     function IndexOf(aDLLPath: wStr): si32;
   public
     property ListDLL: TExtAIListDLL read fListDLL;
     property QueueStates: TExtAIQueueStates read fQueueStates;
 
-    constructor Create(aLog: TLog); reintroduce;
+    constructor Create(aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
     procedure Release();
 
-    function NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLog; aLogProgress: TLogProgress): TExtAIHand;
+    function NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): TExtAIHand;
 end;
 
 
 implementation
 
 { TExtAIMain }
-constructor TExtAIMain.Create(aLog: TLog);
+constructor TExtAIMain.Create(aLog: TLogEvent);
 begin
   inherited Create();
   fOnLog := aLog;
@@ -58,7 +58,7 @@ begin
 end;
 
 
-function TExtAIMain.NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLog; aLogProgress: TLogProgress): TExtAIHand;
+function TExtAIMain.NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): TExtAIHand;
 var
   Idx: si32;
   DLL: TExtAICommDLL;

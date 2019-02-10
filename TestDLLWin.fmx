@@ -41,7 +41,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Folders (second folder only for debug)'
-      TabOrder = 5
     end
     object btnSelectFolder2: TButton
       Position.X = 336.000000000000000000
@@ -74,7 +73,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Detected DLLs'
-      TabOrder = 4
     end
     object btdRefreshDLLs: TButton
       Position.X = 336.000000000000000000
@@ -119,7 +117,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '1.'
-      TabOrder = 27
     end
     object Label5: TLabel
       Position.X = 16.000000000000000000
@@ -128,7 +125,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '2.'
-      TabOrder = 26
     end
     object edAI2: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -236,7 +232,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '3.'
-      TabOrder = 25
     end
     object Label7: TLabel
       Position.X = 16.000000000000000000
@@ -245,7 +240,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '4.'
-      TabOrder = 24
     end
     object Label8: TLabel
       Position.X = 16.000000000000000000
@@ -254,7 +248,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '5.'
-      TabOrder = 23
     end
     object Label9: TLabel
       Position.X = 16.000000000000000000
@@ -263,7 +256,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '6.'
-      TabOrder = 22
     end
     object Label10: TLabel
       Position.X = 16.000000000000000000
@@ -272,7 +264,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '7.'
-      TabOrder = 21
     end
     object Label11: TLabel
       Position.X = 16.000000000000000000
@@ -281,7 +272,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '8.'
-      TabOrder = 20
     end
     object Label12: TLabel
       Position.X = 16.000000000000000000
@@ -290,7 +280,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '9.'
-      TabOrder = 19
     end
     object Label13: TLabel
       Position.X = 8.000000000000000000
@@ -299,7 +288,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '10.'
-      TabOrder = 18
     end
     object Label14: TLabel
       Position.X = 8.000000000000000000
@@ -308,7 +296,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '11.'
-      TabOrder = 17
     end
     object Label15: TLabel
       Position.X = 8.000000000000000000
@@ -317,7 +304,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '12.'
-      TabOrder = 16
     end
     object cbAI1: TComboBox
       Position.X = 32.000000000000000000
@@ -599,7 +585,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Max ticks:'
-      TabOrder = 4
     end
     object edTickCnt: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]

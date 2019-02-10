@@ -14,7 +14,7 @@ private
   fLiveStatesCnt: si32;
   fLastPointer: PTExtAIStates;
   fClassLock: array [0..12] of TExtAIStates;
-  fOnLog: TLog;
+  fOnLog: TLogEvent;
   // Queue
   procedure FreeUnused(aIgnoreLock: Boolean);
   // IStates
@@ -23,7 +23,7 @@ private
   // Log
   procedure Log(aLog: wStr);
 public
-  constructor Create(aLog: TLog); reintroduce;
+  constructor Create(aLog: TLogEvent); reintroduce;
   destructor Destroy(); override;
 
   // Extract states
@@ -34,7 +34,7 @@ implementation
 
 
 { TExtAIQueueStates }
-constructor TExtAIQueueStates.Create(aLog: TLog);
+constructor TExtAIQueueStates.Create(aLog: TLogEvent);
 var
   K: si32;
 begin

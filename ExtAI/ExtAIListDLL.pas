@@ -30,7 +30,7 @@ type
   private
     fDLLs: TListDLL;
     fPaths: wStrArr;
-    fOnLog: TLog;
+    fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
     function GetDLL(aIndex: Integer): PInfoDLL;
     function GetCount: Integer;
@@ -40,7 +40,7 @@ type
     property DLL[aIndex: Integer]: PInfoDLL read GetDLL; default;
     property List: TListDLL read fDLLs;
 
-    constructor Create(aLog: TLog); reintroduce;
+    constructor Create(aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     procedure RefreshDLLs(aLogDLLs: Boolean = False);
@@ -100,7 +100,7 @@ end;
 
 
 { TExtAIListDLL }
-constructor TExtAIListDLL.Create(aLog: TLog);
+constructor TExtAIListDLL.Create(aLog: TLogEvent);
 begin
   inherited Create();
   fOnLog := aLog;

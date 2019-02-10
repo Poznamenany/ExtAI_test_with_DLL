@@ -37,9 +37,9 @@ private
   // Log
   procedure Log(aLog: wStr);
 public
-  OnLog: TLog;
+  OnLog: TLogEvent;
   Actions: IActions;
-  constructor Create(aID: ui8; aLog: TLog); reintroduce;
+  constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
   destructor Destroy(); override;
 
   function CallAction(): b;
@@ -49,7 +49,7 @@ implementation
 
 
 { TExtAIQueueActions }
-constructor TExtAIQueueActions.Create(aID: ui8; aLog: TLog);
+constructor TExtAIQueueActions.Create(aID: ui8; aLog: TLogEvent);
 begin
   inherited Create();
   fID := aID;

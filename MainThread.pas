@@ -29,18 +29,18 @@ type
     fHands: TList; // ExtAI hand entry point
     fSimState: TSimulationState;
     fUpdateSimStatus: TUpdateSimStatus; //@Martin: According to Delphi conventions, this should be renamed to fOnUpdateSimStatus
-    fOnLog: TLog;
+    fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
   public
     Tick: ui32;
     MaxTick: ui32;
     property SimulationState: TSimulationState read fSimState;
-    constructor Create(aInitLog: TLog; aUpdateSimStatus: TUpdateSimStatus); reintroduce;
+    constructor Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus); reintroduce;
     destructor Destroy(); override;
 
     function GetDLLs(aPaths: wStrArr): TListDLL;
 
-    procedure InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgress);
+    procedure InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
     procedure StartSimulation();
     procedure PauseSimulation();
     procedure TerminateSimulation();
@@ -52,7 +52,7 @@ implementation
 
 
 { TMainThread }
-constructor TMainThread.Create(aInitLog: TLog; aUpdateSimStatus: TUpdateSimStatus);
+constructor TMainThread.Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -81,7 +81,7 @@ begin
   Result := fExtAI.ListDLL.List.Copy();
 end;
 
-procedure TMainThread.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgress);
+procedure TMainThread.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
 var
   K: si32;
 begin

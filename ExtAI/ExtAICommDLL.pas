@@ -24,23 +24,23 @@ type
     fOnInitNewExtAI: TInitNewExtAI;
     fOnNewExtAI: TNewExtAI;
 
-    fOnLog: TLog;
+    fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
   public
     property Config: TDLLMainCfg read fDLLConfig;
 
-    constructor Create(aLog: TLog); reintroduce;
+    constructor Create(aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     function LinkDLL(aDLLPath: wStr): b;
-    function CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLog; aLogProgress: TLogProgress; var aStates: TExtAIQueueStates): TExtAIHand;
+    function CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): TExtAIHand;
   end;
 
 implementation
 
 
 { TExtAICommDLL }
-constructor TExtAICommDLL.Create(aLog: TLog);
+constructor TExtAICommDLL.Create(aLog: TLogEvent);
 begin
   inherited Create();
   fOnLog := aLog;
@@ -121,11 +121,11 @@ begin
 end;
 
 
-function TExtAICommDLL.CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLog; aLogProgress: TLogProgress; var aStates: TExtAIQueueStates): TExtAIHand;
+function TExtAICommDLL.CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): TExtAIHand;
 var
   Thread: TExtAIThread;
   Hand: TExtAIHand;
-  ThreadLog: TLog;
+  ThreadLog: TLogEvent;
   QueueActions: TExtAIQueueActions;
   QueueEvents: TExtAIQueueEvents;
 begin

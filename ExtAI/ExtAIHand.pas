@@ -9,7 +9,7 @@ type
   TExtAIHand = class(TInterfacedObject, IActions)
   private
     fID: ui8;
-    fOnLog: TLog;
+    fOnLog: TLogEvent;
     // IActions
     procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
     procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
@@ -20,7 +20,7 @@ type
     Events: IEvents;
     property ID: ui8 read fID;
 
-    constructor Create(aID: ui8; aLog: TLog); reintroduce;
+    constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     // Events - or use public variable Events: IEvents to directly call events in DLL
@@ -34,7 +34,7 @@ implementation
 
 
 { TExtAIHand }
-constructor TExtAIHand.Create(aID: ui8; aLog: TLog);
+constructor TExtAIHand.Create(aID: ui8; aLog: TLogEvent);
 begin
   inherited Create();
   fID := aID;

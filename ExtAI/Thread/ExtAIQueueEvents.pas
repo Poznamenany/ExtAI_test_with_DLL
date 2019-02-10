@@ -42,10 +42,10 @@ private
   // Log
   procedure Log(aLog: wStr);
 public
-  OnLog: TLog;
+  OnLog: TLogEvent;
   Events: IEvents;
   QueueActions: TExtAIQueueActions;
-  constructor Create(aID: ui8; aLog: TLog); reintroduce;
+  constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
   destructor Destroy(); override;
 
   function CallEvent(var aTick: ui32): b;
@@ -55,7 +55,7 @@ implementation
 
 
 { TExtAIQueueEvents }
-constructor TExtAIQueueEvents.Create(aID: ui8; aLog: TLog);
+constructor TExtAIQueueEvents.Create(aID: ui8; aLog: TLogEvent);
 begin
   inherited Create();
   fID := aID;

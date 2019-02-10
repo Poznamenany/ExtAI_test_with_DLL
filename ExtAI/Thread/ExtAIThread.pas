@@ -15,8 +15,8 @@ type
   private
     fID: ui8;
     fState: TExtAIThreadStates;
-    fOnLog: TLog;
-    fOnLogProgress: TLogProgress;
+    fOnLog: TLogEvent;
+    fOnLogProgress: TLogProgressEvent;
     fLastTick: ui32;
     fQueueEvents: TExtAIQueueEvents;
     procedure SetState(aState: TExtAIThreadStates);
@@ -26,7 +26,7 @@ type
     property ID: ui8 read fID;
     property State: TExtAIThreadStates read fState write SetState;
 
-    constructor Create(aID: ui8; aLog: TLog; aLogProgress: TLogProgress; var aThreadLog: TLog); reintroduce;
+    constructor Create(aID: ui8; aLog: TLogEvent; aLogProgress: TLogProgressEvent; var aThreadLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     procedure Init(aQueueEvents: TExtAIQueueEvents);
@@ -37,7 +37,7 @@ implementation
 
 
 { TExtAIThread }
-constructor TExtAIThread.Create(aID: ui8; aLog: TLog; aLogProgress: TLogProgress; var aThreadLog: TLog);
+constructor TExtAIThread.Create(aID: ui8; aLog: TLogEvent; aLogProgress: TLogProgressEvent; var aThreadLog: TLogEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := False;

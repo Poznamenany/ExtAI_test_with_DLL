@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, StrUtils,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView.Types,
-  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView,
+  FMX.ListView,
   FMX.Layouts, FMX.ListBox, FMX.Edit,
   MainThread,
   ExtAIListDLL, ExtAIUtils, ExtAIDataTypes;

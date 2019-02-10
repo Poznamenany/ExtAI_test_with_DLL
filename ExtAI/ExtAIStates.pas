@@ -23,7 +23,7 @@ private
   //fWalkable: bArr;
   //fTerrain: ui8Arr;
   //...
-  fOnLog: TLog;
+  fOnLog: TLogEvent;
   // Log
   procedure Log(aLog: wStr);
 public
@@ -33,7 +33,7 @@ public
   property Lock: ui32 read fLock;
   property SpecialLock: ui32 read fSpecLock;
 
-  constructor Create(aLog: TLog); reintroduce;
+  constructor Create(aLog: TLogEvent); reintroduce;
   destructor Destroy(); override;
   procedure DeclareNext();
 
@@ -54,7 +54,7 @@ uses MainThread;
 
 
 { TExtAIStates }
-constructor TExtAIStates.Create(aLog: TLog);
+constructor TExtAIStates.Create(aLog: TLogEvent);
 begin
   inherited Create();
   fNext := nil;
