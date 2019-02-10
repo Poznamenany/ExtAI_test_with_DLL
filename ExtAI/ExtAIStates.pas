@@ -50,7 +50,8 @@ public
 end;
 
 implementation
-uses MainThread;
+uses
+  GameThread;
 
 
 { TExtAIStates }

@@ -1,4 +1,4 @@
-unit MainThread;
+unit GameThread;
 interface
 uses
   Windows, Classes,

@@ -6,7 +6,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView.Types,
   FMX.ListView,
   FMX.Layouts, FMX.ListBox, FMX.Edit,
-  MainThread,
+  GameThread,
   ExtAIListDLL, ExtAIUtils, ExtAIDataTypes;
 
 const
