@@ -33,7 +33,7 @@ type
     procedure Log(aLog: wStr);
   public
     Tick: ui32;
-    MaxTick: ui32;
+    MaxTick: Cardinal;
     property SimulationState: TSimulationState read fSimState;
     constructor Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus); reintroduce;
     destructor Destroy(); override;
@@ -41,7 +41,7 @@ type
     function GetDLLs(aPaths: wStrArr): TListDLL;
 
     procedure InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
-    procedure StartSimulation();
+    procedure StartSimulation(aTicks: Cardinal);
     procedure PauseSimulation();
     procedure TerminateSimulation();
 
@@ -92,17 +92,22 @@ begin
       fHands.Add( fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
 end;
 
-procedure TGameThread.StartSimulation();
+procedure TGameThread.StartSimulation(aTicks: Cardinal);
 var
   K,L: si32;
 begin
   Log('TMainThread-StartSimulation');
+
+  MaxTick := aTicks;
+
   for L := 0 to fHands.Count-1 do
     if (fHands[L] <> nil) then
     begin
       TExtAIHand(fHands[L]).OnMissionStart();
       //...
     end;
+
+  Start;
 end;
 
 procedure TGameThread.Execute();

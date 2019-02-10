@@ -282,15 +282,13 @@ end;
 procedure TPPLWin.btnStartSimClick(Sender: TObject);
 begin
   if (fGameThread.SimulationState = ssInit) then
-  begin
-    fGameThread.MaxTick := Round(tbTicks.Value);
-    fGameThread.StartSimulation(); // Start ExtAI threads
-    fGameThread.Start();
-  end
+    fGameThread.StartSimulation(Round(tbTicks.Value)) // Start ExtAI threads
   else
     fGameThread.PauseSimulation();
+
   RefreshSimButtons(Sender);
 end;
+
 
 procedure TPPLWin.btnTerminateClick(Sender: TObject);
 begin
