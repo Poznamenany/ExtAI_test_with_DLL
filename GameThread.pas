@@ -20,7 +20,7 @@ var
 
 type
   TSimulationState = (ssCreated, ssInit, ssInProgress, ssPaused, ssTerminated);
-  TUpdateSimStatus = procedure () of object; //@Martin: According to KP/Delphi conventions, this should be renamed to TUpdateSimStatusEvent
+  TUpdateSimStatEvent = procedure () of object;
 
   // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
   TGameThread = class(TThread)
@@ -35,13 +35,13 @@ type
 
     // Purely testbed things
     fSimState: TSimulationState;
-    fUpdateSimStatus: TUpdateSimStatus; //@Martin: According to Delphi conventions, this should be renamed to fOnUpdateSimStatus
+    fOnUpdateSimStatus: TUpdateSimStatEvent;
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
   protected
     procedure Execute; override;
   public
-    constructor Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus); reintroduce;
+    constructor Create(aInitLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent); reintroduce;
     destructor Destroy; override;
 
     // Game properties
@@ -61,7 +61,7 @@ implementation
 
 
 { TGameThread }
-constructor TGameThread.Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus);
+constructor TGameThread.Create(aInitLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -71,7 +71,7 @@ begin
   fMaxTick := 0;
   fSimState := ssCreated;
   fOnLog := aInitLog;
-  fUpdateSimStatus := aUpdateSimStatus;
+  fOnUpdateSimStatus := aOnUpdateSimStatus;
   Log('TMainThread-Create');
   fExtAI := TExtAIMain.Create(Log);
   fHands := TList<TGameHand>.Create;
@@ -100,6 +100,8 @@ begin
   for K := Low(aExtAIs) to High(aExtAIs) do
     if (CompareStr(aExtAIs[K],'') <> 0) then
       //@MArtin here's a hand index mismatch. In KP hands are always going from 0 to N-1, without gaps.
+      //@Krom I know but all variables are also initialized to 0 and I wanted to be 100% sure that ID is sent to DLL
+      //      ID is decided by GameThread so you can easily change it in the KP
       fHands.Add(TGameHand.Create(K, fOnLog, fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress)));
 end;
 
@@ -127,7 +129,7 @@ begin
     begin
       Inc(fTick);
       gMainData.Tick := Tick;
-      fUpdateSimStatus(); // Log status
+      fOnUpdateSimStatus(); // Log status
       // Update map
       for K := Low(gMainData.Map) to High(gMainData.Map) do
         gMainData.Map[K] := K;
@@ -146,7 +148,7 @@ begin
 
   fSimState := ssTerminated;
   fTick := 0;
-  fUpdateSimStatus();
+  fOnUpdateSimStatus();
   Log('TMainThread-Execute: End');
 end;
 
