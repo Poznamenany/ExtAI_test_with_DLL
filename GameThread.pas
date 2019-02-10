@@ -1,7 +1,7 @@
 unit GameThread;
 interface
 uses
-  Windows, Classes,
+  Windows, Classes, Generics.Collections,
   System.Threading, System.Diagnostics, System.SysUtils,
   ExtAIMain, ExtAIListDLL, ExtAIHand, ExtAIDataTypes, ExtAIUtils;
 
@@ -25,30 +25,36 @@ type
   // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
   TGameThread = class(TThread)
   private
+    // Game assets
+    fExtAI: TExtAIMain; // ExtAI DLL entry point
+    fHands: TList<TExtAIHand>; // ExtAI hand entry point
+
+    // Game properties (kind of testbed)
     fTick: Cardinal;
     fMaxTick: Cardinal;
 
-    fExtAI: TExtAIMain; // ExtAI DLL entry point
-    fHands: TList; // ExtAI hand entry point
+    // Purely testbed things
     fSimState: TSimulationState;
     fUpdateSimStatus: TUpdateSimStatus; //@Martin: According to Delphi conventions, this should be renamed to fOnUpdateSimStatus
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
+  protected
+    procedure Execute; override;
   public
     constructor Create(aInitLog: TLogEvent; aUpdateSimStatus: TUpdateSimStatus); reintroduce;
-    destructor Destroy(); override;
+    destructor Destroy; override;
 
-    function GetDLLs(aPaths: wStrArr): TListDLL;
-    property SimulationState: TSimulationState read fSimState;
+    // Game properties
     property Tick: Cardinal read fTick;
     property MaxTick: Cardinal read fMaxTick;
+    function GetDLLs(aPaths: wStrArr): TListDLL;
 
+    // Game controls
+    property SimulationState: TSimulationState read fSimState;
     procedure InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
     procedure StartSimulation(aTicks: Cardinal);
     procedure PauseSimulation();
     procedure TerminateSimulation();
-
-    procedure Execute(); override;
   end;
 
 implementation
@@ -68,13 +74,13 @@ begin
   fUpdateSimStatus := aUpdateSimStatus;
   Log('TMainThread-Create');
   fExtAI := TExtAIMain.Create(Log);
-  fHands := TList.Create();
+  fHands := TList<TExtAIHand>.Create;
 end;
 
 destructor TGameThread.Destroy();
 begin
-  fExtAI.Free();
-  fHands.Free(); // Items of list are Interfaces and will be freed automatically
+  FreeAndNil(fExtAI);
+  FreeAndNil(fHands); // Items of list are Interfaces and will be freed automatically
   Log('TMainThread-Destroy');
   inherited;
 end;
@@ -93,12 +99,12 @@ begin
   fSimState := ssInit;
   for K := Low(aExtAIs) to High(aExtAIs) do
     if (CompareStr(aExtAIs[K],'') <> 0) then
-      fHands.Add( fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
+      fHands.Add(fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
 end;
 
 procedure TGameThread.StartSimulation(aTicks: Cardinal);
 var
-  K,L: si32;
+  L: si32;
 begin
   Log('TMainThread-StartSimulation');
 
@@ -107,7 +113,7 @@ begin
   for L := 0 to fHands.Count-1 do
     if (fHands[L] <> nil) then
     begin
-      TExtAIHand(fHands[L]).OnMissionStart();
+      fHands[L].OnMissionStart();
       //...
     end;
 
@@ -141,7 +147,7 @@ begin
       for K := 0 to fHands.Count-1 do
         if (fHands[K] <> nil) then
         begin
-          TExtAIHand(fHands[K]).OnTick(Tick);
+          fHands[K].OnTick(Tick);
           //... and another events
         end;
     end
@@ -173,11 +179,11 @@ end;
 procedure TGameThread.Log(aLog: wStr);
 begin
   Synchronize(
-  procedure
-  begin
-    if Assigned(fOnLog) then
-      fOnLog(aLog);
-  end);
+    procedure
+    begin
+      if Assigned(fOnLog) then
+        fOnLog(aLog);
+    end);
 end;
 
 
