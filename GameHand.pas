@@ -62,6 +62,30 @@ begin
     fExtAIHand.OnMissionStart;
 
   fExtAIHand.OnTick(aTick);
+
+  {
+  //@Martin: todo
+
+  if aTick = 5 then
+    .. call ExtAI events here
+
+  if aTick = 6 then
+    .. let ExtAI perform actions here
+
+  if aTick = 7 then
+    .. let ExtAI query states here
+
+  if aTick = 8 then
+    .. give queried data to ExtAI here
+
+  if aTick = 9 then
+    .. query data from ExtAI here (debug text and etc)
+
+  if aTick = 10 then
+    .. receive data queried from ExtAI here
+
+  }
 end;
+
 
 end.
