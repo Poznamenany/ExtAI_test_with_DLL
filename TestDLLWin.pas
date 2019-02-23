@@ -85,6 +85,7 @@ type
     btnAutoFill: TButton;
     chckbClosed: TCheckBox;
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var aAction: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure btnSelectFolder1Click(Sender: TObject);
     procedure btnSelectFolder2Click(Sender: TObject);
@@ -274,6 +275,7 @@ begin
   end;
   // Init ExtAI
   if (cnt > 0) then
+    //fGameThread.InitSimulation(chckbMultithread.Ischecked,ExtAIs,nil);
     fGameThread.InitSimulation(chckbMultithread.Ischecked,ExtAIs,LogProgress);
   RefreshSimButtons(Sender);
 end;
@@ -282,7 +284,7 @@ end;
 procedure TPPLWin.btnStartSimClick(Sender: TObject);
 begin
   if (fGameThread.SimulationState = ssInit) then
-    fGameThread.StartSimulation(Round(tbTicks.Value)) // Start ExtAI threads
+    fGameThread.StartSimulation(Round(StrToInt(edTickCnt.Text))) // Start ExtAI threads
   else
     fGameThread.PauseSimulation();
 
@@ -303,30 +305,51 @@ end;
 
 procedure TPPLWin.RefreshSimButtons(Sender: TObject);
 begin
-  // Default
-  btnInitSim.Enabled := False;
-  btnStartSim.Text := 'Start';
-  btnStartSim.Enabled := True;
-  // Special
   case fGameThread.SimulationState of
     ssCreated:
       begin
-        btnInitSim.Enabled := True;
-        btnStartSim.Enabled := False;
+        if not btnInitSim.Enabled then
+          btnInitSim.Enabled := True;
+        if btnStartSim.Enabled then
+          btnStartSim.Enabled := False;
+        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
+          btnStartSim.Text := 'Start';
       end;
     ssInit:
       begin
+        if btnInitSim.Enabled then
+          btnInitSim.Enabled := False;
+        if NOT btnStartSim.Enabled then
+          btnStartSim.Enabled := True;
+        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
+          btnStartSim.Text := 'Start';
       end;
     ssInProgress:
       begin
-        btnStartSim.Text := 'Pause';
+        if btnInitSim.Enabled then
+          btnInitSim.Enabled := False;
+        if NOT btnStartSim.Enabled then
+          btnStartSim.Enabled := True;
+        if (CompareStr(btnStartSim.Text,'Pause') <> 0) then
+          btnStartSim.Text := 'Pause';
       end;
     ssPaused:
       begin
+        if btnInitSim.Enabled then
+          btnInitSim.Enabled := False;
+        if NOT btnStartSim.Enabled then
+          btnStartSim.Enabled := True;
+        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
+          btnStartSim.Text := 'Start';
       end;
     ssTerminated:
       begin
-        btnStartSim.Enabled := False;
+        if btnInitSim.Enabled then
+          btnInitSim.Enabled := False;
+        if btnStartSim.Enabled then
+          btnStartSim.Enabled := False;
+        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
+          btnStartSim.Text := 'Start';
       end;
   end;
 end;
@@ -340,6 +363,17 @@ begin
   InitLobby(Sender);
   InitDLL(Sender);
 end;
+
+procedure TPPLWin.FormClose(Sender: TObject; var aAction: TCloseAction);
+begin
+  aAction := TCloseAction.caFree;
+  if (fGameThread.SimulationState <> ssTerminated) then
+  begin
+    fGameThread.TerminateSimulation();
+    Sleep(SLEEP_EVERY_TICK*10);
+  end;
+end;
+
 
 procedure TPPLWin.FormDestroy(Sender: TObject);
 begin
