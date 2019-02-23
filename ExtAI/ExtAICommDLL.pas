@@ -135,6 +135,7 @@ begin
     //Log('  CommDLL-CreateNewExtAI: ID = ' + IntToStr(aExtAIID));
     Hand := TExtAIHand.Create(aExtAIID, fOnLog);
     try
+      {$IFDEF ExtAIMultithreading}
       if aOwnThread then
       begin
         // Create thread
@@ -154,11 +155,14 @@ begin
       end
       else
       begin
+      {$ENDIF}
         // Create interface
         Hand.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
         // Create ExtAI in DLL
         fOnInitNewExtAI( aExtAIID, Hand, aStates ); // = add reference to TExtAIHand and States
+      {$IFDEF ExtAIMultithreading}
       end;
+      {$ENDIF}
     except
       on E: Exception do
       begin
