@@ -66,22 +66,34 @@ begin
   {
   //@Martin: todo
   if aTick = 5 then
-    .. call ExtAI events here
+    fExtAIHand.OnTick(aTick); // Call function in ExtAI (event)
+    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 6 then
-    .. let ExtAI perform actions here
+    fExtAIHand.OnTick(aTick);
+    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 7 then
-    .. let ExtAI query states here
+    fExtAIHand.OnTick(aTick);
+    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 8 then
-    .. give queried data to ExtAI here
+    fExtAIHand.OnTick(aTick);
+    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 9 then
-    .. query data from ExtAI here (debug text and etc)
+    fExtAIHand.OnTick(aTick);
+    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 10 then
-    .. receive data queried from ExtAI here
+    fExtAIHand.OnTick(aTick);
+    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   //@Krom: I need everything in 1 tick to make stress test
 
