@@ -3,7 +3,7 @@ interface
 uses
   Classes, Windows, System.SysUtils,
   ExtAIQueueActions, ExtAIQueueEvents, ExtAIQueueStates, ExtAIThread,
-  ExtAIHand, ExtAIInterfaceDelphi, ExtAIDataTypes, ExtAIUtils;
+  HandAI_Ext, ExtAIInterfaceDelphi, ExtAIDataTypes, ExtAIUtils;
 
 type
   TInitDLL = procedure(var aConfig: TDLLpConfig); StdCall;
@@ -33,7 +33,7 @@ type
     destructor Destroy(); override;
 
     function LinkDLL(aDLLPath: wStr): b;
-    function CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): TExtAIHand;
+    function CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
   end;
 
 implementation
@@ -121,10 +121,10 @@ begin
 end;
 
 
-function TExtAICommDLL.CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): TExtAIHand;
+function TExtAICommDLL.CreateNewExtAI(aOwnThread: b; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
 var
   Thread: TExtAIThread;
-  Hand: TExtAIHand;
+  Hand: THandAI_Ext;
   ThreadLog: TLogEvent;
   QueueActions: TExtAIQueueActions;
   QueueEvents: TExtAIQueueEvents;
@@ -133,7 +133,7 @@ begin
   if (Assigned(fOnNewExtAI)) then
   begin
     //Log('  CommDLL-CreateNewExtAI: ID = ' + IntToStr(aExtAIID));
-    Hand := TExtAIHand.Create(aExtAIID, fOnLog);
+    Hand := THandAI_Ext.Create(aExtAIID, fOnLog);
     try
       {$IFDEF ExtAIMultithreading}
       if aOwnThread then
@@ -142,7 +142,7 @@ begin
         Thread := TExtAIThread.Create(aExtAIID, aInitLog, aLogProgress, ThreadLog);
         // Create interfaces
         QueueActions := TExtAIQueueActions.Create(aExtAIID, ThreadLog);
-        QueueActions.Actions := Hand; // = add reference to TExtAIHand
+        QueueActions.Actions := Hand; // = add reference to THandAI_Ext
         QueueEvents := TExtAIQueueEvents.Create(aExtAIID, ThreadLog);
         QueueEvents.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
         QueueEvents.QueueActions := QueueActions; // Mark actions so they are called OnTick event from main thread
@@ -159,7 +159,7 @@ begin
         // Create interface
         Hand.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
         // Create ExtAI in DLL
-        fOnInitNewExtAI( aExtAIID, Hand, aStates ); // = add reference to TExtAIHand and States
+        fOnInitNewExtAI( aExtAIID, Hand, aStates ); // = add reference to THandAI_Ext and States
       {$IFDEF ExtAIMultithreading}
       end;
       {$ENDIF}

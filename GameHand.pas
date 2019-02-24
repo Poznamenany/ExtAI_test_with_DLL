@@ -2,14 +2,14 @@ unit GameHand;
 interface
 uses
   Windows, System.SysUtils,
-  ExtAIHand, ExtAIUtils, ExtAIDataTypes;
+  HandAI_Ext, ExtAIUtils, ExtAIDataTypes;
 
 type
   // Game class for Hand. It hides the ExtAI inside of it
   TGameHand = class
   private
     fHandIndex: Integer;
-    fExtAIHand: TExtAIHand;
+    fExtAIHand: THandAI_Ext;
     fOnLog: TLogEvent;
 
     // Log
@@ -17,7 +17,7 @@ type
   public
     property HandIndex: Integer read fHandIndex;
 
-    constructor Create(aHandIndex: Integer; aLog: TLogEvent; aExtAIHand: TExtAIHand); reintroduce;
+    constructor Create(aHandIndex: Integer; aLog: TLogEvent; aExtAIHand: THandAI_Ext); reintroduce;
     destructor Destroy; override;
 
     procedure UpdateState(aTick: Integer);
@@ -27,7 +27,7 @@ implementation
 
 
 { TGameHand }
-constructor TGameHand.Create(aHandIndex: Integer; aLog: TLogEvent; aExtAIHand: TExtAIHand);
+constructor TGameHand.Create(aHandIndex: Integer; aLog: TLogEvent; aExtAIHand: THandAI_Ext);
 begin
   inherited Create();
   fHandIndex := aHandIndex;

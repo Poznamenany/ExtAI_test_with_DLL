@@ -2,7 +2,7 @@ unit ExtAIMain;
 interface
 uses
   Classes, Windows, System.SysUtils,
-  ExtAIHand, ExtAIQueueStates, ExtAIListDLL, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
+  HandAI_Ext, ExtAIQueueStates, ExtAIListDLL, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
 
 type
   // Main ExtAI class (manage DLLs and States (for now))
@@ -23,7 +23,7 @@ type
     destructor Destroy(); override;
     procedure Release();
 
-    function NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): TExtAIHand;
+    function NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
 
 
@@ -58,7 +58,7 @@ begin
 end;
 
 
-function TExtAIMain.NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): TExtAIHand;
+function TExtAIMain.NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
   Idx: si32;
   DLL: TExtAICommDLL;
