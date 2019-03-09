@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{67A226D3-BFF2-44FD-8541-DAA9CF95BB54}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="TestDLLWinPrj.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ExtAI\DLL_Delphi\DLL_Library.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TestDLLWinPrj">
+        <MSBuild Projects="TestDLLWinPrj.dproj"/>
+    </Target>
+    <Target Name="TestDLLWinPrj:Clean">
+        <MSBuild Projects="TestDLLWinPrj.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestDLLWinPrj:Make">
+        <MSBuild Projects="TestDLLWinPrj.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DLL_Library">
+        <MSBuild Projects="ExtAI\DLL_Delphi\DLL_Library.dproj"/>
+    </Target>
+    <Target Name="DLL_Library:Clean">
+        <MSBuild Projects="ExtAI\DLL_Delphi\DLL_Library.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DLL_Library:Make">
+        <MSBuild Projects="ExtAI\DLL_Delphi\DLL_Library.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TestDLLWinPrj;DLL_Library"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TestDLLWinPrj:Clean;DLL_Library:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TestDLLWinPrj:Make;DLL_Library:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

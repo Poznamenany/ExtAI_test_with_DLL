@@ -133,7 +133,7 @@ implementation
 procedure TPPLWin.InitDLL(Sender: TObject);
 begin
   edFolderDLL1.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI' );
-  edFolderDLL2.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI\DLL_Delphi\Win32');
+  edFolderDLL2.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI\DLL_Delphi');
   RefreshListDLL(Sender);
 end;
 
@@ -152,7 +152,7 @@ begin
 
   listBoxDLLs.Items.Clear();
   for K := 0 to fListDLL.Count-1 do
-    listBoxDLLs.Items.Add(fListDLL[K].Path);
+    listBoxDLLs.Items.Add(ExtractRelativePath(ExtractFilePath(ParamStr(0)), fListDLL[K].Path));
 
   RefreshExtAIs(Sender);
 end;
@@ -179,7 +179,6 @@ procedure TPPLWin.btdRefreshDLLsClick(Sender: TObject);
 begin
   RefreshListDLL(Sender);
 end;
-
 
 
 // Lobby
@@ -276,8 +275,8 @@ begin
   end;
   // Init ExtAI
   if (cnt > 0) then
-    //fGameThread.InitSimulation(chckbMultithread.Ischecked,ExtAIs,nil);
-    fGameThread.InitSimulation(chckbMultithread.Ischecked,ExtAIs,LogProgress);
+    //fGameThread.InitSimulation(chckbMultithread.Ischecked, ExtAIs, nil);
+    fGameThread.InitSimulation(chckbMultithread.Ischecked, ExtAIs, LogProgress);
   RefreshSimButtons(Sender);
 end;
 

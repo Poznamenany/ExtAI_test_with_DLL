@@ -99,7 +99,7 @@ begin
   fSimState := ssInit;
   for K := Low(aExtAIs) to High(aExtAIs) do
     if (CompareStr(aExtAIs[K],'') <> 0) then
-      //@MArtin here's a hand index mismatch. In KP hands are always going from 0 to N-1, without gaps.
+      //@Martin here's a hand index mismatch. In KP hands are always going from 0 to N-1, without gaps.
       //@Krom I know but all variables are also initialized to 0 and I wanted to be 100% sure that ID is sent to DLL
       //      ID is decided by GameThread so you can easily change it in the KP
       fHands.Add(TGameHand.Create(K, fOnLog, fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress)));

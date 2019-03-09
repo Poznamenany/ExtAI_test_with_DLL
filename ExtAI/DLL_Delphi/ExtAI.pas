@@ -1,12 +1,11 @@
 unit ExtAI;
-
 interface
 uses
   Windows, System.SysUtils,
   ExtAIInterfaceDelphi, ExtAIDataTypes;
 
 type
-TExtAI = class(TInterfacedObject, IEvents)
+  TExtAI = class(TInterfacedObject, IEvents)
   private
     fMap: ui32Arr;
     // IInterface
