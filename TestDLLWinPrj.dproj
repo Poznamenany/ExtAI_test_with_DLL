@@ -41,16 +41,17 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_DcuOutput>dcu</DCC_DcuOutput>
+        <VerInfo_Locale>1049</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_UnitSearchPath>src;src\extai;src\extai\Thread;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
-        <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>TestDLLWinPrj</SanitizedProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -58,9 +59,7 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
     </PropertyGroup>
@@ -76,7 +75,6 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <DCC_UnitSearchPath>\ExtAI;\ExtAI\Multithread;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
@@ -94,23 +92,23 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="GameHand.pas"/>
-        <DCCReference Include="GameThread.pas"/>
-        <DCCReference Include="HandAI_Ext.pas"/>
+        <DCCReference Include="src\GameHand.pas"/>
+        <DCCReference Include="src\GameThread.pas"/>
+        <DCCReference Include="src\HandAI_Ext.pas"/>
         <DCCReference Include="TestDLLWin.pas">
             <Form>PPLWin</Form>
         </DCCReference>
-        <DCCReference Include="ExtAI\ExtAICommDLL.pas"/>
-        <DCCReference Include="ExtAI\ExtAIDataTypes.pas"/>
-        <DCCReference Include="ExtAI\ExtAIInterfaceDelphi.pas"/>
-        <DCCReference Include="ExtAI\ExtAIListDLL.pas"/>
-        <DCCReference Include="ExtAI\ExtAIMain.pas"/>
-        <DCCReference Include="ExtAI\Thread\ExtAIQueueActions.pas"/>
-        <DCCReference Include="ExtAI\Thread\ExtAIQueueEvents.pas"/>
-        <DCCReference Include="ExtAI\Thread\ExtAIQueueStates.pas"/>
-        <DCCReference Include="ExtAI\ExtAIStates.pas"/>
-        <DCCReference Include="ExtAI\Thread\ExtAIThread.pas"/>
-        <DCCReference Include="ExtAI\ExtAIUtils.pas"/>
+        <DCCReference Include="src\extai\ExtAICommDLL.pas"/>
+        <DCCReference Include="src\extai\ExtAIDataTypes.pas"/>
+        <DCCReference Include="src\extai\ExtAIInterfaceDelphi.pas"/>
+        <DCCReference Include="src\extai\ExtAIListDLL.pas"/>
+        <DCCReference Include="src\extai\ExtAIMain.pas"/>
+        <DCCReference Include="src\extai\Thread\ExtAIQueueActions.pas"/>
+        <DCCReference Include="src\extai\Thread\ExtAIQueueEvents.pas"/>
+        <DCCReference Include="src\extai\Thread\ExtAIQueueStates.pas"/>
+        <DCCReference Include="src\extai\ExtAIStates.pas"/>
+        <DCCReference Include="src\extai\Thread\ExtAIThread.pas"/>
+        <DCCReference Include="src\extai\ExtAIUtils.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -132,8 +130,8 @@
                     <Source Name="MainSource">TestDLLWinPrj.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k220.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp220.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="2">
@@ -601,15 +599,15 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

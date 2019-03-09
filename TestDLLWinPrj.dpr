@@ -7,17 +7,17 @@ uses
   GameThread in 			'src\GameThread.pas',
   HandAI_Ext in 			'src\HandAI_Ext.pas',
   TestDLLWin in 			'TestDLLWin.pas' {PPLWin},
-  ExtAICommDLL in 			'ExtAI\ExtAICommDLL.pas',
-  ExtAIDataTypes in 		'ExtAI\ExtAIDataTypes.pas',
-  ExtAIInterfaceDelphi in	'ExtAI\ExtAIInterfaceDelphi.pas',
-  ExtAIListDLL in 			'ExtAI\ExtAIListDLL.pas',
-  ExtAIMain in 				'ExtAI\ExtAIMain.pas',
-  ExtAIQueueActions in 		'ExtAI\Thread\ExtAIQueueActions.pas',
-  ExtAIQueueEvents in 		'ExtAI\Thread\ExtAIQueueEvents.pas',
-  ExtAIQueueStates in 		'ExtAI\Thread\ExtAIQueueStates.pas',
-  ExtAIStates in 			'ExtAI\ExtAIStates.pas',
-  ExtAIThread in 			'ExtAI\Thread\ExtAIThread.pas',
-  ExtAIUtils in 			'ExtAI\ExtAIUtils.pas';
+  ExtAICommDLL in 			'src\extai\ExtAICommDLL.pas',
+  ExtAIDataTypes in 		'src\extai\ExtAIDataTypes.pas',
+  ExtAIInterfaceDelphi in	'src\extai\ExtAIInterfaceDelphi.pas',
+  ExtAIListDLL in 			'src\extai\ExtAIListDLL.pas',
+  ExtAIMain in 				'src\extai\ExtAIMain.pas',
+  ExtAIQueueActions in 		'src\extai\Thread\ExtAIQueueActions.pas',
+  ExtAIQueueEvents in 		'src\extai\Thread\ExtAIQueueEvents.pas',
+  ExtAIQueueStates in 		'src\extai\Thread\ExtAIQueueStates.pas',
+  ExtAIStates in 			'src\extai\ExtAIStates.pas',
+  ExtAIThread in 			'src\extai\Thread\ExtAIThread.pas',
+  ExtAIUtils in 			'src\extai\ExtAIUtils.pas';
 
 {$R *.res}
 

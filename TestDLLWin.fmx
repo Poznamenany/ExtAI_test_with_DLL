@@ -15,6 +15,7 @@ object PPLWin: TPPLWin
     Size.PlatformDefault = False
     Text = 'DLL'
     TabOrder = 3
+    OnClick = GroupBox1Click
     object edFolderDLL1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 0

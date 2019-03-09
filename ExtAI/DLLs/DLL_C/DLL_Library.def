@@ -1,6 +1,0 @@
-LIBRARY "DLL_library.dll"
-EXPORTS
-    InitDLL=InitDLL@4
-    InitNewExtAI=InitNewExtAI@12
-    NewExtAI=NewExtAI@4
-    TerminDLL=TerminDLL@0

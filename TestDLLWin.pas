@@ -95,6 +95,7 @@ type
     procedure btnTerminateClick(Sender: TObject);
     procedure tbTicksChange(Sender: TObject);
     procedure btnAutoFillClick(Sender: TObject);
+    procedure GroupBox1Click(Sender: TObject);
   private
     fGameThread: TGameThread;
     // DLL
@@ -131,8 +132,8 @@ implementation
 // DLLs
 procedure TPPLWin.InitDLL(Sender: TObject);
 begin
-  edFolderDLL1.Text := ExpandFileName( ExtractFilePath(ParamStr(0)) + '\..\..\ExtAI\DLLs' );
-  edFolderDLL2.Text := ExpandFileName( ExtractFilePath(ParamStr(0)) + '\..\..\ExtAI\DLLs\DLL_Delphi\Win32' );
+  edFolderDLL1.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI' );
+  edFolderDLL2.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI\DLL_Delphi\Win32');
   RefreshListDLL(Sender);
 end;
 
@@ -158,7 +159,7 @@ end;
 
 procedure TPPLWin.btnSelectFolder1Click(Sender: TObject);
 var
-  chosenDirectory : string;
+  chosenDirectory: string;
 begin
   if SelectDirectory('Select a directory with DLL', edFolderDLL1.Text, chosenDirectory) then
     edFolderDLL1.Text := chosenDirectory;
@@ -167,7 +168,7 @@ end;
 
 procedure TPPLWin.btnSelectFolder2Click(Sender: TObject);
 var
-  chosenDirectory : string;
+  chosenDirectory: string;
 begin
   if SelectDirectory('Select a directory with second DLL', edFolderDLL2.Text, chosenDirectory) then
     edFolderDLL2.Text := chosenDirectory;
@@ -381,6 +382,11 @@ begin
   fListDLL.Free();
 end;
 
+
+procedure TPPLWin.GroupBox1Click(Sender: TObject);
+begin
+
+end;
 
 // Log
 procedure TPPLWin.UpdateSimStatus();
