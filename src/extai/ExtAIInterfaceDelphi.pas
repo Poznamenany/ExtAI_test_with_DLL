@@ -5,7 +5,6 @@ uses
   ExtAIDataTypes;
 
 type
-
   // Interface for Actions
   IActions = interface(IInterface)
     ['{66FDB631-E3DC-4B8E-A745-4337C487ED69}']

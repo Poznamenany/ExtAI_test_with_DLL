@@ -8,7 +8,7 @@ type
   // ExtAI class for Hands - process flow of events and actions
   THandAI_Ext = class(TInterfacedObject, IActions)
   private
-    fID: ui8;
+    fID: Integer;
     fOnLog: TLogEvent;
     fEvents: IEvents;
     // IActions
@@ -18,16 +18,16 @@ type
     // Log
     procedure Log(aLog: wStr);
   public
-    property ID: ui8 read fID;
+    property ID: Integer read fID;
 
-    constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
+    constructor Create(aID: Integer; aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     procedure AssignEvents(aEvents: IEvents);
 
     // Events - or use public variable Events: IEvents to directly call events in DLL
     procedure OnMissionStart();
-    procedure OnTick(aTick: ui32);
+    procedure OnTick(aTick: Cardinal);
     procedure OnPlayerDefeated(aPlayer: si8);
     procedure OnPlayerVictory(aPlayer: si8);
   end;
@@ -36,17 +36,18 @@ implementation
 
 
 { THandAI_Ext }
-constructor THandAI_Ext.Create(aID: ui8; aLog: TLogEvent);
+constructor THandAI_Ext.Create(aID: Integer; aLog: TLogEvent);
 begin
   inherited Create();
   fID := aID;
   fOnLog := aLog;
-  Log('  TExtAIHand-Create: ID = '+IntToStr(fID));
+  Log('  TExtAIHand-Create: ID = ' + IntToStr(fID));
 end;
+
 
 destructor THandAI_Ext.Destroy();
 begin
-  Log('  TExtAIHand-Destroy: ID = '+IntToStr(fID));
+  Log('  TExtAIHand-Destroy: ID = ' + IntToStr(fID));
   inherited;
 end;
 
@@ -63,15 +64,16 @@ begin
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 11) OR (aUnitID <> 22) then
-    Log('  TExtAIHand-GroupOrderAttackUnit: wrong parameters, ID = '+IntToStr(fID));
+    Log('  TExtAIHand-GroupOrderAttackUnit: wrong parameters, ID = ' + IntToStr(fID));
 end;
+
 
 procedure THandAI_Ext.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16);
 begin
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 1) OR (aX <> 50) OR (aY <> 50) OR (aDirection <> 1) then
-    Log('  TExtAIHand-GroupOrderWalk: wrong parameters, ID = '+IntToStr(fID));
+    Log('  TExtAIHand-GroupOrderWalk: wrong parameters, ID = ' + IntToStr(fID));
 end;
 
 
@@ -81,15 +83,18 @@ begin
   fEvents.OnMissionStart();
 end;
 
-procedure THandAI_Ext.OnTick(aTick: ui32);
+
+procedure THandAI_Ext.OnTick(aTick: Cardinal);
 begin
   fEvents.OnTick(aTick);
 end;
+
 
 procedure THandAI_Ext.OnPlayerDefeated(aPlayer: si8);
 begin
   fEvents.OnPlayerDefeated(aPlayer);
 end;
+
 
 procedure THandAI_Ext.OnPlayerVictory(aPlayer: si8);
 begin
@@ -102,7 +107,7 @@ procedure THandAI_Ext.LogDLL(apLog: pwStr; aLen: ui32);
 var
   Str: wStr;
 begin
-  SetLength(Str,aLen);
+  SetLength(Str, aLen);
   Move(apLog^, Str[1], aLen * SizeOf(Str[1]));
   Log(Str);
 end;
@@ -113,5 +118,6 @@ begin
   if Assigned(fOnLog) then
     fOnLog(aLog);
 end;
+
 
 end.
