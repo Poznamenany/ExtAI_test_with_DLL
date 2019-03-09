@@ -10,6 +10,7 @@ type
   private
     fID: ui8;
     fOnLog: TLogEvent;
+    fEvents: IEvents;
     // IActions
     procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
     procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
@@ -17,11 +18,12 @@ type
     // Log
     procedure Log(aLog: wStr);
   public
-    Events: IEvents;
     property ID: ui8 read fID;
 
     constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
+
+    procedure AssignEvents(aEvents: IEvents);
 
     // Events - or use public variable Events: IEvents to directly call events in DLL
     procedure OnMissionStart();
@@ -49,6 +51,12 @@ begin
 end;
 
 
+procedure THandAI_Ext.AssignEvents(aEvents: IEvents);
+begin
+  fEvents := aEvents;
+end;
+
+
 // IActions - definition of functions in the interface
 procedure THandAI_Ext.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32);
 begin
@@ -70,22 +78,22 @@ end;
 // IEvents - calling of functions in the interface (or delete this part and use directly public variable Events)
 procedure THandAI_Ext.OnMissionStart();
 begin
-  Events.OnMissionStart();
+  fEvents.OnMissionStart();
 end;
 
 procedure THandAI_Ext.OnTick(aTick: ui32);
 begin
-  Events.OnTick(aTick);
+  fEvents.OnTick(aTick);
 end;
 
 procedure THandAI_Ext.OnPlayerDefeated(aPlayer: si8);
 begin
-  Events.OnPlayerDefeated(aPlayer);
+  fEvents.OnPlayerDefeated(aPlayer);
 end;
 
 procedure THandAI_Ext.OnPlayerVictory(aPlayer: si8);
 begin
-  Events.OnPlayerVictory(aPlayer);
+  fEvents.OnPlayerVictory(aPlayer);
 end;
 
 

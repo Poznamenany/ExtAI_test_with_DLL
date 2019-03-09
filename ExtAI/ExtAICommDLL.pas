@@ -157,7 +157,7 @@ begin
       {$ENDIF}
       begin
         // Create interface
-        Hand.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
+        Hand.AssignEvents(fOnNewExtAI); // = add reference to TExtAI in DLL
         // Create ExtAI in DLL
         fOnInitNewExtAI( aExtAIID, Hand, aStates ); // = add reference to THandAI_Ext and States
       end;
