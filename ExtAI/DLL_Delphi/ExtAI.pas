@@ -62,10 +62,17 @@ begin
   // Test actions
   res := Actions.GroupOrderAttackUnit(11,22);
   res := Actions.GroupOrderWalk(1,50,50,1);
+
   // Test states
   feedback := States.State1(11);
   if (feedback <> 11) then
     Log('    TExtAI-OnTick: wrong state feedback = ' + IntToStr(feedback));
+
+  feedback := States.UnitAt(5,5);
+  if (feedback <> 11) then
+    Log('    TExtAI-OnTick: wrong state feedback = ' + IntToStr(feedback));
+
+
   if States.MapTerrain(ID,pFirstElem,Len) then
   begin
     if (Len <> Length(fMap)) then

@@ -18,6 +18,7 @@ type
     procedure FreeUnused(aIgnoreLock: Boolean);
     // IStates
     function State1(aID: ui32): ui8; StdCall;
+    function UnitAt(aX: ui16; aY: ui16): ui32; StdCall;
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
     // Log
     procedure Log(aLog: wStr);
@@ -111,6 +112,12 @@ begin
   Result := 0; // Some default case
   if (fEndStates <> nil) then
     Result := fLastPointer^.State1(aID);
+end;
+
+
+function TExtAIQueueStates.UnitAt(aX, aY: ui16): ui32;
+begin
+  Result := 11;
 end;
 
 

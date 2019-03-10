@@ -132,7 +132,15 @@ begin
     begin
       Inc(fTick);
       gMainData.Tick := Tick;
-      fOnUpdateSimStatus(); // Log status
+
+      // Log status
+      Synchronize(
+        procedure
+        begin
+          if Assigned(fOnUpdateSimStatus) then
+            fOnUpdateSimStatus;
+        end);
+
       // Update map
       for K := Low(gMainData.Map) to High(gMainData.Map) do
         gMainData.Map[K] := K;
