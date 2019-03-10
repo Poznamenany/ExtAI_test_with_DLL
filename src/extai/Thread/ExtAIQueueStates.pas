@@ -88,6 +88,7 @@ begin
   end;
 end;
 
+
 procedure TExtAIQueueStates.ExtractStates();
 begin
   fEndStates.DeclareNext();
@@ -112,6 +113,7 @@ begin
     Result := fLastPointer^.State1(aID);
 end;
 
+
 function TExtAIQueueStates.MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b;
 begin
   // Check if request for MapTerrain is correct
@@ -128,5 +130,6 @@ begin
   if Assigned(fOnLog) then
     fOnLog(aLog);
 end;
+
 
 end.

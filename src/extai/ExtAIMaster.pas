@@ -18,7 +18,7 @@ type
     procedure Log(aLog: wStr);
     function IndexOf(aDLLPath: wStr): Integer;
   public
-    constructor Create(aDLLPath: TArray<string>; aLog: TLogEvent); reintroduce;
+    constructor Create(aDLLPaths: TArray<string>; aLog: TLogEvent); reintroduce;
     destructor Destroy; override;
     procedure Release;
 
@@ -32,16 +32,17 @@ type
 implementation
 
 { TExtAIMaster }
-constructor TExtAIMaster.Create(aDLLPath: TArray<string>; aLog: TLogEvent);
+constructor TExtAIMaster.Create(aDLLPaths: TArray<string>; aLog: TLogEvent);
 begin
   inherited Create;
 
   fOnLog := aLog;
 
   fDLLInstances := TList<TExtAICommDLL>.Create;
-  fDLLs := TExtAIDLLs.Create(aDLLPath, aLog);
+  fDLLs := TExtAIDLLs.Create(aDLLPaths, aLog);
   fQueueStates := nil; // States are interface and will be freed automatically
 end;
+
 
 destructor TExtAIMaster.Destroy;
 begin
@@ -55,7 +56,7 @@ end;
 
 procedure TExtAIMaster.Release;
 var
-  K: si32;
+  K: Integer;
 begin
   for K := 0 to fDLLInstances.Count-1 do
     fDLLInstances[K].Free;
@@ -65,7 +66,7 @@ end;
 
 function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
-  Idx: si32;
+  Idx: Integer;
   DLL: TExtAICommDLL;
 begin
   Result := nil;
@@ -78,7 +79,7 @@ begin
   // Check if we already have this DLL loaded
   Idx := IndexOf(aDLLPath);
   if Idx <> -1 then
-    DLL := TExtAICommDLL(fDLLInstances[Idx])
+    DLL := fDLLInstances[Idx]
   else
   begin // if not, create the DLL
     DLL := TExtAICommDLL.Create(fOnLog);

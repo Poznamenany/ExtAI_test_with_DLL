@@ -11,11 +11,13 @@ type
     // IInterface
     //procedure AfterConstruction; override;
     //procedure BeforeDestruction; override;
+
     // IEvents
     procedure OnMissionStart(); StdCall;
     procedure OnTick(aTick: ui32); StdCall;
     procedure OnPlayerDefeated(aPlayer: si8); StdCall;
     procedure OnPlayerVictory(aPlayer: si8); StdCall;
+
     // Log
     procedure Log(aLog: wStr);
   public
