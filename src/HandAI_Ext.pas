@@ -45,13 +45,13 @@ begin
 
   fOwner := aOwner;
   fOnLog := aLog;
-  Log('  TExtAIHand-Create: ID = ' + IntToStr(fOwner));
+  Log('  THandAIExt-Create: ID = ' + IntToStr(fOwner));
 end;
 
 
 destructor THandAI_Ext.Destroy();
 begin
-  Log('  TExtAIHand-Destroy: ID = ' + IntToStr(fOwner));
+  Log('  THandAIExt-Destroy: ID = ' + IntToStr(fOwner));
   inherited;
 end;
 
@@ -68,7 +68,7 @@ begin
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 11) or (aUnitID <> 22) then
-    Log('  TExtAIHand-GroupOrderAttackUnit: wrong parameters, ID = ' + IntToStr(fOwner));
+    Log('  THandAIExt-GroupOrderAttackUnit: wrong parameters, ID = ' + IntToStr(fOwner));
 end;
 
 
@@ -77,7 +77,7 @@ begin
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 1) or (aX <> 50) or (aY <> 50) or (aDirection <> 1) then
-    Log('  TExtAIHand-GroupOrderWalk: wrong parameters, ID = ' + IntToStr(fOwner));
+    Log('  THandAIExt-GroupOrderWalk: wrong parameters, ID = ' + IntToStr(fOwner));
 end;
 
 

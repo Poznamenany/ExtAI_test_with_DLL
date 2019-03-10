@@ -67,32 +67,32 @@ begin
   //@Martin: todo
   if aTick = 5 then
     fExtAIHand.OnTick(aTick); // Call function in ExtAI (event)
-    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ action then XYZ procedures in THandAIExt will be called
     // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 6 then
     fExtAIHand.OnTick(aTick);
-    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ action then XYZ procedures in THandAIExt will be called
     // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 7 then
     fExtAIHand.OnTick(aTick);
-    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ action then XYZ procedures in THandAIExt will be called
     // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 8 then
     fExtAIHand.OnTick(aTick);
-    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ action then XYZ procedures in THandAIExt will be called
     // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 9 then
     fExtAIHand.OnTick(aTick);
-    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ action then XYZ procedures in THandAIExt will be called
     // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   if aTick = 10 then
     fExtAIHand.OnTick(aTick);
-    // if ExtAI call XYZ action then XYZ procedures in TExtAIHand will be called
+    // if ExtAI call XYZ action then XYZ procedures in THandAIExt will be called
     // if ExtAI call XYZ state then XYZ procedure in TExtAIQueueStates will be called
 
   //@Krom: I need everything in 1 tick to make stress test
@@ -109,7 +109,7 @@ begin
 
     Actions
       from ExtAI - the ExtAI can call Actions.NameOfAction(...) at any time
-      to GameThread - entry functions are in TExtAIHand
+      to GameThread - entry functions are in THandAIExt
         SingleThread - actions are called immediately and directly by the ExtAI
         MultiThread - actions are called on new tick event registration in
                       TExtAIQueueEvents.OnTick => if GameThread creates OnTick

@@ -31,24 +31,12 @@ type
     cbAI11: TComboBox;
     cbAI12: TComboBox;
     cbMultithread: TCheckBox;
-    edAI1: TEdit;
-    edAI2: TEdit;
-    edAI3: TEdit;
-    edAI4: TEdit;
-    edAI5: TEdit;
-    edAI6: TEdit;
-    edAI7: TEdit;
-    edAI8: TEdit;
-    edAI9: TEdit;
-    edAI10: TEdit;
-    edAI11: TEdit;
-    edAI12: TEdit;
     edFolderDLL1: TEdit;
     edFolderDLL2: TEdit;
     edTickCnt: TEdit;
-    GroupBox1: TGroupBox;
-    GroupBox2: TGroupBox;
-    GroupBox3: TGroupBox;
+    gbSetup: TGroupBox;
+    gbLobby: TGroupBox;
+    gbSimulation: TGroupBox;
     Label1: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -65,24 +53,36 @@ type
     Label15: TLabel;
     Label16: TLabel;
     listBoxDLLs: TListBox;
-    ListBoxLOG: TListBox;
-    pbAI1: TProgressBar;
-    pbAI2: TProgressBar;
-    pbAI3: TProgressBar;
-    pbAI4: TProgressBar;
-    pbAI5: TProgressBar;
-    pbAI6: TProgressBar;
-    pbAI7: TProgressBar;
-    pbAI8: TProgressBar;
-    pbAI9: TProgressBar;
-    pbAI10: TProgressBar;
-    pbAI11: TProgressBar;
-    pbAI12: TProgressBar;
+    lbLog: TListBox;
     pbSimulation: TProgressBar;
     tbTicks: TTrackBar;
-    GroupBox4: TGroupBox;
+    gbMultithread: TGroupBox;
     btnAutoFill: TButton;
     chckbClosed: TCheckBox;
+    edAI1: TEdit;
+    edAI2: TEdit;
+    edAI3: TEdit;
+    edAI4: TEdit;
+    edAI5: TEdit;
+    edAI6: TEdit;
+    edAI7: TEdit;
+    edAI8: TEdit;
+    edAI9: TEdit;
+    edAI10: TEdit;
+    edAI11: TEdit;
+    edAI12: TEdit;
+    pbAI12: TProgressBar;
+    pbAI11: TProgressBar;
+    pbAI10: TProgressBar;
+    pbAI9: TProgressBar;
+    pbAI8: TProgressBar;
+    pbAI7: TProgressBar;
+    pbAI6: TProgressBar;
+    pbAI5: TProgressBar;
+    pbAI4: TProgressBar;
+    pbAI3: TProgressBar;
+    pbAI2: TProgressBar;
+    pbAI1: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var aAction: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -377,13 +377,13 @@ end;
 
 procedure TPPLWin.Log(aLog: wStr);
 begin
-  ListBoxLog.Items.Add(aLog);
-  ListBoxLog.ItemIndex := ListBoxLog.Items.Count - 1;
+  lbLog.Items.Add(aLog);
+  lbLog.ItemIndex := lbLog.Items.Count - 1;
 end;
 
 procedure TPPLWin.ClearLog;
 begin
-  ListBoxLog.Items.Clear;
+  lbLog.Items.Clear;
 end;
 
 procedure TPPLWin.LogProgress(aID: ui8; aTick: ui32; aState: TExtAIThreadStates);
@@ -410,17 +410,17 @@ var
   Actions, Events, Hands, Threads: array [1..MAX_HANDS_COUNT] of TOverview;
   Stats: TOverview;
 begin
-  for K := ListBoxLog.Count-1 downto 0 do
+  for K := lbLog.Count-1 downto 0 do
   begin
-    str := ListBoxLog.Items[K];
+    str := lbLog.Items[K];
     if      AnsiPos('TExtAIThread-Create: ID =', str) > 0 then        Threads[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
     else if AnsiPos('TExtAIThread-Destroy: ID =', str) > 0 then       Threads[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
     else if AnsiPos('TExtAIQueueActions-Create: ID =', str) > 0 then  Actions[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
     else if AnsiPos('TExtAIQueueActions-Destroy: ID =', str) > 0 then Actions[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
     else if AnsiPos('TExtAIQueueEvents-Create: ID =', str) > 0 then   Events[  StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
     else if AnsiPos('TExtAIQueueEvents-Destroy: ID =', str) > 0 then  Events[  StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('TExtAIHand-Create: ID =', str) > 0 then          Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIHand-Destroy: ID =', str) > 0 then         Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('THandAIExt-Create: ID =', str) > 0 then          Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('THandAIExt-Destroy: ID =', str) > 0 then         Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
     else if AnsiPos('TExtAIQueueStates-Create', str) > 0 then         Stats.Init := True
     else if AnsiPos('TExtAIQueueStates-Destroy', str) > 0 then        Stats.Termin := True;
   end;
@@ -428,13 +428,13 @@ begin
   for K := Low(Actions) to High(Actions) do
   begin
     if (Threads[K].Init OR Threads[K].Termin) <> (Threads[K].Init AND Threads[K].Termin) then
-      Log('WARNING: Init/Termin THREAD: '+IntToStr(K));
+      Log('WARNING: Init/Termin THREAD: ' + IntToStr(K));
     if (Actions[K].Init OR Actions[K].Termin) <> (Actions[K].Init AND Actions[K].Termin) then
-      Log('WARNING: Init/Termin ACTION: '+IntToStr(K));
+      Log('WARNING: Init/Termin ACTION: ' + IntToStr(K));
     if (Events[K].Init OR Events[K].Termin) <> (Events[K].Init AND Events[K].Termin) then
-      Log('WARNING: Init/Termin EVENT: '+IntToStr(K));
+      Log('WARNING: Init/Termin EVENT: ' + IntToStr(K));
     if (Hands[K].Init OR Hands[K].Termin) <> (Hands[K].Init AND Hands[K].Termin) then
-      Log('WARNING: Init/Termin HANS: '+IntToStr(K));
+      Log('WARNING: Init/Termin HANS: ' + IntToStr(K));
   end;
 
   if (Stats.Init OR Stats.Termin) <> (Stats.Init AND Stats.Termin) then

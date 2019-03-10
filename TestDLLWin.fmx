@@ -9,12 +9,12 @@ object PPLWin: TPPLWin
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
   DesignerMasterStyle = 0
-  object GroupBox1: TGroupBox
+  object gbSetup: TGroupBox
     Size.Width = 425.000000000000000000
     Size.Height = 161.000000000000000000
     Size.PlatformDefault = False
     Text = 'DLL'
-    TabOrder = 3
+    TabOrder = 2
     object edFolderDLL1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 0
@@ -84,32 +84,23 @@ object PPLWin: TPPLWin
       Text = 'Refresh List'
       OnClick = btdRefreshDLLsClick
     end
+    object edFolderDLL2: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 7
+      Position.X = 8.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 321.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
   end
-  object edFolderDLL2: TEdit
-    Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 0
-    Position.X = 8.000000000000000000
-    Position.Y = 56.000000000000000000
-    Size.Width = 321.000000000000000000
-    Size.Height = 17.000000000000000000
-    Size.PlatformDefault = False
-  end
-  object GroupBox2: TGroupBox
+  object gbLobby: TGroupBox
     Position.Y = 160.000000000000000000
     Size.Width = 193.000000000000000000
     Size.Height = 353.000000000000000000
     Size.PlatformDefault = False
     Text = 'Lobby'
-    TabOrder = 4
-    object edAI1: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 11
-      Position.X = 208.000000000000000000
-      Position.Y = 24.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
+    TabOrder = 3
     object Label4: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 24.000000000000000000
@@ -125,105 +116,6 @@ object PPLWin: TPPLWin
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = '2.'
-    end
-    object edAI2: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 10
-      Position.X = 208.000000000000000000
-      Position.Y = 48.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI3: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 9
-      Position.X = 208.000000000000000000
-      Position.Y = 72.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI4: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 8
-      Position.X = 208.000000000000000000
-      Position.Y = 96.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI5: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 7
-      Position.X = 208.000000000000000000
-      Position.Y = 128.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI6: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 6
-      Position.X = 208.000000000000000000
-      Position.Y = 152.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI7: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 5
-      Position.X = 208.000000000000000000
-      Position.Y = 176.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI8: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 4
-      Position.X = 208.000000000000000000
-      Position.Y = 200.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI9: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 3
-      Position.X = 208.000000000000000000
-      Position.Y = 232.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI10: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 2
-      Position.X = 208.000000000000000000
-      Position.Y = 256.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI11: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 1
-      Position.X = 208.000000000000000000
-      Position.Y = 280.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object edAI12: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 0
-      Position.X = 208.000000000000000000
-      Position.Y = 304.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
     end
     object Label6: TLabel
       Position.X = 16.000000000000000000
@@ -311,7 +203,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 40
+      TabOrder = 28
     end
     object cbAI2: TComboBox
       Position.X = 32.000000000000000000
@@ -319,7 +211,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 39
+      TabOrder = 27
     end
     object cbAI3: TComboBox
       Position.X = 32.000000000000000000
@@ -327,7 +219,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 38
+      TabOrder = 26
     end
     object cbAI4: TComboBox
       Position.X = 32.000000000000000000
@@ -335,7 +227,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 37
+      TabOrder = 25
     end
     object cbAI5: TComboBox
       Position.X = 32.000000000000000000
@@ -343,7 +235,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 36
+      TabOrder = 24
     end
     object cbAI6: TComboBox
       Position.X = 32.000000000000000000
@@ -351,7 +243,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 35
+      TabOrder = 23
     end
     object cbAI7: TComboBox
       Position.X = 32.000000000000000000
@@ -359,7 +251,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 34
+      TabOrder = 22
     end
     object cbAI8: TComboBox
       Position.X = 32.000000000000000000
@@ -367,7 +259,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 33
+      TabOrder = 21
     end
     object cbAI9: TComboBox
       Position.X = 32.000000000000000000
@@ -375,7 +267,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 32
+      TabOrder = 20
     end
     object cbAI10: TComboBox
       Position.X = 32.000000000000000000
@@ -383,7 +275,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 31
+      TabOrder = 19
     end
     object cbAI11: TComboBox
       Position.X = 32.000000000000000000
@@ -391,7 +283,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 30
+      TabOrder = 18
     end
     object cbAI12: TComboBox
       Position.X = 32.000000000000000000
@@ -399,115 +291,7 @@ object PPLWin: TPPLWin
       Size.Width = 153.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 29
-    end
-    object pbAI1: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 24.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI2: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 48.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI3: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 72.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI4: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 96.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI5: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 128.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI6: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 152.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI7: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 176.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI8: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 200.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI9: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 232.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI10: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 256.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI11: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 280.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object pbAI12: TProgressBar
-      Max = 1.000000000000000000
-      Orientation = Horizontal
-      Position.X = 336.000000000000000000
-      Position.Y = 304.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
+      TabOrder = 17
     end
     object btnAutoFill: TButton
       Position.X = 104.000000000000000000
@@ -515,7 +299,7 @@ object PPLWin: TPPLWin
       Size.Width = 81.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 53
+      TabOrder = 41
       Text = 'Auto Fill'
       OnClick = btnAutoFillClick
     end
@@ -526,17 +310,17 @@ object PPLWin: TPPLWin
       Size.Width = 89.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 55
+      TabOrder = 43
       Text = 'Incl. Closed'
     end
   end
-  object GroupBox3: TGroupBox
+  object gbSimulation: TGroupBox
     Position.Y = 520.000000000000000000
     Size.Width = 425.000000000000000000
     Size.Height = 161.000000000000000000
     Size.PlatformDefault = False
     Text = 'Simulation'
-    TabOrder = 5
+    TabOrder = 4
     object cbMultithread: TCheckBox
       Position.X = 8.000000000000000000
       Position.Y = 16.000000000000000000
@@ -604,14 +388,14 @@ object PPLWin: TPPLWin
       Size.PlatformDefault = False
     end
   end
-  object ListBoxLOG: TListBox
+  object lbLog: TListBox
     StyleName = 'lbOwnerDrawFixed'
     Position.X = 440.000000000000000000
     Position.Y = 8.000000000000000000
     Size.Width = 569.000000000000000000
     Size.Height = 665.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
+    TabOrder = 1
     DisableFocusEffect = True
     DefaultItemStyles.ItemStyle = ''
     DefaultItemStyles.GroupHeaderStyle = ''
@@ -619,13 +403,229 @@ object PPLWin: TPPLWin
     Viewport.Width = 565.000000000000000000
     Viewport.Height = 661.000000000000000000
   end
-  object GroupBox4: TGroupBox
+  object gbMultithread: TGroupBox
     Position.X = 200.000000000000000000
     Position.Y = 160.000000000000000000
     Size.Width = 225.000000000000000000
     Size.Height = 353.000000000000000000
     Size.PlatformDefault = False
     Text = 'Multithread'
-    TabOrder = 6
+    TabOrder = 5
+    object edAI1: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 11
+      Position.X = 8.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI2: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 10
+      Position.X = 8.000000000000000000
+      Position.Y = 48.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI3: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 9
+      Position.X = 8.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI4: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 8
+      Position.X = 8.000000000000000000
+      Position.Y = 96.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI5: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 7
+      Position.X = 8.000000000000000000
+      Position.Y = 128.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI6: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 6
+      Position.X = 8.000000000000000000
+      Position.Y = 152.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI7: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 5
+      Position.X = 8.000000000000000000
+      Position.Y = 176.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI8: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 4
+      Position.X = 8.000000000000000000
+      Position.Y = 200.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI9: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 3
+      Position.X = 8.000000000000000000
+      Position.Y = 232.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI10: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 2
+      Position.X = 8.000000000000000000
+      Position.Y = 256.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI11: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 1
+      Position.X = 8.000000000000000000
+      Position.Y = 280.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edAI12: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 0
+      Position.X = 8.000000000000000000
+      Position.Y = 304.000000000000000000
+      Size.Width = 121.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI12: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 304.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI11: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 280.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI10: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 256.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI9: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 232.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI8: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 200.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI7: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 176.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI6: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 152.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI5: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 128.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI4: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 96.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI3: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI2: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 48.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object pbAI1: TProgressBar
+      Max = 1.000000000000000000
+      Orientation = Horizontal
+      Position.X = 136.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
   end
 end
