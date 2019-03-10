@@ -13,20 +13,20 @@ type
   // Thread management for ExtAI (optional)
   TExtAIThread = class(TThread)
   private
-    fID: ui8;
-    fState: TExtAIThreadStates;
+    fHandIndex: Integer;
+    fState: TExtAIThreadState;
     fOnLog: TLogEvent;
     fOnLogProgress: TLogProgressEvent;
     fLastTick: ui32;
     fQueueEvents: TExtAIQueueEvents;
-    procedure SetState(aState: TExtAIThreadStates);
+    procedure SetState(aState: TExtAIThreadState);
     procedure Log(aLog: wStr);
     procedure LogProgress();
   public
-    property ID: ui8 read fID;
-    property State: TExtAIThreadStates read fState write SetState;
+    property HandIndex: Integer read fHandIndex;
+    property State: TExtAIThreadState read fState write SetState;
 
-    constructor Create(aID: ui8; aLog: TLogEvent; aLogProgress: TLogProgressEvent; var aThreadLog: TLogEvent); reintroduce;
+    constructor Create(aHandIndex: Integer; aLog: TLogEvent; aLogProgress: TLogProgressEvent; var aThreadLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     procedure Init(aQueueEvents: TExtAIQueueEvents);
@@ -37,12 +37,13 @@ implementation
 
 
 { TExtAIThread }
-constructor TExtAIThread.Create(aID: ui8; aLog: TLogEvent; aLogProgress: TLogProgressEvent; var aThreadLog: TLogEvent);
+constructor TExtAIThread.Create(aHandIndex: Integer; aLog: TLogEvent; aLogProgress: TLogProgressEvent; var aThreadLog: TLogEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
   Priority := tpNormal;
-  fID := aID;
+
+  fHandIndex := aHandIndex;
   fOnLog := aLog;
   fOnLogProgress := aLogProgress;
   fQueueEvents := nil;
@@ -50,12 +51,12 @@ begin
   aThreadLog := Log;
   State := tsInit;
   LogProgress();
-  Log('  TExtAIThread-Create: ID = '+IntToStr(fID));
+  Log('  TExtAIThread-Create: HandIndex = '+IntToStr(fHandIndex));
 end;
 
 destructor TExtAIThread.Destroy();
 begin
-  Log('  TExtAIThread-Destroy: ID = '+IntToStr(fID));
+  Log('  TExtAIThread-Destroy: HandIndex = '+IntToStr(fHandIndex));
   inherited;
 end;
 
@@ -90,7 +91,7 @@ begin
 end;
 
 
-procedure TExtAIThread.SetState(aState: TExtAIThreadStates);
+procedure TExtAIThread.SetState(aState: TExtAIThreadState);
 begin
   if (fState <> aState) then
   begin
@@ -116,7 +117,7 @@ begin
   procedure
   begin
     if Assigned(fOnLogProgress) then
-      fOnLogProgress(ID, fLastTick, fState);
+      fOnLogProgress(fHandIndex, fLastTick, fState);
   end);
 end;
 

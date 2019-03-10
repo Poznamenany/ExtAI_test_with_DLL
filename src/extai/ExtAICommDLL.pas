@@ -7,12 +7,12 @@ uses
   ExtAIQueueActions, ExtAIQueueEvents, ExtAIThread,
   {$ENDIF}
   ExtAIQueueStates,
-  HandAI_Ext, ExtAIInterfaceDelphi, ExtAIDataTypes, ExtAIUtils;
+  Consts, HandAI_Ext, ExtAIInterfaceDelphi, ExtAIDataTypes, ExtAIUtils;
 
 type
   TInitDLL = procedure(var aConfig: TDLLpConfig); StdCall;
   TTerminDLL = procedure(); StdCall;
-  TInitNewExtAI = procedure(aID: ui8; aActions: IActions; aStates: IStates) StdCall;
+  TInitNewExtAI = procedure(aHandIndex: TKMHandIndex; aActions: IActions; aStates: IStates) StdCall;
   TNewExtAI = function(): IEvents; SafeCall; // Same like StdCall but allows exceptions
 
   // Communication with 1 physical DLL with using exported methods.
@@ -40,7 +40,7 @@ type
     destructor Destroy; override;
 
     function LinkDLL(aDLLPath: wStr): b;
-    function CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+    function CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
   end;
 
 implementation
@@ -71,7 +71,7 @@ begin
   for K := 0 to fExtAIThread.Count-1 do
     if (TExtAIThread(fExtAIThread[K]).State = tsRun) then
     begin
-      Log('  TExtAICommDLL-Destroy: Wait for thread ID = ' + IntToStr(TExtAIThread(fExtAIThread[K]).ID));
+      Log('  TExtAICommDLL-Destroy: Wait for thread of HandIndex = ' + IntToStr(TExtAIThread(fExtAIThread[K]).HandIndex));
       TExtAIThread(fExtAIThread[K]).State := tsTerminate;
       TExtAIThread(fExtAIThread[K]).WaitFor;
     end;
@@ -139,7 +139,7 @@ begin
 end;
 
 
-function TExtAICommDLL.CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+function TExtAICommDLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   Thread: TExtAIThread;
@@ -151,24 +151,24 @@ begin
   Result := nil;
   if not Assigned(fOnNewExtAI) then Exit;
 
-  //Log('  CommDLL-CreateNewExtAI: ID = ' + IntToStr(aExtAIID));
-  Result := THandAI_Ext.Create(aExtAIID, fOnLog);
+  //Log('  CommDLL-CreateNewExtAI: HandIndex = ' + IntToStr(aHandIndex));
+  Result := THandAI_Ext.Create(aHandIndex, fOnLog);
   try
     if aOwnThread then
     begin
       {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
       // Create thread
-      Thread := TExtAIThread.Create(aExtAIID, aLogProgress, ThreadLog);
+      Thread := TExtAIThread.Create(aHandIndex, fOnLog, aLogProgress, ThreadLog);
       // Create interfaces
-      QueueActions := TExtAIQueueActions.Create(aExtAIID, ThreadLog);
+      QueueActions := TExtAIQueueActions.Create(aHandIndex, ThreadLog);
       QueueActions.Actions := Result; // = add reference to THandAI_Ext
-      QueueEvents := TExtAIQueueEvents.Create(aExtAIID, ThreadLog);
+      QueueEvents := TExtAIQueueEvents.Create(aHandIndex, ThreadLog);
       QueueEvents.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
       QueueEvents.QueueActions := QueueActions; // Mark actions so they are called OnTick event from main thread
       Result.AssignEvents(QueueEvents); // = add reference to TExtAIQueueEvents
       Thread.Init(QueueEvents);
       // Create ExtAI in DLL
-      fOnInitNewExtAI( aExtAIID, QueueActions, aStates ); // = add reference to TExtAIQueueActions and States
+      fOnInitNewExtAI(aHandIndex, QueueActions, aStates); // = add reference to TExtAIQueueActions and States
       fExtAIThread.Add(Thread);
       Thread.Start;
       {$ELSE}
@@ -179,7 +179,7 @@ begin
       // Create interface
       Result.AssignEvents(fOnNewExtAI); // = add reference to TExtAI in DLL
       // Create ExtAI in DLL
-      fOnInitNewExtAI(aExtAIID, Result, aStates); // = add reference to THandAI_Ext and States
+      fOnInitNewExtAI(aHandIndex, Result, aStates); // = add reference to THandAI_Ext and States
     end;
   except
     on E: Exception do

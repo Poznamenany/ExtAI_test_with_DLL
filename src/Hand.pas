@@ -2,23 +2,23 @@ unit Hand;
 interface
 uses
   Windows, System.SysUtils,
-  HandAI_Ext, ExtAIUtils, ExtAIDataTypes;
+  Consts, HandAI_Ext, ExtAIUtils, ExtAIDataTypes;
 
 type
   // Game class for Hand. It hides the ExtAI inside of it
   THand = class
   private
-    fHandIndex: Integer;
+    fHandIndex: TKMHandIndex;
     fExtAIHand: THandAI_Ext;
     fOnLog: TLogEvent;
 
     // Log
     procedure Log(aLog: wStr);
   public
-    constructor Create(aHandIndex: Integer; aLog: TLogEvent); reintroduce;
+    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
     destructor Destroy; override;
 
-    property HandIndex: Integer read fHandIndex;
+    property HandIndex: TKMHandIndex read fHandIndex;
 
     // KP sets AI type after init
     procedure SetAIType(aExtAIHand: THandAI_Ext);
@@ -27,25 +27,24 @@ type
   end;
 
 implementation
-uses
-  Consts;
 
 
 { THand }
-constructor THand.Create(aHandIndex: Integer; aLog: TLogEvent);
+constructor THand.Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
 begin
-  inherited Create();
+  inherited Create;
+
   fHandIndex := aHandIndex;
   fOnLog := aLog;
 
-  Log('  THand-Create: ID = '+IntToStr(fHandIndex));
+  Log('  THand-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
 destructor THand.Destroy();
 begin
   FreeAndNil(fExtAIHand);
-  Log('  THand-Destroy: ID = '+IntToStr(fHandIndex));
+  Log('  THand-Destroy: HandIndex = ' + IntToStr(fHandIndex));
 
   inherited;
 end;

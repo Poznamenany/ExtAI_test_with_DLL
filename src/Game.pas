@@ -93,20 +93,19 @@ end;
 
 procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
 var
-  K: si32;
+  K: Integer;
 begin
   Log('TGame-InitSimulation');
+
   fSimState := ssInit;
   for K := Low(aExtAIs) to High(aExtAIs) do
     if CompareStr(aExtAIs[K], '') <> 0 then
-      //@Martin here's a hand index mismatch. In KP hands are always going from 0 to N-1, without gaps.
-      //@Krom I know but all variables are also initialized to 0 and I wanted to be 100% sure that ID is sent to DLL
-      //      ID is decided by Game so you can easily change it in the KP
     begin
       fHands.Add(THand.Create(K, fOnLog));
-      fHands.Last.SetAIType(fExtAIMaster.NewExtAI(aMultithread, K+1, aExtAIs[K], aLogProgress));
+      fHands.Last.SetAIType(fExtAIMaster.NewExtAI(aMultithread, K, aExtAIs[K], aLogProgress));
     end;
 end;
+
 
 procedure TGame.StartSimulation(aTicks: Cardinal);
 begin
@@ -116,6 +115,7 @@ begin
 
   Start;
 end;
+
 
 procedure TGame.Execute;
 var

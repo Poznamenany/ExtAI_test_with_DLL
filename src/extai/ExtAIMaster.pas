@@ -3,7 +3,7 @@ unit ExtAIMaster;
 interface
 uses
   Classes, Windows, System.SysUtils, Generics.Collections,
-  HandAI_Ext, ExtAIQueueStates, ExtAIDLLs, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
+  Consts, HandAI_Ext, ExtAIQueueStates, ExtAIDLLs, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
 
 type
   // Master of ExtAIs
@@ -25,7 +25,7 @@ type
     property DLLs: TExtAIDLLs read fDLLs;
     property QueueStates: TExtAIQueueStates read fQueueStates;
 
-    function NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
+    function NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
 
 
@@ -63,7 +63,7 @@ begin
 end;
 
 
-function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
+function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
   Idx: si32;
   DLL: TExtAICommDLL;
@@ -91,7 +91,7 @@ begin
     fQueueStates := TExtAIQueueStates.Create(fOnLog);
 
   // Create ExtAI in DLL
-  Result := DLL.CreateNewExtAI(aOwnThread, aExtAIID, aLogProgress, fQueueStates);
+  Result := DLL.CreateNewExtAI(aOwnThread, aHandIndex, aLogProgress, fQueueStates);
 end;
 
 

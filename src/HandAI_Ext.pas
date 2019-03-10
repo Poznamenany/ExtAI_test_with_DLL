@@ -2,13 +2,13 @@ unit HandAI_Ext;
 interface
 uses
   Windows, System.SysUtils,
-  ExtAIInterfaceDelphi, ExtAIUtils, ExtAIDataTypes;
+  Consts, ExtAIInterfaceDelphi, ExtAIUtils, ExtAIDataTypes;
 
 type
   // ExtAI class for Hands - process flow of events and actions
   THandAI_Ext = class(TInterfacedObject, IActions)
   private
-    fOwner: Integer;
+    fHandIndex: TKMHandIndex;
     fOnLog: TLogEvent;
 
     fEvents: IEvents;
@@ -21,9 +21,7 @@ type
     // Log
     procedure Log(aLog: wStr);
   public
-    property Owner: Integer read fOwner;
-
-    constructor Create(aOwner: Integer; aLog: TLogEvent); reintroduce;
+    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     procedure AssignEvents(aEvents: IEvents);
@@ -31,29 +29,28 @@ type
     // fEvents: IEvents to directly call events in DLL
     procedure OnMissionStart();
     procedure OnTick(aTick: Cardinal);
-    procedure OnPlayerDefeated(aPlayer: si8);
-    procedure OnPlayerVictory(aPlayer: si8);
+    procedure OnPlayerDefeated(aHandIndex: TKMHandIndex);
+    procedure OnPlayerVictory(aHandIndex: TKMHandIndex);
   end;
 
 implementation
-uses
-  Consts;
 
 
 { THandAI_Ext }
-constructor THandAI_Ext.Create(aOwner: Integer; aLog: TLogEvent);
+constructor THandAI_Ext.Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
 begin
   inherited Create;
 
-  fOwner := aOwner;
+  fHandIndex := aHandIndex;
   fOnLog := aLog;
-  Log('  THandAIExt-Create: ID = ' + IntToStr(fOwner));
+  Log('  THandAIExt-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
 destructor THandAI_Ext.Destroy();
 begin
-  Log('  THandAIExt-Destroy: ID = ' + IntToStr(fOwner));
+  Log('  THandAIExt-Destroy: HandIndex = ' + IntToStr(fHandIndex));
+
   inherited;
 end;
 
@@ -68,24 +65,24 @@ end;
 procedure THandAI_Ext.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32);
 begin
   if LOG_VERBOSE then
-    Log(Format('THandAIExt(%d).GroupOrderAttackUnit [%d, %d]', [fOwner, aGroupID, aUnitID]));
+    Log(Format('THandAIExt(%d).GroupOrderAttackUnit [%d, %d]', [fHandIndex, aGroupID, aUnitID]));
 
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 11) or (aUnitID <> 22) then
-    Log('  THandAIExt-GroupOrderAttackUnit: wrong parameters, ID = ' + IntToStr(fOwner));
+    Log('  THandAIExt-GroupOrderAttackUnit: wrong parameters, HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
 procedure THandAI_Ext.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16);
 begin
   if LOG_VERBOSE then
-    Log(Format('THandAIExt(%d).GroupOrderWalk [%d, %d, %d, %d]', [fOwner, aGroupID, aX, aY, aDirection]));
+    Log(Format('THandAIExt(%d).GroupOrderWalk [%d, %d, %d, %d]', [fHandIndex, aGroupID, aX, aY, aDirection]));
 
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 1) or (aX <> 50) or (aY <> 50) or (aDirection <> 1) then
-    Log('  THandAIExt-GroupOrderWalk: wrong parameters, ID = ' + IntToStr(fOwner));
+    Log('  THandAIExt-GroupOrderWalk: wrong parameters, HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
@@ -102,15 +99,15 @@ begin
 end;
 
 
-procedure THandAI_Ext.OnPlayerDefeated(aPlayer: si8);
+procedure THandAI_Ext.OnPlayerDefeated(aHandIndex: TKMHandIndex);
 begin
-  fEvents.OnPlayerDefeated(aPlayer);
+  fEvents.OnPlayerDefeated(aHandIndex);
 end;
 
 
-procedure THandAI_Ext.OnPlayerVictory(aPlayer: si8);
+procedure THandAI_Ext.OnPlayerVictory(aHandIndex: TKMHandIndex);
 begin
-  fEvents.OnPlayerVictory(aPlayer);
+  fEvents.OnPlayerVictory(aHandIndex);
 end;
 
 

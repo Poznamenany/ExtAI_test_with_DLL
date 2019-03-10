@@ -18,8 +18,8 @@ type
     ['{8E77167C-CC59-4917-BE0B-BCF311B3CEEE}']
     procedure OnMissionStart(); StdCall;
     procedure OnTick(aTick: ui32); StdCall;
-    procedure OnPlayerDefeated(aPlayer: si8); StdCall;
-    procedure OnPlayerVictory(aPlayer: si8); StdCall;
+    procedure OnPlayerDefeated(aHandIndex: si8); StdCall;
+    procedure OnPlayerVictory(aHandIndex: si8); StdCall;
   end;
 
   // Interface for States

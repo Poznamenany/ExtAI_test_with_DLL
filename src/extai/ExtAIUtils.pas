@@ -1,12 +1,14 @@
 unit ExtAIUtils;
 interface
 uses
-  ExtAIDataTypes;
+  Consts, ExtAIDataTypes;
 
 type
   TLogEvent = procedure(aStr: wStr) of Object;
-  TExtAIThreadStates = (tsInit, tsRun, tsPause, tsTerminate);
-  TLogProgressEvent = procedure(aID: ui8; aTick: ui32; aState: TExtAIThreadStates) of Object;
+
+  TExtAIThreadState = (tsInit, tsRun, tsPause, tsTerminate);
+
+  TLogProgressEvent = procedure(aHandIndex: TKMHandIndex; aTick: ui32; aState: TExtAIThreadState) of Object;
 
 implementation
 

@@ -93,9 +93,9 @@ type
   private
     fGame: TGame;
     // Lobby
-    fcbAI: array[1..MAX_HANDS_COUNT] of TComboBox;
-    fedAI: array[1..MAX_HANDS_COUNT] of TEdit;
-    fpbAI: array[1..MAX_HANDS_COUNT] of TProgressBar;
+    fcbAI: array[0..MAX_HANDS_COUNT-1] of TComboBox;
+    fedAI: array[0..MAX_HANDS_COUNT-1] of TEdit;
+    fpbAI: array[0..MAX_HANDS_COUNT-1] of TProgressBar;
     // DLL
     procedure RefreshListDLL;
     // Lobby
@@ -108,7 +108,7 @@ type
     procedure UpdateSimStatus;
     procedure Log(aLog: wStr);
     procedure ClearLog;
-    procedure LogProgress(aID: ui8; aTick: ui32; aState: TExtAIThreadStates);
+    procedure LogProgress(aHandIndex: TKMHandIndex; aTick: ui32; aState: TExtAIThreadState);
     procedure Overview;
   end;
 
@@ -145,29 +145,28 @@ end;
 // Lobby
 procedure TPPLWin.InitLobby;
 begin
-  fedAI[1]  := edAI1;  fpbAI[1]  := pbAI1;  fcbAI[1]  := cbAI1;
-  fedAI[2]  := edAI2;  fpbAI[2]  := pbAI2;  fcbAI[2]  := cbAI2;
-  fedAI[3]  := edAI3;  fpbAI[3]  := pbAI3;  fcbAI[3]  := cbAI3;
-  fedAI[4]  := edAI4;  fpbAI[4]  := pbAI4;  fcbAI[4]  := cbAI4;
-  fedAI[5]  := edAI5;  fpbAI[5]  := pbAI5;  fcbAI[5]  := cbAI5;
-  fedAI[6]  := edAI6;  fpbAI[6]  := pbAI6;  fcbAI[6]  := cbAI6;
-  fedAI[7]  := edAI7;  fpbAI[7]  := pbAI7;  fcbAI[7]  := cbAI7;
-  fedAI[8]  := edAI8;  fpbAI[8]  := pbAI8;  fcbAI[8]  := cbAI8;
-  fedAI[9]  := edAI9;  fpbAI[9]  := pbAI9;  fcbAI[9]  := cbAI9;
-  fedAI[10] := edAI10; fpbAI[10] := pbAI10; fcbAI[10] := cbAI10;
-  fedAI[11] := edAI11; fpbAI[11] := pbAI11; fcbAI[11] := cbAI11;
-  fedAI[12] := edAI12; fpbAI[12] := pbAI12; fcbAI[12] := cbAI12;
+  fedAI[0]  := edAI1;  fpbAI[0]  := pbAI1;  fcbAI[0]  := cbAI1;
+  fedAI[1]  := edAI2;  fpbAI[1]  := pbAI2;  fcbAI[1]  := cbAI2;
+  fedAI[2]  := edAI3;  fpbAI[2]  := pbAI3;  fcbAI[2]  := cbAI3;
+  fedAI[3]  := edAI4;  fpbAI[3]  := pbAI4;  fcbAI[3]  := cbAI4;
+  fedAI[4]  := edAI5;  fpbAI[4]  := pbAI5;  fcbAI[4]  := cbAI5;
+  fedAI[5]  := edAI6;  fpbAI[5]  := pbAI6;  fcbAI[5]  := cbAI6;
+  fedAI[6]  := edAI7;  fpbAI[6]  := pbAI7;  fcbAI[6]  := cbAI7;
+  fedAI[7]  := edAI8;  fpbAI[7]  := pbAI8;  fcbAI[7]  := cbAI8;
+  fedAI[8]  := edAI9;  fpbAI[8]  := pbAI9;  fcbAI[8]  := cbAI9;
+  fedAI[9]  := edAI10; fpbAI[9]  := pbAI10; fcbAI[9]  := cbAI10;
+  fedAI[10] := edAI11; fpbAI[10] := pbAI11; fcbAI[10] := cbAI11;
+  fedAI[11] := edAI12; fpbAI[11] := pbAI12; fcbAI[11] := cbAI12;
 end;
 
 procedure TPPLWin.btnAutoFillClick(Sender: TObject);
 var
-  K,Offset,Range: si32;
+  K,Offset,Range: Integer;
 begin
-  Offset := si32(NOT chckbClosed.IsChecked);
-  Range := fcbAI[1].Count - Offset;
+  Offset := Ord(not chckbClosed.IsChecked);
+  Range := fcbAI[0].Count - Offset;
   for K := Low(fcbAI) to High(fcbAI) do
-    //fcbAI[K].ItemIndex := 1;
-    fcbAI[K].ItemIndex := Round(Offset+Random(Range));
+    fcbAI[K].ItemIndex := Round(Offset + Random(Range));
 end;
 
 procedure TPPLWin.RefreshExtAIs;
@@ -181,8 +180,9 @@ begin
     SelectedName := '';
     if (Idx > 0) then // -1 = Nothing, 0 = Closed
       SelectedName := fcbAI[K].Items[Idx];
+
     fcbAI[K].Items.Clear;
-    Idx := 0;
+    Idx := 0; // Closed by default
     fcbAI[K].Items.Add('Closed');
     for L := 0 to fGame.ExtAIMaster.DLLs.Count-1 do
     begin
@@ -190,6 +190,7 @@ begin
       if (CompareStr(fGame.ExtAIMaster.DLLs[L].ExtAIName, SelectedName) = 0) then
         Idx := L+1;
     end;
+
     fcbAI[K].ItemIndex := Idx;
   end;
 end;
@@ -216,28 +217,30 @@ var
 begin
   RefreshListDLL; // Make sure that all DLLs are available
   ClearLog;
+
   // Load ExtAI configuration from Lobby
   SetLength(ExtAIs, MAX_HANDS_COUNT);
   cnt := 0;
   for K := Low(fcbAI) to High(fcbAI) do
   begin
-    ExtAIs[K-1] := '';
-    if (fcbAI[K].ItemIndex > 0) then
+    ExtAIs[K] := '';
+    if fcbAI[K].ItemIndex > 0 then
     begin
-      SelectedName := fcbAI[K].Items[ fcbAI[K].ItemIndex ];
+      SelectedName := fcbAI[K].Items[fcbAI[K].ItemIndex];
       for L := 0 to fGame.ExtAIMaster.DLLs.Count-1 do
-        if CompareStr(fGame.ExtAIMaster.DLLs[L].ExtAIName,SelectedName) = 0 then
+        if CompareStr(fGame.ExtAIMaster.DLLs[L].ExtAIName, SelectedName) = 0 then
         begin
           Inc(cnt);
-          ExtAIs[K-1] := fGame.ExtAIMaster.DLLs[L].Path;
+          ExtAIs[K] := fGame.ExtAIMaster.DLLs[L].Path;
           break;
         end;
     end;
   end;
+
   // Init ExtAI
   if (cnt > 0) then
-    //fGame.InitSimulation(chckbMultithread.Ischecked, ExtAIs, nil);
     fGame.InitSimulation(cbMultithread.IsChecked, ExtAIs, LogProgress);
+
   RefreshSimButtons;
 end;
 
@@ -350,15 +353,15 @@ begin
   lbLog.Items.Clear;
 end;
 
-procedure TPPLWin.LogProgress(aID: ui8; aTick: ui32; aState: TExtAIThreadStates);
+procedure TPPLWin.LogProgress(aHandIndex: TKMHandIndex; aTick: ui32; aState: TExtAIThreadState);
 begin
   case aState of
-    tsInit: fedAI[aID].Text := 'Init';
-    tsRun: fedAI[aID].Text := 'Run';
-    tsPause: fedAI[aID].Text := 'Pause';
-    tsTerminate: fedAI[aID].Text := 'Terminate';
+    tsInit:       fedAI[aHandIndex].Text := 'Init';
+    tsRun:        fedAI[aHandIndex].Text := 'Run';
+    tsPause:      fedAI[aHandIndex].Text := 'Pause';
+    tsTerminate:  fedAI[aHandIndex].Text := 'Terminate';
   end;
-  fpbAI[aID].Value := aTick / fGame.MaxTick;
+  fpbAI[aHandIndex].Value := aTick / fGame.MaxTick;
 end;
 
 procedure TPPLWin.Overview;
@@ -371,20 +374,20 @@ type
 var
   K: si32;
   str: wStr;
-  Actions, Events, Hands, Threads: array [1..MAX_HANDS_COUNT] of TOverview;
+  Actions, Events, Hands, Threads: array [0..MAX_HANDS_COUNT-1] of TOverview;
   Stats: TOverview;
 begin
   for K := lbLog.Count-1 downto 0 do
   begin
     str := lbLog.Items[K];
-    if      AnsiPos('TExtAIThread-Create: ID =', str) > 0 then        Threads[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIThread-Destroy: ID =', str) > 0 then       Threads[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('TExtAIQueueActions-Create: ID =', str) > 0 then  Actions[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIQueueActions-Destroy: ID =', str) > 0 then Actions[ StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('TExtAIQueueEvents-Create: ID =', str) > 0 then   Events[  StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIQueueEvents-Destroy: ID =', str) > 0 then  Events[  StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('THandAIExt-Create: ID =', str) > 0 then          Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('THandAIExt-Destroy: ID =', str) > 0 then         Hands[   StrToInt( AnsiMidStr(str,Length(str)-1,2) ) ].Termin := True
+    if      AnsiPos('TExtAIThread-Create: ID =', str) > 0 then        Threads[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIThread-Destroy: ID =', str) > 0 then       Threads[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueActions-Create: ID =', str) > 0 then  Actions[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIQueueActions-Destroy: ID =', str) > 0 then Actions[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueEvents-Create: ID =', str) > 0 then   Events[  StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIQueueEvents-Destroy: ID =', str) > 0 then  Events[  StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('THandAIExt-Create: ID =', str) > 0 then          Hands[   StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('THandAIExt-Destroy: ID =', str) > 0 then         Hands[   StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
     else if AnsiPos('TExtAIQueueStates-Create', str) > 0 then         Stats.Init := True
     else if AnsiPos('TExtAIQueueStates-Destroy', str) > 0 then        Stats.Termin := True;
   end;

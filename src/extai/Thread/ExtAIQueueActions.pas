@@ -23,7 +23,7 @@ type
   // Queue of actions for multithreading
   TExtAIQueueActions = class(TInterfacedObject, IActions)
   private
-    fID: ui8;
+    fHandIndex: TKMHandIndex;
     fStartAct: pAct;
     fEndAct: pAct;
     fLiveActionsCnt: si32;
@@ -39,7 +39,7 @@ type
   public
     OnLog: TLogEvent;
     Actions: IActions;
-    constructor Create(aID: ui8; aLog: TLogEvent); reintroduce;
+    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
     function CallAction(): b;
@@ -49,17 +49,17 @@ implementation
 
 
 { TExtAIQueueActions }
-constructor TExtAIQueueActions.Create(aID: ui8; aLog: TLogEvent);
+constructor TExtAIQueueActions.Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
 begin
   inherited Create();
-  fID := aID;
+  fHandIndex := aHandIndex;
   OnLog := aLog;
   fLiveActionsCnt := 0;
   New(fStartAct);  // 1 Action is empty and divides start and end pointer
   Inc(fLiveActionsCnt);
   fStartAct.Next := nil;
   fEndAct := fStartAct;
-  Log('  TExtAIQueueActions-Create: ID = '+IntToStr(fID));
+  Log('  TExtAIQueueActions-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 destructor TExtAIQueueActions.Destroy();
@@ -67,7 +67,7 @@ var
   ActType: TActType;
   ActPtr: Pointer;
 begin
-  Log('  TExtAIQueueActions-Destroy: ID = '+IntToStr(fID));
+  Log('  TExtAIQueueActions-Destroy: HandIndex = ' + IntToStr(fHandIndex));
   while GetAction(ActType, ActPtr) do
   begin
     case ActType of
@@ -81,7 +81,7 @@ begin
     Dec(fLiveActionsCnt);
   end;
   if (fLiveActionsCnt <> 0) then
-    Log('  TExtAIQueueActions-Destroy: Actions termination error, ID = ' + IntToStr(fID) + '; cnt = '+IntToStr(fLiveActionsCnt));
+    Log('  TExtAIQueueActions-Destroy: Actions termination error, HandIndex = ' + IntToStr(fHandIndex) + '; cnt = '+IntToStr(fLiveActionsCnt));
 
   inherited;
 end;
