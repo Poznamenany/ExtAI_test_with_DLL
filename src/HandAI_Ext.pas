@@ -14,8 +14,8 @@ type
     fEvents: IEvents;
 
     // IActions
-    procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
-    procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
+    function GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b; StdCall;
+    function GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b; StdCall;
     procedure LogDLL(apLog: pwStr; aLen: ui32); StdCall;
 
     // Log
@@ -62,10 +62,12 @@ end;
 
 
 // IActions - definition of functions in the interface
-procedure THandAI_Ext.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32);
+function THandAI_Ext.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b;
 begin
   if LOG_VERBOSE then
     Log(Format('THandAIExt(%d).GroupOrderAttackUnit [%d, %d]', [fHandIndex, aGroupID, aUnitID]));
+
+  Result := (aGroupID = 11) and (aUnitID = 22);
 
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
@@ -74,10 +76,12 @@ begin
 end;
 
 
-procedure THandAI_Ext.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16);
+function THandAI_Ext.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b;
 begin
   if LOG_VERBOSE then
     Log(Format('THandAIExt(%d).GroupOrderWalk [%d, %d, %d, %d]', [fHandIndex, aGroupID, aX, aY, aDirection]));
+
+  Result := (aGroupID = 1) and (aX = 50) and (aY = 50) and (aDirection = 1);
 
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct

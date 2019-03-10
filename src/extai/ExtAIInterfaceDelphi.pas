@@ -9,8 +9,8 @@ type
   // ExtAI -> Game, no feedback?
   IActions = interface(IInterface)
     ['{66FDB631-E3DC-4B8E-A745-4337C487ED69}']
-    procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
-    procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
+    function GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b; StdCall;
+    function GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b; StdCall;
     procedure LogDLL(apLog: pwStr; aLen: ui32); StdCall;
   end;
 

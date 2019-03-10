@@ -56,11 +56,12 @@ var
   feedback: ui8;
   Len, K: si32;
   pFirstElem: pui32;
+  res: b;
 begin
   //Log('    TExtAI-OnTick: ID = ' + IntToStr(ID));
   // Test actions
-  Actions.GroupOrderAttackUnit(11,22);
-  Actions.GroupOrderWalk(1,50,50,1);
+  res := Actions.GroupOrderAttackUnit(11,22);
+  res := Actions.GroupOrderWalk(1,50,50,1);
   // Test states
   feedback := States.State1(11);
   if (feedback <> 11) then
