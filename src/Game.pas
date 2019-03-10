@@ -8,15 +8,6 @@ uses
 const
   SLEEP_BEFORE_RUN = 50;
   SLEEP_EVERY_TICK = 1;
-  MAP_LENGTH = 255*255*10;
-
-//var
-  // Global variable with informations (informations which ExtAI needs during the simulation)
-  //gMainData: record
-  //  Tick: ui32;
-  //  Map: ui32Arr;
-  //  //...
-  //end;
 
 type
   TSimulationState = (ssCreated, ssInit, ssInProgress, ssPaused, ssTerminated);
@@ -124,14 +115,12 @@ begin
   Log('TGame-Execute: Start');
   fSimState := ssInProgress;
   fTick := 0;
-  //gMainData.Tick := Tick;
-  //SetLength(gMainData.Map,MAP_LENGTH);
+
   while (fSimState <> ssTerminated) and (Tick < fMaxTick) do
   begin
     if (fSimState = ssInProgress) then
     begin
       Inc(fTick);
-      //gMainData.Tick := Tick;
 
       // Log status
       Synchronize(
@@ -141,9 +130,6 @@ begin
             fOnUpdateSimStatus;
         end);
 
-      // Update map
-      //for K := Low(gMainData.Map) to High(gMainData.Map) do
-      //  gMainData.Map[K] := K;
       // Do something else (update game logic)
       Sleep(SLEEP_EVERY_TICK);
 
