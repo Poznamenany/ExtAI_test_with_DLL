@@ -16,7 +16,6 @@ type
   // Check presence of all valid DLLs (in future it can also check CRC, save info etc.)
   TExtAIDLLs = class
   private
-    fDLLPath: string;
     fDLLs: TList<TDLLMainCfg>;
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
@@ -24,13 +23,13 @@ type
     function GetCount: Integer;
     procedure AddDLL(aPath: wStr);
   public
-    constructor Create(aDLLPath: string; aLog: TLogEvent); reintroduce;
-    destructor Destroy(); override;
+    constructor Create(aDLLPaths: TArray<string>; aLog: TLogEvent); reintroduce;
+    destructor Destroy; override;
 
     property Count: Integer read GetCount;
     property DLL[aIndex: Integer]: TDLLMainCfg read GetDLL; default;
 
-    procedure RefreshList;
+    procedure RefreshList(aPaths: TArray<string>);
     function DLLExists(const aDLLPath: wStr): Boolean;
   end;
 
@@ -38,19 +37,18 @@ implementation
 
 
 { TExtAIDLLs }
-constructor TExtAIDLLs.Create(aDLLPath: string; aLog: TLogEvent);
+constructor TExtAIDLLs.Create(aDLLPaths: TArray<string>; aLog: TLogEvent);
 begin
   inherited Create();
 
-  fDLLPath := aDLLPath;
   fOnLog := aLog;
 
   fDLLs := TList<TDLLMainCfg>.Create;
-  RefreshList; // Find available DLL (public method for possibility reload DLLs)
+  RefreshList(aDLLPaths); // Find available DLL (public method for possibility reload DLLs)
 end;
 
 
-destructor TExtAIDLLs.Destroy();
+destructor TExtAIDLLs.Destroy;
 begin
   fDLLs.Free;
 
@@ -72,24 +70,24 @@ end;
 
 procedure TExtAIDLLs.AddDLL(aPath: wStr);
 var
-  Info: TDLLMainCfg;
+  dllInfo: TDLLMainCfg;
   CommDLL: TExtAICommDLL;
 begin
+  // Init DLL and ask it about its details
   CommDLL := TExtAICommDLL.Create(fOnLog);
   try
-    if (CommDLL.LinkDLL(aPath)) then
+    if CommDLL.LinkDLL(aPath) then
     begin
-      Info := default(TDLLMainCfg);
-      with Info do
-      begin
-        Author := CommDLL.Config.Author;
-        Description := CommDLL.Config.Description;
-        ExtAIName := CommDLL.Config.ExtAIName;
-        Version := CommDLL.Config.Version;
-        Path := aPath;
-      end;
+      // Copy data
+      dllInfo := default(TDLLMainCfg);
+      dllInfo.Author := CommDLL.Config.Author;
+      dllInfo.Description := CommDLL.Config.Description;
+      dllInfo.ExtAIName := CommDLL.Config.ExtAIName;
+      dllInfo.Version := CommDLL.Config.Version;
+      dllInfo.Path := aPath;
       // Check CRC?
-      fDLLs.Add(Info);
+
+      fDLLs.Add(dllInfo);
     end;
   finally
     CommDLL.Free;
@@ -97,14 +95,16 @@ begin
 end;
 
 
-procedure TExtAIDLLs.RefreshList;
+procedure TExtAIDLLs.RefreshList(aPaths: TArray<string>);
 var
+  I: Integer;
   subFolder, fileDLL: string;
 begin
   fDLLs.Clear;
-  if not DirectoryExists(fDLLPath) then Exit;
 
-  for subFolder in TDirectory.GetDirectories(fDLLPath) do
+  for I := Low(aPaths) to High(aPaths) do
+  if DirectoryExists(aPaths[I]) then
+  for subFolder in TDirectory.GetDirectories(aPaths[I]) do
     for fileDLL in TDirectory.GetFiles(subFolder) do
       if ExtractFileExt(fileDLL) = '.dll' then
       begin

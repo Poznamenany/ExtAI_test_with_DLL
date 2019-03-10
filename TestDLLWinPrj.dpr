@@ -27,6 +27,9 @@ uses
 
 {$R *.res}
 
+var
+  PPLWin: TPPLWin;
+
 begin
   Application.Initialize;
   Application.CreateForm(TPPLWin, PPLWin);

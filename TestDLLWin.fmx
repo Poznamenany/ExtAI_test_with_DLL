@@ -17,7 +17,7 @@ object PPLWin: TPPLWin
     TabOrder = 2
     object listBoxDLLs: TListBox
       Position.X = 8.000000000000000000
-      Position.Y = 40.000000000000000000
+      Position.Y = 96.000000000000000000
       Size.Width = 321.000000000000000000
       Size.Height = 57.000000000000000000
       Size.PlatformDefault = False
@@ -31,7 +31,7 @@ object PPLWin: TPPLWin
     end
     object Label3: TLabel
       Position.X = 8.000000000000000000
-      Position.Y = 24.000000000000000000
+      Position.Y = 80.000000000000000000
       Size.Width = 305.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
@@ -39,13 +39,32 @@ object PPLWin: TPPLWin
     end
     object btdRefreshDLLs: TButton
       Position.X = 336.000000000000000000
-      Position.Y = 40.000000000000000000
+      Position.Y = 96.000000000000000000
       Size.Width = 81.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       Text = 'Refresh List'
       OnClick = btdRefreshDLLsClick
+    end
+    object edDLLPath1: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 12
+      Text = 'ExtAI'
+      Position.X = 8.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 321.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edDLLPath2: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 11
+      Position.X = 8.000000000000000000
+      Position.Y = 48.000000000000000000
+      Size.Width = 321.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
     end
   end
   object gbLobby: TGroupBox

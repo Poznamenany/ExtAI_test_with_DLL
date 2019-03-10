@@ -20,7 +20,7 @@ var
 
 type
   TSimulationState = (ssCreated, ssInit, ssInProgress, ssPaused, ssTerminated);
-  TUpdateSimStatEvent = procedure () of object;
+  TUpdateSimStatEvent = procedure of object;
 
   // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
   TGame = class(TThread)
@@ -41,7 +41,7 @@ type
   protected
     procedure Execute; override;
   public
-    constructor Create(aInitLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent); reintroduce;
+    constructor Create(aOnLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent); reintroduce;
     destructor Destroy; override;
 
     // Game properties
@@ -61,7 +61,7 @@ implementation
 
 
 { TGame }
-constructor TGame.Create(aInitLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent);
+constructor TGame.Create(aOnLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -70,15 +70,17 @@ begin
   fTick := 0;
   fMaxTick := 0;
   fSimState := ssCreated;
-  fOnLog := aInitLog;
+  fOnLog := aOnLog;
   fOnUpdateSimStatus := aOnUpdateSimStatus;
-  Log('TGame-Create');
-  fExtAIMaster := TExtAIMaster.Create('ExtAI\', Log);
+
+  fExtAIMaster := TExtAIMaster.Create(['ExtAI\'], Log);
   fHands := TList<THand>.Create;
+
+  Log('TGame-Create');
 end;
 
 
-destructor TGame.Destroy();
+destructor TGame.Destroy;
 begin
   Log('TGame-Destroy');
 

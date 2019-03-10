@@ -78,6 +78,8 @@ type
     pbAI3: TProgressBar;
     pbAI2: TProgressBar;
     pbAI1: TProgressBar;
+    edDLLPath1: TEdit;
+    edDLLPath2: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var aAction: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -109,8 +111,6 @@ type
     procedure Overview;
   end;
 
-var
-  PPLWin: TPPLWin;
 
 implementation
 
@@ -120,8 +120,13 @@ implementation
 procedure TPPLWin.RefreshListDLL;
 var
   K: Integer;
+  a: TArray<string>;
 begin
-  fGame.ExtAIMaster.DLLs.RefreshList;
+  SetLength(a, 2);
+  a[0] := edDLLPath1.Text;
+  a[1] := edDLLPath2.Text;
+
+  fGame.ExtAIMaster.DLLs.RefreshList(a);
 
   listBoxDLLs.Items.Clear;
   for K := 0 to fGame.ExtAIMaster.DLLs.Count - 1 do

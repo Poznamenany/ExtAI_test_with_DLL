@@ -37,7 +37,7 @@ type
     property Config: TDLLMainCfg read fDLLConfig;
 
     constructor Create(aLog: TLogEvent); reintroduce;
-    destructor Destroy(); override;
+    destructor Destroy; override;
 
     function LinkDLL(aDLLPath: wStr): b;
     function CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
@@ -49,7 +49,8 @@ implementation
 { TExtAICommDLL }
 constructor TExtAICommDLL.Create(aLog: TLogEvent);
 begin
-  inherited Create();
+  inherited Create;
+
   fOnLog := aLog;
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   fExtAIThread := TList.Create();
@@ -57,7 +58,8 @@ begin
   Log('  TExtAICommDLL-Create');
 end;
 
-destructor TExtAICommDLL.Destroy();
+
+destructor TExtAICommDLL.Destroy;
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   K: si32;
@@ -85,6 +87,7 @@ begin
   {$ENDIF}
 
   FreeLibrary(fLibHandle);
+
   inherited;
 end;
 

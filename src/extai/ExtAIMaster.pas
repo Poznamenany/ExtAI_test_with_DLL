@@ -2,7 +2,7 @@ unit ExtAIMaster;
 {$I KM_CompilerDirectives.inc}
 interface
 uses
-  Classes, Windows, System.SysUtils,
+  Classes, Windows, System.SysUtils, Generics.Collections,
   HandAI_Ext, ExtAIQueueStates, ExtAIDLLs, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
 
 type
@@ -10,15 +10,15 @@ type
   // Manages DLLs and States (for now)
   TExtAIMaster = class
   private
-    fCommDLL: TList;
     fDLLs: TExtAIDLLs;
+    fDLLInstances: TList<TExtAICommDLL>;
     fQueueStates: TExtAIQueueStates;
 
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
     function IndexOf(aDLLPath: wStr): Integer;
   public
-    constructor Create(aDLLPath: string; aLog: TLogEvent); reintroduce;
+    constructor Create(aDLLPath: TArray<string>; aLog: TLogEvent); reintroduce;
     destructor Destroy; override;
     procedure Release;
 
@@ -32,13 +32,13 @@ type
 implementation
 
 { TExtAIMaster }
-constructor TExtAIMaster.Create(aDLLPath: string; aLog: TLogEvent);
+constructor TExtAIMaster.Create(aDLLPath: TArray<string>; aLog: TLogEvent);
 begin
   inherited Create;
 
   fOnLog := aLog;
 
-  fCommDLL := TList.Create;
+  fDLLInstances := TList<TExtAICommDLL>.Create;
   fDLLs := TExtAIDLLs.Create(aDLLPath, aLog);
   fQueueStates := nil; // States are interface and will be freed automatically
 end;
@@ -46,7 +46,7 @@ end;
 destructor TExtAIMaster.Destroy;
 begin
   Release; // Make sure that DLLs are released
-  fCommDLL.Free;
+  fDLLInstances.Free;
   fDLLs.Free;
 
   inherited;
@@ -57,9 +57,9 @@ procedure TExtAIMaster.Release;
 var
   K: si32;
 begin
-  for K := 0 to fCommDLL.Count-1 do
-    TExtAICommDLL(fCommDLL[K]).Free;
-  fCommDLL.Clear;
+  for K := 0 to fDLLInstances.Count-1 do
+    fDLLInstances[K].Free;
+  fDLLInstances.Clear;
 end;
 
 
@@ -77,13 +77,13 @@ begin
 
   // Check if we already have this DLL loaded
   Idx := IndexOf(aDLLPath);
-  if (Idx <> -1) then
-    DLL := TExtAICommDLL(fCommDLL[Idx])
+  if Idx <> -1 then
+    DLL := TExtAICommDLL(fDLLInstances[Idx])
   else
   begin // if not, create the DLL
     DLL := TExtAICommDLL.Create(fOnLog);
     DLL.LinkDLL(aDLLPath);
-    fCommDLL.Add( DLL );
+    fDLLInstances.Add(DLL);
   end;
   // Create States if does not exist
   if (fQueueStates = nil) then
@@ -98,8 +98,8 @@ var
   K: Integer;
 begin
   Result := -1;
-  for K := 0 to fCommDLL.Count-1 do
-    if (fCommDLL[K] <> nil) and (AnsiCompareStr(TExtAICommDLL(fCommDLL[K]).Config.Path, aDLLPath) = 0) then
+  for K := 0 to fDLLInstances.Count-1 do
+    if (fDLLInstances[K] <> nil) and (AnsiCompareStr(fDLLInstances[K].Config.Path, aDLLPath) = 0) then
       Exit(K);
 end;
 
