@@ -1,25 +1,28 @@
 unit ExtAIQueueStates;
+{$I KM_CompilerDirectives.inc}
 interface
 uses
-  Windows, System.SysUtils,
-  ExtAIStates, ExtAIUtils, ExtAIInterfaceDelphi, ExtAIDataTypes;
+  Windows, System.SysUtils, Math,
+  {ExtAIStates,} ExtAIUtils, ExtAIInterfaceDelphi, ExtAIDataTypes;
 
 type
   // Queue of states for multithreading
   TExtAIQueueStates = class(TInterfacedObject, IStates)
   private
-    fStartStates: TExtAIStates;
-    fEndStates: TExtAIStates;
-    fLiveStatesCnt: si32;
-    fLastPointer: PTExtAIStates;
-    fClassLock: array [0..12] of TExtAIStates;
+    //fStartStates: TExtAIStates;
+    //fEndStates: TExtAIStates;
+    //fLiveStatesCnt: si32;
+    //fLastPointer: PTExtAIStates;
+    //fClassLock: array [0..12] of TExtAIStates;
     fOnLog: TLogEvent;
     // Queue
-    procedure FreeUnused(aIgnoreLock: Boolean);
+    //procedure FreeUnused(aIgnoreLock: Boolean);
     // IStates
     function State1(aID: ui32): ui8; StdCall;
     function UnitAt(aX: ui16; aY: ui16): ui32; StdCall;
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
+    procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
+    procedure TerrainPassability(var aPassability: bArr); StdCall;
     // Log
     procedure Log(aLog: wStr);
   public
@@ -27,7 +30,7 @@ type
     destructor Destroy(); override;
 
     // Extract states
-    procedure ExtractStates();
+    //procedure ExtractStates();
   end;
 
 implementation
@@ -35,33 +38,33 @@ implementation
 
 { TExtAIQueueStates }
 constructor TExtAIQueueStates.Create(aLog: TLogEvent);
-var
-  K: si32;
+//var
+//  K: Integer;
 begin
   inherited Create();
   fOnLog := aLog;
-  fLiveStatesCnt := 0;
-  fStartStates := TExtAIStates.Create(fOnLog);
-  Inc(fLiveStatesCnt);
-  fEndStates := fStartStates;
-  for K := Low(fClassLock) to High(fClassLock) do
-    fClassLock[K] := nil;
+  //fLiveStatesCnt := 0;
+  //fStartStates := TExtAIStates.Create(fOnLog);
+  //Inc(fLiveStatesCnt);
+  //fEndStates := fStartStates;
+  //for K := Low(fClassLock) to High(fClassLock) do
+  //  fClassLock[K] := nil;
   Log('  TExtAIQueueStates-Create');
 end;
 
 destructor TExtAIQueueStates.Destroy();
 begin
   Log('  TExtAIQueueStates-Destroy');
-  FreeUnused(True);
-  fEndStates.Free;
-  Dec(fLiveStatesCnt);
-  if (fLiveStatesCnt <> 0) then
-    Log('  TExtAIQueueStates-Destroy: States termination error, cnt = ' + IntToStr(fLiveStatesCnt));
+  //FreeUnused(True);
+  //fEndStates.Free;
+  //Dec(fLiveStatesCnt);
+  //if (fLiveStatesCnt <> 0) then
+  //  Log('  TExtAIQueueStates-Destroy: States termination error, cnt = ' + IntToStr(fLiveStatesCnt));
   inherited;
 end;
 
 
-procedure TExtAIQueueStates.FreeUnused(aIgnoreLock: Boolean);
+{procedure TExtAIQueueStates.FreeUnused(aIgnoreLock: Boolean);
 var
   tmp1, tmp2, tmp3: TExtAIStates;
 begin
@@ -98,7 +101,7 @@ begin
   fEndStates := fEndStates.Next;
   AtomicExchange(fLastPointer, @fEndStates);
   FreeUnused(False);
-end;
+end;}
 
 
 // States
@@ -110,8 +113,25 @@ begin
     Log('  TExtAIQueueStates-State1: Wrong ID');
   // Get State1
   Result := 0; // Some default case
-  if (fEndStates <> nil) then
-    Result := fLastPointer^.State1(aID);
+  //if (fEndStates <> nil) then
+  //  Result := fLastPointer^.State1(aID);
+end;
+
+
+procedure TExtAIQueueStates.TerrainPassability(var aPassability: bArr);
+var
+  I, K: Integer;
+begin
+  for I := 0 to 15 do
+    for K := 0 to 15 do
+      aPassability[I * 16 + K] := InRange(I, 1, 14) and InRange(K, 1, 14);
+end;
+
+
+procedure TExtAIQueueStates.TerrainSize(var aX: ui16; var aY: ui16);
+begin
+  aX := 16;
+  aY := 16;
 end;
 
 
@@ -127,8 +147,8 @@ begin
   //...
   // Get State1
   Result := False;
-  if (fLastPointer <> nil) then
-    Result := fLastPointer^.MapTerrain(fClassLock[aID], aFirstElem, aLength);
+//  if (fLastPointer <> nil) then
+//    Result := fLastPointer^.MapTerrain(fClassLock[aID], aFirstElem, aLength);
 end;
 
 

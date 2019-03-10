@@ -119,7 +119,7 @@ end;
 
 procedure TGame.Execute;
 var
-  K: si32;
+  K: Integer;
 begin
   Log('TGame-Execute: Start');
   fSimState := ssInProgress;
@@ -148,7 +148,7 @@ begin
       Sleep(SLEEP_EVERY_TICK);
 
       // Create new game states (maybe each x. tick)
-      fExtAIMaster.QueueStates.ExtractStates();
+      //fExtAIMaster.QueueStates.ExtractStates();
       // Call ExtAI (Hands)
       for K := 0 to fHands.Count-1 do
         if (fHands[K] <> nil) then

@@ -104,7 +104,6 @@
         <DCCReference Include="src\extai\ExtAIInterfaceDelphi.pas"/>
         <DCCReference Include="src\extai\ExtAIDLLs.pas"/>
         <DCCReference Include="src\extai\ExtAIMaster.pas"/>
-        <DCCReference Include="src\extai\ExtAIStates.pas"/>
         <DCCReference Include="src\extai\Thread\ExtAIQueueActions.pas"/>
         <DCCReference Include="src\extai\Thread\ExtAIQueueStates.pas"/>
         <DCCReference Include="src\extai\ExtAIUtils.pas"/>

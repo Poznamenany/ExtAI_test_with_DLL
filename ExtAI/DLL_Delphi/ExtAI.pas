@@ -57,6 +57,8 @@ var
   Len, K: si32;
   pFirstElem: pui32;
   res: b;
+  tx, ty: ui16;
+  tp: bArr;
 begin
   //Log('    TExtAI-OnTick: ID = ' + IntToStr(ID));
   // Test actions
@@ -72,6 +74,13 @@ begin
   if (feedback <> 11) then
     Log('    TExtAI-OnTick: wrong state feedback = ' + IntToStr(feedback));
 
+  States.TerrainSize(tx, ty);
+  Log(Format('    TExtAI-OnTick: Terrain is %dx%d', [tx, ty]));
+
+  SetLength(tp, tx*ty);
+  States.TerrainPassability(tp);
+  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(tp[24])]));
+  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(tp[12])]));
 
   if States.MapTerrain(ID,pFirstElem,Len) then
   begin

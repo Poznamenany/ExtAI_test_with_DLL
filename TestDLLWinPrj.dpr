@@ -13,7 +13,7 @@ uses
   ExtAIInterfaceDelphi in 'src\extai\ExtAIInterfaceDelphi.pas',
   ExtAIDLLs in 'src\extai\ExtAIDLLs.pas',
   ExtAIMaster in 'src\extai\ExtAIMaster.pas',
-  ExtAIStates in 'src\extai\ExtAIStates.pas',
+  //ExtAIStates in 'src\extai\ExtAIStates.pas',
 
   // Thread
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}

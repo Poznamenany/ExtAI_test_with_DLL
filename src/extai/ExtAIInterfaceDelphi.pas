@@ -31,6 +31,9 @@ type
     function State1(aID: ui32): ui8; StdCall;
     function UnitAt(aX: ui16; aY: ui16): ui32; StdCall;
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
+    procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
+    // DLL should allocate TerrainSize.X * TerrainSize.Y elements
+    procedure TerrainPassability(var aPassability: bArr); StdCall;
   end;
 
 
