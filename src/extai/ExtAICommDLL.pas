@@ -160,7 +160,7 @@ begin
         QueueEvents := TExtAIQueueEvents.Create(aExtAIID, ThreadLog);
         QueueEvents.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
         QueueEvents.QueueActions := QueueActions; // Mark actions so they are called OnTick event from main thread
-        Result.Events := QueueEvents; // = add reference to TExtAIQueueEvents
+        Result.AssignEvents(QueueEvents); // = add reference to TExtAIQueueEvents
         Thread.Init(QueueEvents);
         // Create ExtAI in DLL
         fOnInitNewExtAI( aExtAIID, QueueActions, aStates ); // = add reference to TExtAIQueueActions and States
