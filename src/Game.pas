@@ -3,7 +3,7 @@ interface
 uses
   Windows, Classes, Generics.Collections,
   System.Threading, System.Diagnostics, System.SysUtils, Hand,
-  ExtAIMain, ExtAIListDLL, HandAI_Ext, ExtAIDataTypes, ExtAIUtils;
+  ExtAIMaster, ExtAIListDLL, HandAI_Ext, ExtAIDataTypes, ExtAIUtils;
 
 const
   SLEEP_BEFORE_RUN = 50;
@@ -26,7 +26,7 @@ type
   TGame = class(TThread)
   private
     // Game assets
-    fExtAI: TExtAIMain; // ExtAI DLL entry point
+    fExtAIMaster: TExtAIMaster;
     fHands: TList<THand>; // ExtAI hand entry point
 
     // Game properties (kind of testbed)
@@ -47,7 +47,7 @@ type
     // Game properties
     property Tick: Cardinal read fTick;
     property MaxTick: Cardinal read fMaxTick;
-    function GetDLLs(aPaths: wStrArr): TListDLL;
+    property ExtAIMaster: TExtAIMaster read fExtAIMaster;
 
     // Game controls
     property SimulationState: TSimulationState read fSimState;
@@ -73,23 +73,21 @@ begin
   fOnLog := aInitLog;
   fOnUpdateSimStatus := aOnUpdateSimStatus;
   Log('TGame-Create');
-  fExtAI := TExtAIMain.Create(Log);
+  fExtAIMaster := TExtAIMaster.Create('ExtAI\', Log);
   fHands := TList<THand>.Create;
 end;
 
+
 destructor TGame.Destroy();
 begin
-  FreeAndNil(fExtAI);
-  FreeAndNil(fHands); // Items of list are Interfaces and will be freed automatically
   Log('TGame-Destroy');
+
+  FreeAndNil(fExtAIMaster);
+  FreeAndNil(fHands); // Items of list are Interfaces and will be freed automatically
+
   inherited;
 end;
 
-function TGame.GetDLLs(aPaths: wStrArr): TListDLL;
-begin
-  fExtAI.ListDLL.SetDLLFolderPaths(aPaths);
-  Result := fExtAI.ListDLL.List.Copy();
-end;
 
 procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
 var
@@ -104,7 +102,7 @@ begin
       //      ID is decided by Game so you can easily change it in the KP
     begin
       fHands.Add(THand.Create(K, fOnLog));
-      fHands.Last.SetAIType(fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
+      fHands.Last.SetAIType(fExtAIMaster.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
     end;
 end;
 
@@ -117,7 +115,7 @@ begin
   Start;
 end;
 
-procedure TGame.Execute();
+procedure TGame.Execute;
 var
   K: si32;
 begin
@@ -126,7 +124,7 @@ begin
   fTick := 0;
   gMainData.Tick := Tick;
   SetLength(gMainData.Map,MAP_LENGTH);
-  while (fSimState <> ssTerminated) AND (Tick < fMaxTick) do
+  while (fSimState <> ssTerminated) and (Tick < fMaxTick) do
   begin
     if (fSimState = ssInProgress) then
     begin
@@ -138,8 +136,9 @@ begin
         gMainData.Map[K] := K;
       // Do something else (update game logic)
       Sleep(SLEEP_EVERY_TICK);
+
       // Create new game states (maybe each x. tick)
-      fExtAI.QueueStates.ExtractStates();
+      fExtAIMaster.QueueStates.ExtractStates();
       // Call ExtAI (Hands)
       for K := 0 to fHands.Count-1 do
         if (fHands[K] <> nil) then

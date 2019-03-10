@@ -15,50 +15,13 @@ object PPLWin: TPPLWin
     Size.PlatformDefault = False
     Text = 'DLL'
     TabOrder = 2
-    object edFolderDLL1: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 0
-      Position.X = 8.000000000000000000
-      Position.Y = 32.000000000000000000
-      Size.Width = 321.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object btnSelectFolder1: TButton
-      Position.X = 336.000000000000000000
-      Position.Y = 32.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 3
-      Text = 'Select folder'
-      OnClick = btnSelectFolder1Click
-    end
-    object Label1: TLabel
-      Position.X = 8.000000000000000000
-      Position.Y = 16.000000000000000000
-      Size.Width = 305.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-      Text = 'Folders (second folder only for debug)'
-    end
-    object btnSelectFolder2: TButton
-      Position.X = 336.000000000000000000
-      Position.Y = 56.000000000000000000
-      Size.Width = 81.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 2
-      Text = 'Select folder'
-      OnClick = btnSelectFolder2Click
-    end
     object listBoxDLLs: TListBox
       Position.X = 8.000000000000000000
-      Position.Y = 96.000000000000000000
+      Position.Y = 40.000000000000000000
       Size.Width = 321.000000000000000000
       Size.Height = 57.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 6
+      TabOrder = 3
       DisableFocusEffect = True
       DefaultItemStyles.ItemStyle = ''
       DefaultItemStyles.GroupHeaderStyle = ''
@@ -68,7 +31,7 @@ object PPLWin: TPPLWin
     end
     object Label3: TLabel
       Position.X = 8.000000000000000000
-      Position.Y = 80.000000000000000000
+      Position.Y = 24.000000000000000000
       Size.Width = 305.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
@@ -76,22 +39,13 @@ object PPLWin: TPPLWin
     end
     object btdRefreshDLLs: TButton
       Position.X = 336.000000000000000000
-      Position.Y = 96.000000000000000000
+      Position.Y = 40.000000000000000000
       Size.Width = 81.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 1
+      TabOrder = 0
       Text = 'Refresh List'
       OnClick = btdRefreshDLLsClick
-    end
-    object edFolderDLL2: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 7
-      Position.X = 8.000000000000000000
-      Position.Y = 56.000000000000000000
-      Size.Width = 321.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
     end
   end
   object gbLobby: TGroupBox

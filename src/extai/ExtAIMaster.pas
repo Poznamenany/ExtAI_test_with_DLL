@@ -1,4 +1,4 @@
-unit ExtAIMain;
+unit ExtAIMaster;
 {$I KM_CompilerDirectives.inc}
 interface
 uses
@@ -6,23 +6,24 @@ uses
   HandAI_Ext, ExtAIQueueStates, ExtAIListDLL, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
 
 type
-  // Main ExtAI class (manage DLLs and States (for now))
-  TExtAIMain = class
+  // Master of ExtAIs
+  // Manages DLLs and States (for now)
+  TExtAIMaster = class
   private
     fCommDLL: TList;
-    fListDLL: TExtAIListDLL;
+    fDLLs: TExtAIDLLs;
     fQueueStates: TExtAIQueueStates;
 
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
-    function IndexOf(aDLLPath: wStr): si32;
+    function IndexOf(aDLLPath: wStr): Integer;
   public
-    property ListDLL: TExtAIListDLL read fListDLL;
-    property QueueStates: TExtAIQueueStates read fQueueStates;
-
-    constructor Create(aLog: TLogEvent); reintroduce;
+    constructor Create(aDLLPath: string; aLog: TLogEvent); reintroduce;
     destructor Destroy; override;
     procedure Release;
+
+    property DLLs: TExtAIDLLs read fDLLs;
+    property QueueStates: TExtAIQueueStates read fQueueStates;
 
     function NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
@@ -30,26 +31,29 @@ type
 
 implementation
 
-{ TExtAIMain }
-constructor TExtAIMain.Create(aLog: TLogEvent);
+{ TExtAIMaster }
+constructor TExtAIMaster.Create(aDLLPath: string; aLog: TLogEvent);
 begin
   inherited Create;
+
   fOnLog := aLog;
+
   fCommDLL := TList.Create;
-  fListDLL := TExtAIListDLL.Create(aLog);
+  fDLLs := TExtAIDLLs.Create(aDLLPath, aLog);
   fQueueStates := nil; // States are interface and will be freed automatically
 end;
 
-destructor TExtAIMain.Destroy;
+destructor TExtAIMaster.Destroy;
 begin
   Release; // Make sure that DLLs are released
   fCommDLL.Free;
-  fListDLL.Free;
+  fDLLs.Free;
+
   inherited;
 end;
 
 
-procedure TExtAIMain.Release;
+procedure TExtAIMaster.Release;
 var
   K: si32;
 begin
@@ -59,7 +63,7 @@ begin
 end;
 
 
-function TExtAIMain.NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
+function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
   Idx: si32;
   DLL: TExtAICommDLL;
@@ -67,8 +71,8 @@ begin
   Result := nil;
 
   // Make sure that DLLs exist - DLL was already refreshed in GUI
-  //fListDLL.RefreshDLLs;
-  if NOT fListDLL.ContainDLL(aDLLPath) then
+  //fDLLs.RefreshDLLs;
+  if not fDLLs.DLLExists(aDLLPath) then
     Exit;
 
   // Check if we already have this DLL loaded
@@ -89,21 +93,18 @@ begin
 end;
 
 
-function TExtAIMain.IndexOf(aDLLPath: wStr): si32;
+function TExtAIMaster.IndexOf(aDLLPath: wStr): Integer;
 var
-  K: si32;
+  K: Integer;
 begin
   Result := -1;
   for K := 0 to fCommDLL.Count-1 do
-    if (fCommDLL[K] <> nil) AND (  AnsiCompareStr( TExtAICommDLL(fCommDLL[K]).Config.Path, aDLLPath ) = 0  ) then
-    begin
-      Result := K;
-      break;
-    end;
+    if (fCommDLL[K] <> nil) and (AnsiCompareStr(TExtAICommDLL(fCommDLL[K]).Config.Path, aDLLPath) = 0) then
+      Exit(K);
 end;
 
 
-procedure TExtAIMain.Log(aLog: wStr);
+procedure TExtAIMaster.Log(aLog: wStr);
 begin
   if Assigned(fOnLog) then
     fOnLog(aLog);

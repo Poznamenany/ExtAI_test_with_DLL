@@ -14,8 +14,6 @@ type
   TPPLWin = class(TForm)
     btnInitSim: TButton;
     btdRefreshDLLs: TButton;
-    btnSelectFolder1: TButton;
-    btnSelectFolder2: TButton;
     btnStartSim: TButton;
     btnTerminate: TButton;
     cbAI1: TComboBox;
@@ -31,13 +29,10 @@ type
     cbAI11: TComboBox;
     cbAI12: TComboBox;
     cbMultithread: TCheckBox;
-    edFolderDLL1: TEdit;
-    edFolderDLL2: TEdit;
     edTickCnt: TEdit;
     gbSetup: TGroupBox;
     gbLobby: TGroupBox;
     gbSimulation: TGroupBox;
-    Label1: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -86,8 +81,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var aAction: TCloseAction);
     procedure FormDestroy(Sender: TObject);
-    procedure btnSelectFolder1Click(Sender: TObject);
-    procedure btnSelectFolder2Click(Sender: TObject);
     procedure btdRefreshDLLsClick(Sender: TObject);
     procedure btnInitSimClick(Sender: TObject);
     procedure btnStartSimClick(Sender: TObject);
@@ -96,14 +89,11 @@ type
     procedure btnAutoFillClick(Sender: TObject);
   private
     fGame: TGame;
-    // DLL
-    fListDLL: TListDLL;
     // Lobby
     fcbAI: array[1..MAX_HANDS_COUNT] of TComboBox;
     fedAI: array[1..MAX_HANDS_COUNT] of TEdit;
     fpbAI: array[1..MAX_HANDS_COUNT] of TProgressBar;
     // DLL
-    procedure InitDLL;
     procedure RefreshListDLL;
     // Lobby
     procedure InitLobby;
@@ -127,50 +117,17 @@ implementation
 {$R *.fmx}
 
 
-// DLLs
-procedure TPPLWin.InitDLL;
-begin
-  edFolderDLL1.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI' );
-  edFolderDLL2.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI\DLL_Delphi');
-  RefreshListDLL;
-end;
-
 procedure TPPLWin.RefreshListDLL;
 var
-  Folders: wStrArr;
-  K: si32;
+  K: Integer;
 begin
-  SetLength(Folders,2);
-  Folders[0] := edFolderDLL1.Text;
-  Folders[1] := '';
-  if (CompareStr(Folders[0],edFolderDLL2.Text) <> 0) then // Do not load the same path 2x
-    Folders[1] := edFolderDLL2.Text;
-
-  fListDLL := fGame.GetDLLs(Folders);
+  fGame.ExtAIMaster.DLLs.RefreshList;
 
   listBoxDLLs.Items.Clear;
-  for K := 0 to fListDLL.Count-1 do
-    listBoxDLLs.Items.Add(ExtractRelativePath(ExtractFilePath(ParamStr(0)), fListDLL[K].Path));
+  for K := 0 to fGame.ExtAIMaster.DLLs.Count - 1 do
+    listBoxDLLs.Items.Add(ExtractRelativePath(ExtractFilePath(ParamStr(0)), fGame.ExtAIMaster.DLLs[K].Path));
 
   RefreshExtAIs;
-end;
-
-procedure TPPLWin.btnSelectFolder1Click(Sender: TObject);
-var
-  chosenDirectory: string;
-begin
-  if SelectDirectory('Select a directory with DLL', edFolderDLL1.Text, chosenDirectory) then
-    edFolderDLL1.Text := chosenDirectory;
-  RefreshListDLL;
-end;
-
-procedure TPPLWin.btnSelectFolder2Click(Sender: TObject);
-var
-  chosenDirectory: string;
-begin
-  if SelectDirectory('Select a directory with second DLL', edFolderDLL2.Text, chosenDirectory) then
-    edFolderDLL2.Text := chosenDirectory;
-  RefreshListDLL;
 end;
 
 procedure TPPLWin.btdRefreshDLLsClick(Sender: TObject);
@@ -221,10 +178,10 @@ begin
     fcbAI[K].Items.Clear;
     Idx := 0;
     fcbAI[K].Items.Add('Closed');
-    for L := 0 to fListDLL.Count-1 do
+    for L := 0 to fGame.ExtAIMaster.DLLs.Count-1 do
     begin
-      fcbAI[K].Items.Add(fListDLL[L].ExtAIName);
-      if (CompareStr(fListDLL[L].ExtAIName,SelectedName) = 0) then
+      fcbAI[K].Items.Add(fGame.ExtAIMaster.DLLs[L].ExtAIName);
+      if (CompareStr(fGame.ExtAIMaster.DLLs[L].ExtAIName, SelectedName) = 0) then
         Idx := L+1;
     end;
     fcbAI[K].ItemIndex := Idx;
@@ -262,11 +219,11 @@ begin
     if (fcbAI[K].ItemIndex > 0) then
     begin
       SelectedName := fcbAI[K].Items[ fcbAI[K].ItemIndex ];
-      for L := 0 to fListDLL.Count-1 do
-        if (CompareStr(fListDLL[L].ExtAIName,SelectedName) = 0) then
+      for L := 0 to fGame.ExtAIMaster.DLLs.Count-1 do
+        if CompareStr(fGame.ExtAIMaster.DLLs[L].ExtAIName,SelectedName) = 0 then
         begin
           Inc(cnt);
-          ExtAIs[K-1] := fListDLL[L].Path;
+          ExtAIs[K-1] := fGame.ExtAIMaster.DLLs[L].Path;
           break;
         end;
     end;
@@ -338,7 +295,7 @@ procedure TPPLWin.FormCreate(Sender: TObject);
 begin
   InitSimulation;
   InitLobby;
-  InitDLL;
+  RefreshListDLL;
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   cbMultithread.Enabled := True;
@@ -364,7 +321,6 @@ end;
 procedure TPPLWin.FormDestroy(Sender: TObject);
 begin
   fGame.Free;
-  fListDLL.Free;
 end;
 
 
