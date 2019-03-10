@@ -51,7 +51,7 @@ type
 
 implementation
 uses
-  GameThread;
+  Game;
 
 
 { TExtAIStates }

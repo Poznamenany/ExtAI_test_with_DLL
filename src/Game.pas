@@ -1,8 +1,8 @@
-unit GameThread;
+unit Game;
 interface
 uses
   Windows, Classes, Generics.Collections,
-  System.Threading, System.Diagnostics, System.SysUtils, GameHand,
+  System.Threading, System.Diagnostics, System.SysUtils, Hand,
   ExtAIMain, ExtAIListDLL, HandAI_Ext, ExtAIDataTypes, ExtAIUtils;
 
 const
@@ -23,11 +23,11 @@ type
   TUpdateSimStatEvent = procedure () of object;
 
   // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
-  TGameThread = class(TThread)
+  TGame = class(TThread)
   private
     // Game assets
     fExtAI: TExtAIMain; // ExtAI DLL entry point
-    fHands: TList<TGameHand>; // ExtAI hand entry point
+    fHands: TList<THand>; // ExtAI hand entry point
 
     // Game properties (kind of testbed)
     fTick: Cardinal;
@@ -60,8 +60,8 @@ type
 implementation
 
 
-{ TGameThread }
-constructor TGameThread.Create(aInitLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent);
+{ TGame }
+constructor TGame.Create(aInitLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -72,56 +72,56 @@ begin
   fSimState := ssCreated;
   fOnLog := aInitLog;
   fOnUpdateSimStatus := aOnUpdateSimStatus;
-  Log('TMainThread-Create');
+  Log('TGame-Create');
   fExtAI := TExtAIMain.Create(Log);
-  fHands := TList<TGameHand>.Create;
+  fHands := TList<THand>.Create;
 end;
 
-destructor TGameThread.Destroy();
+destructor TGame.Destroy();
 begin
   FreeAndNil(fExtAI);
   FreeAndNil(fHands); // Items of list are Interfaces and will be freed automatically
-  Log('TMainThread-Destroy');
+  Log('TGame-Destroy');
   inherited;
 end;
 
-function TGameThread.GetDLLs(aPaths: wStrArr): TListDLL;
+function TGame.GetDLLs(aPaths: wStrArr): TListDLL;
 begin
   fExtAI.ListDLL.SetDLLFolderPaths(aPaths);
   Result := fExtAI.ListDLL.List.Copy();
 end;
 
-procedure TGameThread.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
+procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
 var
   K: si32;
 begin
-  Log('TMainThread-InitSimulation');
+  Log('TGame-InitSimulation');
   fSimState := ssInit;
   for K := Low(aExtAIs) to High(aExtAIs) do
     if CompareStr(aExtAIs[K], '') <> 0 then
       //@Martin here's a hand index mismatch. In KP hands are always going from 0 to N-1, without gaps.
       //@Krom I know but all variables are also initialized to 0 and I wanted to be 100% sure that ID is sent to DLL
-      //      ID is decided by GameThread so you can easily change it in the KP
+      //      ID is decided by Game so you can easily change it in the KP
     begin
-      fHands.Add(TGameHand.Create(K, fOnLog));
+      fHands.Add(THand.Create(K, fOnLog));
       fHands.Last.SetAIType(fExtAI.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
     end;
 end;
 
-procedure TGameThread.StartSimulation(aTicks: Cardinal);
+procedure TGame.StartSimulation(aTicks: Cardinal);
 begin
-  Log('TMainThread-StartSimulation');
+  Log('TGame-StartSimulation');
 
   fMaxTick := aTicks;
 
   Start;
 end;
 
-procedure TGameThread.Execute();
+procedure TGame.Execute();
 var
   K: si32;
 begin
-  Log('TMainThread-Execute: Start');
+  Log('TGame-Execute: Start');
   fSimState := ssInProgress;
   fTick := 0;
   gMainData.Tick := Tick;
@@ -152,10 +152,10 @@ begin
   fSimState := ssTerminated;
   fTick := 0;
   fOnUpdateSimStatus();
-  Log('TMainThread-Execute: End');
+  Log('TGame-Execute: End');
 end;
 
-procedure TGameThread.PauseSimulation();
+procedure TGame.PauseSimulation();
 begin
   if (fSimState = ssPaused) then
     fSimState := ssInProgress
@@ -163,14 +163,14 @@ begin
     fSimState := ssPaused;
 end;
 
-procedure TGameThread.TerminateSimulation();
+procedure TGame.TerminateSimulation();
 begin
-  Log('TMainThread-TerminateSimulation');
+  Log('TGame-TerminateSimulation');
   fSimState := ssTerminated;
 end;
 
 
-procedure TGameThread.Log(aLog: wStr);
+procedure TGame.Log(aLog: wStr);
 begin
   Synchronize(
     procedure
