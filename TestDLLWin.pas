@@ -1,4 +1,5 @@
 unit TestDLLWin;
+{$I KM_CompilerDirectives.inc}
 interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, StrUtils,

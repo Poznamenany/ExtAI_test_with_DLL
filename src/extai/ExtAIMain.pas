@@ -1,4 +1,5 @@
 unit ExtAIMain;
+{$I KM_CompilerDirectives.inc}
 interface
 uses
   Classes, Windows, System.SysUtils,
@@ -23,7 +24,7 @@ type
     destructor Destroy(); override;
     procedure Release();
 
-    function NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
+    function NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
 
 
@@ -58,7 +59,7 @@ begin
 end;
 
 
-function TExtAIMain.NewExtAI(aOwnThread: b; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
+function TExtAIMain.NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
   Idx: si32;
   DLL: TExtAICommDLL;
@@ -84,7 +85,7 @@ begin
   if (fQueueStates = nil) then
     fQueueStates := TExtAIQueueStates.Create(fOnLog);
   // Create ExtAI in DLL
-  Result := DLL.CreateNewExtAI( aOwnThread, aExtAIID, aInitLog, aLogProgress, fQueueStates);
+  Result := DLL.CreateNewExtAI(aOwnThread, aExtAIID, aInitLog, aLogProgress, fQueueStates);
 end;
 
 
