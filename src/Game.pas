@@ -104,7 +104,7 @@ begin
       //      ID is decided by Game so you can easily change it in the KP
     begin
       fHands.Add(THand.Create(K, fOnLog));
-      fHands.Last.SetAIType(fExtAIMaster.NewExtAI(aMultithread, K+1, aExtAIs[K], fOnLog, aLogProgress));
+      fHands.Last.SetAIType(fExtAIMaster.NewExtAI(aMultithread, K+1, aExtAIs[K], aLogProgress));
     end;
 end;
 

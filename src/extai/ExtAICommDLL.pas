@@ -36,22 +36,22 @@ type
   public
     property Config: TDLLMainCfg read fDLLConfig;
 
-    constructor Create(aLog: TLogEvent); reintroduce;
+    constructor Create(aOnLog: TLogEvent); reintroduce;
     destructor Destroy; override;
 
     function LinkDLL(aDLLPath: wStr): b;
-    function CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+    function CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
   end;
 
 implementation
 
 
 { TExtAICommDLL }
-constructor TExtAICommDLL.Create(aLog: TLogEvent);
+constructor TExtAICommDLL.Create(aOnLog: TLogEvent);
 begin
   inherited Create;
 
-  fOnLog := aLog;
+  fOnLog := aOnLog;
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   fExtAIThread := TList.Create();
   {$ENDIF}
@@ -139,7 +139,7 @@ begin
 end;
 
 
-function TExtAICommDLL.CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+function TExtAICommDLL.CreateNewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   Thread: TExtAIThread;
@@ -149,44 +149,43 @@ var
   {$ENDIF}
 begin
   Result := nil;
-  if (Assigned(fOnNewExtAI)) then
-  begin
-    //Log('  CommDLL-CreateNewExtAI: ID = ' + IntToStr(aExtAIID));
-    Result := THandAI_Ext.Create(aExtAIID, fOnLog);
-    try
-      if aOwnThread then
-      begin
-        {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
-        // Create thread
-        Thread := TExtAIThread.Create(aExtAIID, aInitLog, aLogProgress, ThreadLog);
-        // Create interfaces
-        QueueActions := TExtAIQueueActions.Create(aExtAIID, ThreadLog);
-        QueueActions.Actions := Result; // = add reference to THandAI_Ext
-        QueueEvents := TExtAIQueueEvents.Create(aExtAIID, ThreadLog);
-        QueueEvents.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
-        QueueEvents.QueueActions := QueueActions; // Mark actions so they are called OnTick event from main thread
-        Result.AssignEvents(QueueEvents); // = add reference to TExtAIQueueEvents
-        Thread.Init(QueueEvents);
-        // Create ExtAI in DLL
-        fOnInitNewExtAI( aExtAIID, QueueActions, aStates ); // = add reference to TExtAIQueueActions and States
-        fExtAIThread.Add(Thread);
-        Thread.Start;
-        {$ELSE}
-         Assert(False, 'ALLOW_EXT_AI_MULTITHREADING is not set');
-        {$ENDIF}
-      end else
-      begin
-        // Create interface
-        Result.AssignEvents(fOnNewExtAI); // = add reference to TExtAI in DLL
-        // Create ExtAI in DLL
-        fOnInitNewExtAI( aExtAIID, Result, aStates ); // = add reference to THandAI_Ext and States
-      end;
-    except
-      on E: Exception do
-      begin
-        Log('  TExtAICommDLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
-        Readln;
-      end;
+  if not Assigned(fOnNewExtAI) then Exit;
+
+  //Log('  CommDLL-CreateNewExtAI: ID = ' + IntToStr(aExtAIID));
+  Result := THandAI_Ext.Create(aExtAIID, fOnLog);
+  try
+    if aOwnThread then
+    begin
+      {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
+      // Create thread
+      Thread := TExtAIThread.Create(aExtAIID, aLogProgress, ThreadLog);
+      // Create interfaces
+      QueueActions := TExtAIQueueActions.Create(aExtAIID, ThreadLog);
+      QueueActions.Actions := Result; // = add reference to THandAI_Ext
+      QueueEvents := TExtAIQueueEvents.Create(aExtAIID, ThreadLog);
+      QueueEvents.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
+      QueueEvents.QueueActions := QueueActions; // Mark actions so they are called OnTick event from main thread
+      Result.AssignEvents(QueueEvents); // = add reference to TExtAIQueueEvents
+      Thread.Init(QueueEvents);
+      // Create ExtAI in DLL
+      fOnInitNewExtAI( aExtAIID, QueueActions, aStates ); // = add reference to TExtAIQueueActions and States
+      fExtAIThread.Add(Thread);
+      Thread.Start;
+      {$ELSE}
+       Assert(False, 'ALLOW_EXT_AI_MULTITHREADING is not set');
+      {$ENDIF}
+    end else
+    begin
+      // Create interface
+      Result.AssignEvents(fOnNewExtAI); // = add reference to TExtAI in DLL
+      // Create ExtAI in DLL
+      fOnInitNewExtAI(aExtAIID, Result, aStates); // = add reference to THandAI_Ext and States
+    end;
+  except
+    on E: Exception do
+    begin
+      Log('  TExtAICommDLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
+      Readln;
     end;
   end;
 end;

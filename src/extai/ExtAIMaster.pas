@@ -25,7 +25,7 @@ type
     property DLLs: TExtAIDLLs read fDLLs;
     property QueueStates: TExtAIQueueStates read fQueueStates;
 
-    function NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
+    function NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
 
 
@@ -63,7 +63,7 @@ begin
 end;
 
 
-function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
+function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
   Idx: si32;
   DLL: TExtAICommDLL;
@@ -85,11 +85,13 @@ begin
     DLL.LinkDLL(aDLLPath);
     fDLLInstances.Add(DLL);
   end;
+
   // Create States if does not exist
-  if (fQueueStates = nil) then
+  if fQueueStates = nil then
     fQueueStates := TExtAIQueueStates.Create(fOnLog);
+
   // Create ExtAI in DLL
-  Result := DLL.CreateNewExtAI(aOwnThread, aExtAIID, aInitLog, aLogProgress, fQueueStates);
+  Result := DLL.CreateNewExtAI(aOwnThread, aExtAIID, aLogProgress, fQueueStates);
 end;
 
 
