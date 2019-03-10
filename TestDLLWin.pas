@@ -304,51 +304,31 @@ end;
 procedure TPPLWin.RefreshSimButtons;
 begin
   case fGameThread.SimulationState of
-    ssCreated:
-      begin
-        if not btnInitSim.Enabled then
-          btnInitSim.Enabled := True;
-        if btnStartSim.Enabled then
-          btnStartSim.Enabled := False;
-        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
-          btnStartSim.Text := 'Start';
-      end;
-    ssInit:
-      begin
-        if btnInitSim.Enabled then
-          btnInitSim.Enabled := False;
-        if NOT btnStartSim.Enabled then
-          btnStartSim.Enabled := True;
-        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
-          btnStartSim.Text := 'Start';
-      end;
-    ssInProgress:
-      begin
-        if btnInitSim.Enabled then
-          btnInitSim.Enabled := False;
-        if NOT btnStartSim.Enabled then
-          btnStartSim.Enabled := True;
-        if (CompareStr(btnStartSim.Text,'Pause') <> 0) then
-          btnStartSim.Text := 'Pause';
-      end;
-    ssPaused:
-      begin
-        if btnInitSim.Enabled then
-          btnInitSim.Enabled := False;
-        if NOT btnStartSim.Enabled then
-          btnStartSim.Enabled := True;
-        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
-          btnStartSim.Text := 'Start';
-      end;
-    ssTerminated:
-      begin
-        if btnInitSim.Enabled then
-          btnInitSim.Enabled := False;
-        if btnStartSim.Enabled then
-          btnStartSim.Enabled := False;
-        if (CompareStr(btnStartSim.Text,'Start') <> 0) then
-          btnStartSim.Text := 'Start';
-      end;
+    ssCreated:    begin
+                    btnInitSim.Enabled := True;
+                    btnStartSim.Enabled := False;
+                    btnStartSim.Text := 'Start';
+                  end;
+    ssInit:       begin
+                    btnInitSim.Enabled := False;
+                    btnStartSim.Enabled := True;
+                    btnStartSim.Text := 'Start';
+                  end;
+    ssInProgress: begin
+                    btnInitSim.Enabled := False;
+                    btnStartSim.Enabled := True;
+                    btnStartSim.Text := 'Pause';
+                  end;
+    ssPaused:     begin
+                    btnInitSim.Enabled := False;
+                    btnStartSim.Enabled := True;
+                    btnStartSim.Text := 'Start';
+                  end;
+    ssTerminated: begin
+                    btnInitSim.Enabled := False;
+                    btnStartSim.Enabled := False;
+                    btnStartSim.Text := 'Start';
+                  end;
   end;
 end;
 
@@ -420,7 +400,7 @@ end;
 procedure TPPLWin.Overview;
 type
   TOverview = record
-    Init,Termin: b;
+    Init, Termin: b;
     ID: ui8;
     Name: wStr;
   end;
@@ -444,17 +424,19 @@ begin
     else if AnsiPos('TExtAIQueueStates-Create', str) > 0 then         Stats.Init := True
     else if AnsiPos('TExtAIQueueStates-Destroy', str) > 0 then        Stats.Termin := True;
   end;
+
   for K := Low(Actions) to High(Actions) do
   begin
     if (Threads[K].Init OR Threads[K].Termin) <> (Threads[K].Init AND Threads[K].Termin) then
-    Log('WARNING: Init/Termin THREAD: '+IntToStr(K));
+      Log('WARNING: Init/Termin THREAD: '+IntToStr(K));
     if (Actions[K].Init OR Actions[K].Termin) <> (Actions[K].Init AND Actions[K].Termin) then
-    Log('WARNING: Init/Termin ACTION: '+IntToStr(K));
+      Log('WARNING: Init/Termin ACTION: '+IntToStr(K));
     if (Events[K].Init OR Events[K].Termin) <> (Events[K].Init AND Events[K].Termin) then
-    Log('WARNING: Init/Termin EVENT: '+IntToStr(K));
+      Log('WARNING: Init/Termin EVENT: '+IntToStr(K));
     if (Hands[K].Init OR Hands[K].Termin) <> (Hands[K].Init AND Hands[K].Termin) then
-    Log('WARNING: Init/Termin HANS: '+IntToStr(K));
+      Log('WARNING: Init/Termin HANS: '+IntToStr(K));
   end;
+
   if (Stats.Init OR Stats.Termin) <> (Stats.Init AND Stats.Termin) then
     Log('WARNING: Init/Termin STATS');
 end;
