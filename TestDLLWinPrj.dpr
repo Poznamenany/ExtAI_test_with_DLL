@@ -11,7 +11,7 @@ uses
   ExtAICommDLL in 'src\extai\ExtAICommDLL.pas',
   ExtAIDataTypes in 'src\extai\ExtAIDataTypes.pas',
   ExtAIInterfaceDelphi in 'src\extai\ExtAIInterfaceDelphi.pas',
-  ExtAIListDLL in 'src\extai\ExtAIListDLL.pas',
+  ExtAIDLLs in 'src\extai\ExtAIDLLs.pas',
   ExtAIMaster in 'src\extai\ExtAIMaster.pas',
   ExtAIStates in 'src\extai\ExtAIStates.pas',
 

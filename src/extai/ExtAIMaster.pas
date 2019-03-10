@@ -3,7 +3,7 @@ unit ExtAIMaster;
 interface
 uses
   Classes, Windows, System.SysUtils,
-  HandAI_Ext, ExtAIQueueStates, ExtAIListDLL, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
+  HandAI_Ext, ExtAIQueueStates, ExtAIDLLs, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
 
 type
   // Master of ExtAIs
