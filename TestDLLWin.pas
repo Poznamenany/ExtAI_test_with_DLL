@@ -213,7 +213,7 @@ procedure TPPLWin.btnInitSimClick(Sender: TObject);
 var
   K,L,cnt: si32;
   SelectedName: wStr;
-  ExtAIs: wStrArr;
+  ExtAIs: TArray<string>;
 begin
   RefreshListDLL; // Make sure that all DLLs are available
   ClearLog;

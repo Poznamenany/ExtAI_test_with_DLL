@@ -10,13 +10,13 @@ const
   SLEEP_EVERY_TICK = 1;
   MAP_LENGTH = 255*255*10;
 
-var
+//var
   // Global variable with informations (informations which ExtAI needs during the simulation)
-  gMainData: record
-    Tick: ui32;
-    Map: ui32Arr;
-    //...
-  end;
+  //gMainData: record
+  //  Tick: ui32;
+  //  Map: ui32Arr;
+  //  //...
+  //end;
 
 type
   TSimulationState = (ssCreated, ssInit, ssInProgress, ssPaused, ssTerminated);
@@ -51,7 +51,7 @@ type
 
     // Game controls
     property SimulationState: TSimulationState read fSimState;
-    procedure InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
+    procedure InitSimulation(aMultithread: Boolean; aExtAIs: TArray<string>; aLogProgress: TLogProgressEvent);
     procedure StartSimulation(aTicks: Cardinal);
     procedure PauseSimulation();
     procedure TerminateSimulation();
@@ -91,7 +91,7 @@ begin
 end;
 
 
-procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: wStrArr; aLogProgress: TLogProgressEvent);
+procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: TArray<string>; aLogProgress: TLogProgressEvent);
 var
   K: Integer;
 begin
@@ -124,14 +124,14 @@ begin
   Log('TGame-Execute: Start');
   fSimState := ssInProgress;
   fTick := 0;
-  gMainData.Tick := Tick;
-  SetLength(gMainData.Map,MAP_LENGTH);
+  //gMainData.Tick := Tick;
+  //SetLength(gMainData.Map,MAP_LENGTH);
   while (fSimState <> ssTerminated) and (Tick < fMaxTick) do
   begin
     if (fSimState = ssInProgress) then
     begin
       Inc(fTick);
-      gMainData.Tick := Tick;
+      //gMainData.Tick := Tick;
 
       // Log status
       Synchronize(
@@ -142,8 +142,8 @@ begin
         end);
 
       // Update map
-      for K := Low(gMainData.Map) to High(gMainData.Map) do
-        gMainData.Map[K] := K;
+      //for K := Low(gMainData.Map) to High(gMainData.Map) do
+      //  gMainData.Map[K] := K;
       // Do something else (update game logic)
       Sleep(SLEEP_EVERY_TICK);
 

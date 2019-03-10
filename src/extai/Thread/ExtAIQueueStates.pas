@@ -22,7 +22,7 @@ type
     function UnitAt(aX: ui16; aY: ui16): ui32; StdCall;
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
     procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
-    procedure TerrainPassability(var aPassability: bArr); StdCall;
+    procedure TerrainPassability(var aPassability: pb); StdCall;
     // Log
     procedure Log(aLog: wStr);
   public
@@ -118,13 +118,15 @@ begin
 end;
 
 
-procedure TExtAIQueueStates.TerrainPassability(var aPassability: bArr);
+procedure TExtAIQueueStates.TerrainPassability(var aPassability: pb);
+type
+  TB = array of Boolean;
 var
   I, K: Integer;
 begin
   for I := 0 to 15 do
     for K := 0 to 15 do
-      aPassability[I * 16 + K] := InRange(I, 1, 14) and InRange(K, 1, 14);
+      TB(aPassability)[I * 16 + K] := InRange(I, 1, 14) and InRange(K, 1, 14);
 end;
 
 

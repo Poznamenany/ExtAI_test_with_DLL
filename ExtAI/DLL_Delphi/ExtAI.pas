@@ -7,7 +7,7 @@ uses
 type
   TExtAI = class(TInterfacedObject, IEvents)
   private
-    fMap: ui32Arr;
+    //fMap: ui32Arr;
     // IInterface
     //procedure AfterConstruction; override;
     //procedure BeforeDestruction; override;
@@ -52,13 +52,15 @@ begin
 end;
 
 procedure TExtAI.OnTick(aTick: ui32);
+type
+  ab = array of b;
 var
   feedback: ui8;
   Len, K: si32;
   pFirstElem: pui32;
   res: b;
   tx, ty: ui16;
-  tp: bArr;
+  tp: pb;
 begin
   //Log('    TExtAI-OnTick: ID = ' + IntToStr(ID));
   // Test actions
@@ -77,12 +79,13 @@ begin
   States.TerrainSize(tx, ty);
   Log(Format('    TExtAI-OnTick: Terrain is %dx%d', [tx, ty]));
 
-  SetLength(tp, tx*ty);
+  GetMem(tp, tx*ty);
   States.TerrainPassability(tp);
-  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(tp[24])]));
-  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(tp[12])]));
+  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(ab(tp)[24])]));
+  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(ab(tp)[12])]));
+  FreeMem(tp);
 
-  if States.MapTerrain(ID,pFirstElem,Len) then
+  {if States.MapTerrain(ID,pFirstElem,Len) then
   begin
     if (Len <> Length(fMap)) then
       SetLength(fMap,Len);
@@ -93,7 +96,7 @@ begin
         Log('    TExtAI-OnTick: problem in testing map, val: ' + IntToSTr(fMap[K]) + ' vs ' + IntToSTr(fMap[K+1]));
         break;
       end;
-  end;
+  end;}
 end;
 
 procedure TExtAI.OnPlayerDefeated(aPlayer: si8);

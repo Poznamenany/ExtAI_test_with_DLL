@@ -34,16 +34,6 @@ type
 
   pwStr = PWideChar;
 
-  // Arrays
-  bArr = array of b;
-  ui8Arr = array of ui8;
-  si8Arr = array of si8;
-  ui16Arr = array of ui16;
-  si16Arr = array of si16;
-  ui32Arr = array of ui32;
-  si32Arr = array of si32;
-  wStrArr = array of wStr;
-
   // Structures
   TDLLConfig = record
     Author: wStr;

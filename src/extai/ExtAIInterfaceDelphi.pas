@@ -1,7 +1,6 @@
 unit ExtAIInterfaceDelphi;
 interface
 uses
-  System.SysUtils,
   ExtAIDataTypes;
 
 type
@@ -33,7 +32,7 @@ type
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
     procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
     // DLL should allocate TerrainSize.X * TerrainSize.Y elements
-    procedure TerrainPassability(var aPassability: bArr); StdCall;
+    procedure TerrainPassability(var aPassability: pb); StdCall;
   end;
 
 
