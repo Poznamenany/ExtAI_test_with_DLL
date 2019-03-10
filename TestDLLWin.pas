@@ -80,6 +80,7 @@ type
     pbAI1: TProgressBar;
     edDLLPath1: TEdit;
     edDLLPath2: TEdit;
+    lbProgress: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var aAction: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -333,7 +334,9 @@ end;
 procedure TPPLWin.UpdateSimStatus;
 begin
   pbSimulation.Value := fGame.Tick / fGame.MaxTick;
+  lbProgress.Text := IntToStr(fGame.Tick) + '/' + IntToStr(fGame.MaxTick);
   RefreshSimButtons;
+  Invalidate;
 end;
 
 procedure TPPLWin.Log(aLog: wStr);

@@ -172,7 +172,7 @@ begin
       fExtAIThread.Add(Thread);
       Thread.Start;
       {$ELSE}
-       Assert(False, 'ALLOW_EXT_AI_MULTITHREADING is not set');
+      Assert(False, 'ALLOW_EXT_AI_MULTITHREADING is not set');
       {$ENDIF}
     end else
     begin

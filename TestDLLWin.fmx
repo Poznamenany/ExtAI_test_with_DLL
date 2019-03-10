@@ -357,8 +357,17 @@ object PPLWin: TPPLWin
       Position.X = 8.000000000000000000
       Position.Y = 120.000000000000000000
       Size.Width = 257.000000000000000000
-      Size.Height = 17.000000000000000000
+      Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
+    end
+    object lbProgress: TLabel
+      Position.X = 88.000000000000000000
+      Position.Y = 120.000000000000000000
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.HorzAlign = Center
+      Text = '0 / 100'
     end
   end
   object lbLog: TListBox

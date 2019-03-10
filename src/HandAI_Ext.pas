@@ -36,6 +36,8 @@ type
   end;
 
 implementation
+uses
+  Consts;
 
 
 { THandAI_Ext }
@@ -65,6 +67,9 @@ end;
 // IActions - definition of functions in the interface
 procedure THandAI_Ext.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32);
 begin
+  if LOG_VERBOSE then
+    Log(Format('THandAIExt(%d).GroupOrderAttackUnit [%d, %d]', [fOwner, aGroupID, aUnitID]));
+
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 11) or (aUnitID <> 22) then
@@ -74,6 +79,9 @@ end;
 
 procedure THandAI_Ext.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16);
 begin
+  if LOG_VERBOSE then
+    Log(Format('THandAIExt(%d).GroupOrderWalk [%d, %d, %d, %d]', [fOwner, aGroupID, aX, aY, aDirection]));
+
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
   if (aGroupID <> 1) or (aX <> 50) or (aY <> 50) or (aDirection <> 1) then

@@ -103,14 +103,14 @@ begin
   fDLLs.Clear;
 
   for I := Low(aPaths) to High(aPaths) do
-  if DirectoryExists(aPaths[I]) then
-  for subFolder in TDirectory.GetDirectories(aPaths[I]) do
-    for fileDLL in TDirectory.GetFiles(subFolder) do
-      if ExtractFileExt(fileDLL) = '.dll' then
-      begin
-        Log('  TExtAIDLLs: New DLL - ' + fileDLL);
-        AddDLL(fileDLL);
-      end;
+    if DirectoryExists(aPaths[I]) then
+    for subFolder in TDirectory.GetDirectories(aPaths[I]) do
+      for fileDLL in TDirectory.GetFiles(subFolder) do
+        if ExtractFileExt(fileDLL) = '.dll' then
+        begin
+          Log('  TExtAIDLLs: New DLL - ' + fileDLL);
+          AddDLL(fileDLL);
+        end;
 end;
 
 
