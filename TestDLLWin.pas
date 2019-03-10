@@ -103,14 +103,14 @@ type
     fedAI: array[1..MAX_HANDS_COUNT] of TEdit;
     fpbAI: array[1..MAX_HANDS_COUNT] of TProgressBar;
     // DLL
-    procedure InitDLL(Sender: TObject);
-    procedure RefreshListDLL(Sender: TObject);
+    procedure InitDLL;
+    procedure RefreshListDLL;
     // Lobby
-    procedure InitLobby(Sender: TObject);
-    procedure RefreshExtAIs(Sender: TObject);
+    procedure InitLobby;
+    procedure RefreshExtAIs;
     // Simulation
-    procedure InitSimulation(Sender: TObject);
-    procedure RefreshSimButtons(Sender: TObject);
+    procedure InitSimulation;
+    procedure RefreshSimButtons;
     // Log
     procedure UpdateSimStatus;
     procedure Log(aLog: wStr);
@@ -128,14 +128,14 @@ implementation
 
 
 // DLLs
-procedure TPPLWin.InitDLL(Sender: TObject);
+procedure TPPLWin.InitDLL;
 begin
   edFolderDLL1.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI' );
   edFolderDLL2.Text := ExpandFileName(ExtractFilePath(ParamStr(0)) + 'ExtAI\DLL_Delphi');
-  RefreshListDLL(Sender);
+  RefreshListDLL;
 end;
 
-procedure TPPLWin.RefreshListDLL(Sender: TObject);
+procedure TPPLWin.RefreshListDLL;
 var
   Folders: wStrArr;
   K: si32;
@@ -152,7 +152,7 @@ begin
   for K := 0 to fListDLL.Count-1 do
     listBoxDLLs.Items.Add(ExtractRelativePath(ExtractFilePath(ParamStr(0)), fListDLL[K].Path));
 
-  RefreshExtAIs(Sender);
+  RefreshExtAIs;
 end;
 
 procedure TPPLWin.btnSelectFolder1Click(Sender: TObject);
@@ -161,7 +161,7 @@ var
 begin
   if SelectDirectory('Select a directory with DLL', edFolderDLL1.Text, chosenDirectory) then
     edFolderDLL1.Text := chosenDirectory;
-  RefreshListDLL(Sender);
+  RefreshListDLL;
 end;
 
 procedure TPPLWin.btnSelectFolder2Click(Sender: TObject);
@@ -170,17 +170,17 @@ var
 begin
   if SelectDirectory('Select a directory with second DLL', edFolderDLL2.Text, chosenDirectory) then
     edFolderDLL2.Text := chosenDirectory;
-  RefreshListDLL(Sender);
+  RefreshListDLL;
 end;
 
 procedure TPPLWin.btdRefreshDLLsClick(Sender: TObject);
 begin
-  RefreshListDLL(Sender);
+  RefreshListDLL;
 end;
 
 
 // Lobby
-procedure TPPLWin.InitLobby(Sender: TObject);
+procedure TPPLWin.InitLobby;
 begin
   fedAI[1]  := edAI1;  fpbAI[1]  := pbAI1;  fcbAI[1]  := cbAI1;
   fedAI[2]  := edAI2;  fpbAI[2]  := pbAI2;  fcbAI[2]  := cbAI2;
@@ -207,7 +207,7 @@ begin
     fcbAI[K].ItemIndex := Round(Offset+Random(Range));
 end;
 
-procedure TPPLWin.RefreshExtAIs(Sender: TObject);
+procedure TPPLWin.RefreshExtAIs;
 var
   Idx,K,L: si32;
   SelectedName: wStr;
@@ -233,16 +233,16 @@ end;
 
 
 // Simulation
-procedure TPPLWin.InitSimulation(Sender: TObject);
+procedure TPPLWin.InitSimulation;
 begin
-  fGameThread := TGameThread.Create(Log,UpdateSimStatus);
-  tbTicksChange(Sender);
-  RefreshSimButtons(Sender);
+  fGameThread := TGameThread.Create(Log, UpdateSimStatus);
+  tbTicksChange(nil);
+  RefreshSimButtons;
 end;
 
 procedure TPPLWin.tbTicksChange(Sender: TObject);
 begin
-  edTickCnt.Text := FloatToStr(Round(tbTicks.Value));
+  edTickCnt.Text := IntToStr(Round(tbTicks.Value));
 end;
 
 procedure TPPLWin.btnInitSimClick(Sender: TObject);
@@ -251,7 +251,7 @@ var
   SelectedName: wStr;
   ExtAIs: wStrArr;
 begin
-  RefreshListDLL(Sender); // Make sure that all DLLs are available
+  RefreshListDLL; // Make sure that all DLLs are available
   ClearLog;
   // Load ExtAI configuration from Lobby
   SetLength(ExtAIs, MAX_HANDS_COUNT);
@@ -275,7 +275,7 @@ begin
   if (cnt > 0) then
     //fGameThread.InitSimulation(chckbMultithread.Ischecked, ExtAIs, nil);
     fGameThread.InitSimulation(cbMultithread.IsChecked, ExtAIs, LogProgress);
-  RefreshSimButtons(Sender);
+  RefreshSimButtons;
 end;
 
 
@@ -286,7 +286,7 @@ begin
   else
     fGameThread.PauseSimulation;
 
-  RefreshSimButtons(Sender);
+  RefreshSimButtons;
 end;
 
 
@@ -295,13 +295,13 @@ begin
   fGameThread.TerminateSimulation;
   Sleep(SLEEP_EVERY_TICK*10);
   fGameThread.Free;
-  InitSimulation(Sender);
-  RefreshListDLL(Sender);
-  RefreshSimButtons(Sender);
+  InitSimulation;
+  RefreshListDLL;
+  RefreshSimButtons;
   Overview;
 end;
 
-procedure TPPLWin.RefreshSimButtons(Sender: TObject);
+procedure TPPLWin.RefreshSimButtons;
 begin
   case fGameThread.SimulationState of
     ssCreated:
@@ -356,10 +356,9 @@ end;
 // Form
 procedure TPPLWin.FormCreate(Sender: TObject);
 begin
-  fListDLL := nil;
-  InitSimulation(Sender);
-  InitLobby(Sender);
-  InitDLL(Sender);
+  InitSimulation;
+  InitLobby;
+  InitDLL;
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   cbMultithread.Enabled := True;
@@ -393,7 +392,7 @@ end;
 procedure TPPLWin.UpdateSimStatus;
 begin
   pbSimulation.Value := fGameThread.Tick / fGameThread.MaxTick;
-  RefreshSimButtons(nil);
+  RefreshSimButtons;
 end;
 
 procedure TPPLWin.Log(aLog: wStr);
