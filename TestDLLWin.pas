@@ -7,11 +7,9 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView.Types,
   FMX.ListView,
   FMX.Layouts, FMX.ListBox, FMX.Edit,
-  GameThread,
+  Consts, GameThread,
   ExtAIListDLL, ExtAIUtils, ExtAIDataTypes;
 
-const
-  MAX_AI_CNT = 12;
 type
   TPPLWin = class(TForm)
     btnInitSim: TButton;
@@ -32,7 +30,7 @@ type
     cbAI10: TComboBox;
     cbAI11: TComboBox;
     cbAI12: TComboBox;
-    chckbMultithread: TCheckBox;
+    cbMultithread: TCheckBox;
     edAI1: TEdit;
     edAI2: TEdit;
     edAI3: TEdit;
@@ -96,15 +94,14 @@ type
     procedure btnTerminateClick(Sender: TObject);
     procedure tbTicksChange(Sender: TObject);
     procedure btnAutoFillClick(Sender: TObject);
-    procedure GroupBox1Click(Sender: TObject);
   private
     fGameThread: TGameThread;
     // DLL
     fListDLL: TListDLL;
     // Lobby
-    fcbAI: array[1..MAX_AI_CNT] of TComboBox;
-    fedAI: array[1..MAX_AI_CNT] of TEdit;
-    fpbAI: array[1..MAX_AI_CNT] of TProgressBar;
+    fcbAI: array[1..MAX_HANDS_COUNT] of TComboBox;
+    fedAI: array[1..MAX_HANDS_COUNT] of TEdit;
+    fpbAI: array[1..MAX_HANDS_COUNT] of TProgressBar;
     // DLL
     procedure InitDLL(Sender: TObject);
     procedure RefreshListDLL(Sender: TObject);
@@ -115,11 +112,11 @@ type
     procedure InitSimulation(Sender: TObject);
     procedure RefreshSimButtons(Sender: TObject);
     // Log
-    procedure UpdateSimStatus();
+    procedure UpdateSimStatus;
     procedure Log(aLog: wStr);
-    procedure ClearLog();
+    procedure ClearLog;
     procedure LogProgress(aID: ui8; aTick: ui32; aState: TExtAIThreadStates);
-    procedure Overview();
+    procedure Overview;
   end;
 
 var
@@ -151,7 +148,7 @@ begin
 
   fListDLL := fGameThread.GetDLLs(Folders);
 
-  listBoxDLLs.Items.Clear();
+  listBoxDLLs.Items.Clear;
   for K := 0 to fListDLL.Count-1 do
     listBoxDLLs.Items.Add(ExtractRelativePath(ExtractFilePath(ParamStr(0)), fListDLL[K].Path));
 
@@ -255,9 +252,9 @@ var
   ExtAIs: wStrArr;
 begin
   RefreshListDLL(Sender); // Make sure that all DLLs are available
-  ClearLog();
+  ClearLog;
   // Load ExtAI configuration from Lobby
-  SetLength(ExtAIs,MAX_AI_CNT);
+  SetLength(ExtAIs, MAX_HANDS_COUNT);
   cnt := 0;
   for K := Low(fcbAI) to High(fcbAI) do
   begin
@@ -277,7 +274,7 @@ begin
   // Init ExtAI
   if (cnt > 0) then
     //fGameThread.InitSimulation(chckbMultithread.Ischecked, ExtAIs, nil);
-    fGameThread.InitSimulation(chckbMultithread.Ischecked, ExtAIs, LogProgress);
+    fGameThread.InitSimulation(cbMultithread.IsChecked, ExtAIs, LogProgress);
   RefreshSimButtons(Sender);
 end;
 
@@ -287,7 +284,7 @@ begin
   if (fGameThread.SimulationState = ssInit) then
     fGameThread.StartSimulation(Round(StrToInt(edTickCnt.Text))) // Start ExtAI threads
   else
-    fGameThread.PauseSimulation();
+    fGameThread.PauseSimulation;
 
   RefreshSimButtons(Sender);
 end;
@@ -295,13 +292,13 @@ end;
 
 procedure TPPLWin.btnTerminateClick(Sender: TObject);
 begin
-  fGameThread.TerminateSimulation();
+  fGameThread.TerminateSimulation;
   Sleep(SLEEP_EVERY_TICK*10);
-  fGameThread.Free();
+  fGameThread.Free;
   InitSimulation(Sender);
   RefreshListDLL(Sender);
   RefreshSimButtons(Sender);
-  Overview();
+  Overview;
 end;
 
 procedure TPPLWin.RefreshSimButtons(Sender: TObject);
@@ -363,14 +360,23 @@ begin
   InitSimulation(Sender);
   InitLobby(Sender);
   InitDLL(Sender);
+
+  {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
+  cbMultithread.Enabled := True;
+  cbMultithread.IsChecked := True;
+  {$ELSE}
+  cbMultithread.Enabled := False;
+  cbMultithread.IsChecked := False;
+  {$ENDIF}
 end;
+
 
 procedure TPPLWin.FormClose(Sender: TObject; var aAction: TCloseAction);
 begin
   aAction := TCloseAction.caFree;
   if (fGameThread.SimulationState <> ssTerminated) then
   begin
-    fGameThread.TerminateSimulation();
+    fGameThread.TerminateSimulation;
     Sleep(SLEEP_EVERY_TICK*10);
   end;
 end;
@@ -378,18 +384,13 @@ end;
 
 procedure TPPLWin.FormDestroy(Sender: TObject);
 begin
-  fGameThread.Free();
-  fListDLL.Free();
+  fGameThread.Free;
+  fListDLL.Free;
 end;
 
-
-procedure TPPLWin.GroupBox1Click(Sender: TObject);
-begin
-
-end;
 
 // Log
-procedure TPPLWin.UpdateSimStatus();
+procedure TPPLWin.UpdateSimStatus;
 begin
   pbSimulation.Value := fGameThread.Tick / fGameThread.MaxTick;
   RefreshSimButtons(nil);
@@ -401,7 +402,7 @@ begin
   ListBoxLog.ItemIndex := ListBoxLog.Items.Count - 1;
 end;
 
-procedure TPPLWin.ClearLog();
+procedure TPPLWin.ClearLog;
 begin
   ListBoxLog.Items.Clear;
 end;
@@ -417,9 +418,7 @@ begin
   fpbAI[aID].Value := aTick / fGameThread.MaxTick;
 end;
 
-procedure TPPLWin.Overview();
-const
-  LENG_EXTAI = 6;
+procedure TPPLWin.Overview;
 type
   TOverview = record
     Init,Termin: b;
@@ -429,7 +428,7 @@ type
 var
   K: si32;
   str: wStr;
-  Actions, Events, Hands, Threads: array[1..MAX_AI_CNT] of TOverview;
+  Actions, Events, Hands, Threads: array [1..MAX_HANDS_COUNT] of TOverview;
   Stats: TOverview;
 begin
   for K := ListBoxLog.Count-1 downto 0 do

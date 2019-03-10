@@ -3,6 +3,7 @@ program TestDLLWinPrj;
 uses
   System.StartUpCopy,
   FMX.Forms,
+  Consts in 'src\Consts.pas',
   GameHand in 'src\GameHand.pas',
   GameThread in 'src\GameThread.pas',
   HandAI_Ext in 'src\HandAI_Ext.pas',

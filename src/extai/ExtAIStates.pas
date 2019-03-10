@@ -8,46 +8,46 @@ uses
 type
   pTExtAIStates = ^TExtAIStates;
 
-// Store data for ExtAI in 1 tick
-// There is needed another buffer for arrays which will be send to the DLL
-// because they are sent like pointers to first value so ExtAI can replace
-// values in array -> possible trouble
-TExtAIStates = class
-private
-  fNext: TExtAIStates;
-  // Thread variables
-  fLock: ui32; // Standard read lock
-  // Data set
-  fTick: ui32; // = ID of this class
-  fMapTerrain: ui32Arr;
-  //fWalkable: bArr;
-  //fTerrain: ui8Arr;
-  //...
-  fOnLog: TLogEvent;
-  // Log
-  procedure Log(aLog: wStr);
-public
-  fSpecLock: ui32; // Special lock which will lock class till it is not unlocked
-  property Next: TExtAIStates read fNext write fNext;
-  property Tick: ui32 read fTick;
-  property Lock: ui32 read fLock;
-  property SpecialLock: ui32 read fSpecLock;
+  // Store data for ExtAI in 1 tick
+  // There is needed another buffer for arrays which will be send to the DLL
+  // because they are sent like pointers to first value so ExtAI can replace
+  // values in array -> possible trouble
+  TExtAIStates = class
+  private
+    fNext: TExtAIStates;
+    // Thread variables
+    fLock: ui32; // Standard read lock
+    // Data set
+    fTick: ui32; // = ID of this class
+    fMapTerrain: ui32Arr;
+    //fWalkable: bArr;
+    //fTerrain: ui8Arr;
+    //...
+    fOnLog: TLogEvent;
+    // Log
+    procedure Log(aLog: wStr);
+  public
+    fSpecLock: ui32; // Special lock which will lock class till it is not unlocked
+    property Next: TExtAIStates read fNext write fNext;
+    property Tick: ui32 read fTick;
+    property Lock: ui32 read fLock;
+    property SpecialLock: ui32 read fSpecLock;
 
-  constructor Create(aLog: TLogEvent); reintroduce;
-  destructor Destroy(); override;
-  procedure DeclareNext();
+    constructor Create(aLog: TLogEvent); reintroduce;
+    destructor Destroy(); override;
+    procedure DeclareNext();
 
-  // Extract states
-  procedure ExtractStates();
-  // Distribute states
-  function State1(aID: ui32): ui8;
-  function MapTerrain(var aLock: TExtAIStates; var aFirstElem: pui32; var aLength: si32): b;
+    // Extract states
+    procedure ExtractStates();
+    // Distribute states
+    function State1(aID: ui32): ui8;
+    function MapTerrain(var aLock: TExtAIStates; var aFirstElem: pui32; var aLength: si32): b;
 
-  // Lock
-  function IsLocked(): b;
-  procedure SpecLock(var aLock: TExtAIStates);
-  procedure SpecUnLock();
-end;
+    // Lock
+    function IsLocked(): b;
+    procedure SpecLock(var aLock: TExtAIStates);
+    procedure SpecUnLock();
+  end;
 
 implementation
 uses

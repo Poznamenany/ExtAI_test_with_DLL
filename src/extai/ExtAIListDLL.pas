@@ -163,8 +163,8 @@ begin
   fDLLs.Clear();
   for K := Low(fPaths) to High(fPaths) do
     if DirectoryExists(fPaths[K]) then
-      for FolderPath in TDirectory.GetDirectories( fPaths[K] ) do
-        for DLLPath in TDirectory.GetFiles( FolderPath ) do
+      for FolderPath in TDirectory.GetDirectories(fPaths[K]) do
+        for DLLPath in TDirectory.GetFiles(FolderPath) do
           if (ExtractFileExt(DLLPath) = '.dll') then
           begin
             if aLogDLLs then
@@ -180,7 +180,7 @@ var
 begin
   Result := False;
   for K := 0 to fDLLs.Count-1 do
-    if (CompareStr(fDLLs[K]^.Path,aDLLPath) = 0) then
+    if CompareStr(fDLLs[K]^.Path,aDLLPath) = 0 then
     begin
       Result := True;
       break

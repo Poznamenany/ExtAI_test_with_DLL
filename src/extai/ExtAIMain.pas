@@ -21,8 +21,8 @@ type
     property QueueStates: TExtAIQueueStates read fQueueStates;
 
     constructor Create(aLog: TLogEvent); reintroduce;
-    destructor Destroy(); override;
-    procedure Release();
+    destructor Destroy; override;
+    procedure Release;
 
     function NewExtAI(aOwnThread: Boolean; aExtAIID: ui8; aDLLPath: wStr; aInitLog: TLogEvent; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
@@ -33,29 +33,29 @@ implementation
 { TExtAIMain }
 constructor TExtAIMain.Create(aLog: TLogEvent);
 begin
-  inherited Create();
+  inherited Create;
   fOnLog := aLog;
-  fCommDLL := TList.Create();
+  fCommDLL := TList.Create;
   fListDLL := TExtAIListDLL.Create(aLog);
   fQueueStates := nil; // States are interface and will be freed automatically
 end;
 
-destructor TExtAIMain.Destroy();
+destructor TExtAIMain.Destroy;
 begin
-  Release(); // Make sure that DLLs are released
-  fCommDLL.Free();
-  fListDLL.Free();
+  Release; // Make sure that DLLs are released
+  fCommDLL.Free;
+  fListDLL.Free;
   inherited;
 end;
 
 
-procedure TExtAIMain.Release();
+procedure TExtAIMain.Release;
 var
   K: si32;
 begin
   for K := 0 to fCommDLL.Count-1 do
-    TExtAICommDLL(fCommDLL[K]).Free();
-  fCommDLL.Clear();
+    TExtAICommDLL(fCommDLL[K]).Free;
+  fCommDLL.Clear;
 end;
 
 
@@ -67,7 +67,7 @@ begin
   Result := nil;
 
   // Make sure that DLLs exist - DLL was already refreshed in GUI
-  //fListDLL.RefreshDLLs();
+  //fListDLL.RefreshDLLs;
   if NOT fListDLL.ContainDLL(aDLLPath) then
     Exit;
 

@@ -15,7 +15,6 @@ object PPLWin: TPPLWin
     Size.PlatformDefault = False
     Text = 'DLL'
     TabOrder = 3
-    OnClick = GroupBox1Click
     object edFolderDLL1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 0
@@ -538,8 +537,7 @@ object PPLWin: TPPLWin
     Size.PlatformDefault = False
     Text = 'Simulation'
     TabOrder = 5
-    object chckbMultithread: TCheckBox
-      IsChecked = True
+    object cbMultithread: TCheckBox
       Position.X = 8.000000000000000000
       Position.Y = 16.000000000000000000
       TabOrder = 0

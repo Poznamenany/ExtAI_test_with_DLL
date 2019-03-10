@@ -58,8 +58,10 @@ begin
 end;
 
 destructor TExtAICommDLL.Destroy();
+{$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   K: si32;
+{$ENDIF}
 begin
   Log('  TExtAICommDLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
 
@@ -167,7 +169,7 @@ begin
         fExtAIThread.Add(Thread);
         Thread.Start;
         {$ELSE}
-          Assert(False, 'ALLOW_EXT_AI_MULTITHREADING is not set');
+         Assert(False, 'ALLOW_EXT_AI_MULTITHREADING is not set');
         {$ENDIF}
       end else
       begin

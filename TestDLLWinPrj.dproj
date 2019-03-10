@@ -92,6 +92,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="src\Consts.pas"/>
         <DCCReference Include="src\GameHand.pas"/>
         <DCCReference Include="src\GameThread.pas"/>
         <DCCReference Include="src\HandAI_Ext.pas"/>
