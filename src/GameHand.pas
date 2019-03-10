@@ -15,25 +15,28 @@ type
     // Log
     procedure Log(aLog: wStr);
   public
-    property HandIndex: Integer read fHandIndex;
-
-    constructor Create(aHandIndex: Integer; aLog: TLogEvent; aExtAIHand: THandAI_Ext); reintroduce;
+    constructor Create(aHandIndex: Integer; aLog: TLogEvent); reintroduce;
     destructor Destroy; override;
 
-    procedure UpdateState(aTick: Integer);
+    property HandIndex: Integer read fHandIndex;
+
+    // KP sets AI type after init
+    procedure SetAIType(aExtAIHand: THandAI_Ext);
+
+    procedure UpdateState(aTick: Cardinal);
   end;
 
 implementation
+uses
+  Consts;
 
 
 { TGameHand }
-constructor TGameHand.Create(aHandIndex: Integer; aLog: TLogEvent; aExtAIHand: THandAI_Ext);
+constructor TGameHand.Create(aHandIndex: Integer; aLog: TLogEvent);
 begin
   inherited Create();
   fHandIndex := aHandIndex;
   fOnLog := aLog;
-
-  fExtAIHand := aExtAIHand;
 
   Log('  TGameHand-Create: ID = '+IntToStr(fHandIndex));
 end;
@@ -43,6 +46,7 @@ destructor TGameHand.Destroy();
 begin
   FreeAndNil(fExtAIHand);
   Log('  TGameHand-Destroy: ID = '+IntToStr(fHandIndex));
+
   inherited;
 end;
 
@@ -54,9 +58,13 @@ begin
 end;
 
 
-procedure TGameHand.UpdateState(aTick: Integer);
-const
-  FIRST_TICK = 1;
+procedure TGameHand.SetAIType(aExtAIHand: THandAI_Ext);
+begin
+  fExtAIHand := aExtAIHand;
+end;
+
+
+procedure TGameHand.UpdateState(aTick: Cardinal);
 begin
   if aTick = FIRST_TICK then
     fExtAIHand.OnMissionStart;
