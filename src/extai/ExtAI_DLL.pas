@@ -26,10 +26,11 @@ type
     fExtAIThread: TList;
     {$ENDIF}
 
-    fOnInitDLL: TInitDLL;
-    fOnTerminDLL: TTerminDLL;
-    fOnInitNewExtAI: TInitNewExtAI;
-    fOnNewExtAI: TNewExtAI;
+    // DLL Procedures
+    fDLLProc_Init: TInitDLL;
+    fDLLProc_Terminate: TTerminDLL;
+    fDLLProc_InitNewExtAI: TInitNewExtAI;
+    fDLLProc_NewExtAI: TNewExtAI;
 
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
@@ -39,7 +40,7 @@ type
     constructor Create(aOnLog: TLogEvent); reintroduce;
     destructor Destroy; override;
 
-    function LinkDLL(aDLLPath: wStr): b;
+    function LinkDLL(aDLLPath: wStr): Boolean;
     function CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
   end;
 
@@ -77,8 +78,8 @@ begin
     end;
   {$ENDIF}
 
-  if Assigned(fOnTerminDLL) then
-    fOnTerminDLL(); // = remove reference from ExtAIAPI
+  if Assigned(fDLLProc_Terminate) then
+    fDLLProc_Terminate(); // = remove reference from ExtAIAPI
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   for K := 0 to fExtAIThread.Count-1 do
@@ -92,50 +93,57 @@ begin
 end;
 
 
-function TExtAI_DLL.LinkDLL(aDLLPath: wStr): b;
+function TExtAI_DLL.LinkDLL(aDLLPath: wStr): Boolean;
 var
   Err: si32;
   Cfg: TDLLpConfig;
 begin
   Result := False;
-  if FileExists(aDLLPath) then
+
+  if not FileExists(aDLLPath) then
   begin
-    fLibHandle := SafeLoadLibrary( aDLLPath );
-    if (fLibHandle <> 0) then
-    begin
-      Err := GetLastError();
-      if (Err <> 0) then
-        Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
-      Result := True;
-
-      fOnInitDLL := GetProcAddress(fLibHandle, 'InitDLL');
-      fOnTerminDLL := GetProcAddress(fLibHandle, 'TerminDLL');
-      fOnNewExtAI := GetProcAddress(fLibHandle, 'NewExtAI');
-      fOnInitNewExtAI := GetProcAddress(fLibHandle, 'InitNewExtAI');
-
-      if Assigned(fOnInitDLL)
-      AND Assigned(fOnTerminDLL)
-      AND Assigned(fOnNewExtAI)
-      AND Assigned(fOnInitNewExtAI) then
-      begin
-        Result := True;
-        fDLLConfig.Path := aDLLPath;
-        fOnInitDLL(Cfg);
-        SetLength(fDLLConfig.Author, Cfg.AuthorLen);
-        Move(Cfg.Author^, fDLLConfig.Author[1], Cfg.AuthorLen * SizeOf(fDLLConfig.Author[1]));
-        SetLength(fDLLConfig.Description, Cfg.DescriptionLen);
-        Move(Cfg.Description^, fDLLConfig.Description[1], Cfg.DescriptionLen * SizeOf(fDLLConfig.Description[1]));
-        SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
-        Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
-        fDLLConfig.Version := Cfg.Version;
-        Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
-      end;
-    end
-    else
-      Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ' + IntToStr( GetLastError() ));
-  end
-  else
     Log('  TExtAI_DLL-LinkDLL: DLL file was NOT found');
+    Exit;
+  end;
+
+  fLibHandle := SafeLoadLibrary(aDLLPath);
+  if fLibHandle = 0 then
+  begin
+    Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ' + IntToStr(GetLastError()));
+    Exit;
+  end;
+
+  Err := GetLastError();
+  if Err <> 0 then
+  begin
+    Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
+    Exit;
+  end;
+
+  Result := True;
+
+  fDLLProc_Init := GetProcAddress(fLibHandle, 'InitDLL');
+  fDLLProc_Terminate := GetProcAddress(fLibHandle, 'TerminDLL');
+  fDLLProc_NewExtAI := GetProcAddress(fLibHandle, 'NewExtAI');
+  fDLLProc_InitNewExtAI := GetProcAddress(fLibHandle, 'InitNewExtAI');
+
+  if Assigned(fDLLProc_Init)
+  AND Assigned(fDLLProc_Terminate)
+  AND Assigned(fDLLProc_NewExtAI)
+  AND Assigned(fDLLProc_InitNewExtAI) then
+  begin
+    Result := True;
+    fDLLConfig.Path := aDLLPath;
+    fDLLProc_Init(Cfg);
+    SetLength(fDLLConfig.Author, Cfg.AuthorLen);
+    Move(Cfg.Author^, fDLLConfig.Author[1], Cfg.AuthorLen * SizeOf(fDLLConfig.Author[1]));
+    SetLength(fDLLConfig.Description, Cfg.DescriptionLen);
+    Move(Cfg.Description^, fDLLConfig.Description[1], Cfg.DescriptionLen * SizeOf(fDLLConfig.Description[1]));
+    SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
+    Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
+    fDLLConfig.Version := Cfg.Version;
+    Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
+  end;
 end;
 
 
@@ -149,7 +157,7 @@ var
   {$ENDIF}
 begin
   Result := nil;
-  if not Assigned(fOnNewExtAI) then Exit;
+  if not Assigned(fDLLProc_NewExtAI) then Exit;
 
   //Log('  CommDLL-CreateNewExtAI: HandIndex = ' + IntToStr(aHandIndex));
   Result := THandAI_Ext.Create(aHandIndex, fOnLog);
@@ -163,12 +171,12 @@ begin
       QueueActions := TExtAIQueueActions.Create(aHandIndex, ThreadLog);
       QueueActions.Actions := Result; // = add reference to THandAI_Ext
       QueueEvents := TExtAIQueueEvents.Create(aHandIndex, ThreadLog);
-      QueueEvents.Events := fOnNewExtAI(); // = add reference to TExtAI in DLL
+      QueueEvents.Events := fDLLProc_NewExtAI(); // = add reference to TExtAI in DLL
       QueueEvents.QueueActions := QueueActions; // Mark actions so they are called OnTick event from main thread
       Result.AssignEvents(QueueEvents); // = add reference to TExtAIQueueEvents
       Thread.Init(QueueEvents);
       // Create ExtAI in DLL
-      fOnInitNewExtAI(aHandIndex, QueueActions, aStates); // = add reference to TExtAIQueueActions and States
+      fDLLProc_InitNewExtAI(aHandIndex, QueueActions, aStates); // = add reference to TExtAIQueueActions and States
       fExtAIThread.Add(Thread);
       Thread.Start;
       {$ELSE}
@@ -177,9 +185,9 @@ begin
     end else
     begin
       // Create interface
-      Result.AssignEvents(fOnNewExtAI); // = add reference to TExtAI in DLL
+      Result.AssignEvents(fDLLProc_NewExtAI); // = add reference to TExtAI in DLL
       // Create ExtAI in DLL
-      fOnInitNewExtAI(aHandIndex, Result, aStates); // = add reference to THandAI_Ext and States
+      fDLLProc_InitNewExtAI(aHandIndex, Result, aStates); // = add reference to THandAI_Ext and States
     end;
   except
     on E: Exception do
