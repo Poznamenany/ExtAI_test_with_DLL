@@ -3,7 +3,7 @@ unit ExtAIQueueStates;
 interface
 uses
   Windows, System.SysUtils, Math,
-  {ExtAIStates,} ExtAIUtils, ExtAIInterfaceDelphi, ExtAIDataTypes;
+  {ExtAIStates,} ExtAIUtils, ExtAI_SharedInterfaces, ExtAI_SharedTypes;
 
 type
   // Queue of states for multithreading

@@ -2,7 +2,7 @@ library DLL_Library;
 {$DEFINE DLL_Library}
 uses
   SysUtils, Classes,
-  ExtAI, ExtAIInterfaceDelphi, ExtAIDataTypes;
+  ExtAI, ExtAI_SharedInterfaces, ExtAI_SharedTypes;
 
 {$R *.res}
 

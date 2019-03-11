@@ -1,4 +1,4 @@
-unit ExtAIDataTypes;
+unit ExtAI_SharedTypes;
 interface
 
 type

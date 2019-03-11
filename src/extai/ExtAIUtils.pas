@@ -1,7 +1,7 @@
 unit ExtAIUtils;
 interface
 uses
-  Consts, ExtAIDataTypes;
+  Consts, ExtAI_SharedTypes;
 
 type
   TLogEvent = procedure(aStr: wStr) of Object;

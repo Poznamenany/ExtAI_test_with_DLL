@@ -3,7 +3,7 @@ interface
 uses
   Windows, Classes,
   System.Threading, System.Diagnostics, System.SysUtils,
-  ExtAIQueueEvents, ExtAIUtils, ExtAIDataTypes;
+  ExtAIQueueEvents, ExtAIUtils, ExtAI_SharedTypes;
 
 const
   SLEEP_BEFORE_RUN = 1;

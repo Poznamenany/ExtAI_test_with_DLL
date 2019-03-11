@@ -1,7 +1,7 @@
-unit ExtAIInterfaceDelphi;
+unit ExtAI_SharedInterfaces;
 interface
 uses
-  ExtAIDataTypes;
+  ExtAI_SharedTypes;
 
 type
   // Interface for Actions (when ExtAI wants the Game to do something, e.g. move soldiers)

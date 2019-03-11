@@ -1,8 +1,8 @@
 unit ExtAIQueueActions;
 interface
 uses
-  Windows, System.SysUtils,
-  ExtAIUtils, ExtAIInterfaceDelphi, ExtAIDataTypes;
+  Windows, System.SysUtils, Consts,
+  ExtAIUtils, ExtAI_SharedInterfaces, ExtAI_SharedTypes;
 
 type
   TActType = (atGroupOrderAttackUnit, atGroupOrderWalk);
@@ -28,8 +28,8 @@ type
     fEndAct: pAct;
     fLiveActionsCnt: si32;
     // IActions
-    procedure GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32); StdCall;
-    procedure GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16); StdCall;
+    function GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b; StdCall;
+    function GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b; StdCall;
     procedure LogDLL(apLog: pwStr; aLen: ui32); StdCall;
     // Queue
     procedure AddAction(aActType: TActType; aPtr: Pointer);
@@ -145,7 +145,7 @@ end;
 
 
 // IActions - definition of functions in the interface
-procedure TExtAIQueueActions.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32);
+function TExtAIQueueActions.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b;
 var
   newRec: pRecGroupOrderAttackUnit;
 begin
@@ -159,7 +159,7 @@ begin
 end;
 
 
-procedure TExtAIQueueActions.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui16);
+function TExtAIQueueActions.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b;
 var
   newRec: pRecGroupOrderWalk;
 begin

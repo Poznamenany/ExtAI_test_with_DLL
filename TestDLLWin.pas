@@ -8,7 +8,7 @@ uses
   FMX.ListView,
   FMX.Layouts, FMX.ListBox, FMX.Edit,
   Consts, Game,
-  ExtAIUtils, ExtAIDataTypes;
+  ExtAIUtils, ExtAI_SharedTypes;
 
 type
   TPPLWin = class(TForm)

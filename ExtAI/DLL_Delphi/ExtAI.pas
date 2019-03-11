@@ -2,7 +2,7 @@ unit ExtAI;
 interface
 uses
   Windows, System.SysUtils,
-  ExtAIInterfaceDelphi, ExtAIDataTypes;
+  ExtAI_SharedInterfaces, ExtAI_SharedTypes;
 
 type
   TExtAI = class(TInterfacedObject, IEvents)

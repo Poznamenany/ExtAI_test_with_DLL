@@ -2,7 +2,7 @@ unit HandAI_Ext;
 interface
 uses
   Windows, System.SysUtils,
-  Consts, ExtAIInterfaceDelphi, ExtAIUtils, ExtAIDataTypes;
+  Consts, ExtAI_SharedInterfaces, ExtAIUtils, ExtAI_SharedTypes;
 
 type
   // ExtAI class for Hands - process flow of events and actions

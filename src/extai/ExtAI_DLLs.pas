@@ -2,7 +2,7 @@ unit ExtAI_DLLs;
 interface
 uses
   IOUtils, Classes, System.SysUtils, Generics.Collections,
-  ExtAI_DLL, ExtAIDataTypes, ExtAIUtils;
+  ExtAI_DLL, ExtAI_SharedTypes, ExtAIUtils;
 
   // Expected folder structure:
   // - ExtAI

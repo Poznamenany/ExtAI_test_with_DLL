@@ -2,7 +2,7 @@ unit Hand;
 interface
 uses
   Windows, System.SysUtils,
-  Consts, HandAI_Ext, ExtAIUtils, ExtAIDataTypes;
+  Consts, HandAI_Ext, ExtAIUtils, ExtAI_SharedTypes;
 
 type
   // Game class for Hand. It hides the ExtAI inside of it

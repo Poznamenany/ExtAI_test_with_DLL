@@ -7,7 +7,7 @@ uses
   ExtAIQueueActions, ExtAIQueueEvents, ExtAIThread,
   {$ENDIF}
   ExtAIQueueStates,
-  Consts, HandAI_Ext, ExtAIInterfaceDelphi, ExtAIDataTypes, ExtAIUtils;
+  Consts, HandAI_Ext, ExtAI_SharedInterfaces, ExtAI_SharedTypes, ExtAIUtils;
 
 type
   TInitDLL = procedure(var aConfig: TDLLpConfig); StdCall;

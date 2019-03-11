@@ -8,8 +8,6 @@ uses
   Hand in 'src\Hand.pas',
   HandAI_Ext in 'src\HandAI_Ext.pas',
   TestDLLWin in 'TestDLLWin.pas' {PPLWin} ,
-  ExtAIDataTypes in 'src\extai\ExtAIDataTypes.pas',
-  ExtAIInterfaceDelphi in 'src\extai\ExtAIInterfaceDelphi.pas',
   ExtAI_DLL in 'src\extai\ExtAI_DLL.pas',
   ExtAI_DLLs in 'src\extai\ExtAI_DLLs.pas',
   ExtAIMaster in 'src\extai\ExtAIMaster.pas',
@@ -22,6 +20,9 @@ uses
   ExtAIThread in 'src\extai\Thread\ExtAIThread.pas',
   {$ENDIF}
   ExtAIQueueStates in 'src\extai\Thread\ExtAIQueueStates.pas',
+
+  ExtAI_SharedTypes in 'src\extai\ExtAI_SharedTypes.pas',
+  ExtAI_SharedInterfaces in 'src\extai\ExtAI_SharedInterfaces.pas',
 
   ExtAIUtils in 'src\extai\ExtAIUtils.pas';
 

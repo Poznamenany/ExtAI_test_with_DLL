@@ -2,7 +2,7 @@ unit ExtAIQueueEvents;
 interface
 uses
   Windows, System.SysUtils,
-  ExtAIQueueActions, ExtAIUtils, ExtAIInterfaceDelphi, ExtAIDataTypes;
+  ExtAIQueueActions, ExtAIUtils, ExtAI_SharedInterfaces, ExtAI_SharedTypes;
 
 type
   TEvType = (etOnMissionStart, etOnTick, etOnPlayerDefeated, etOnPlayerVictory);

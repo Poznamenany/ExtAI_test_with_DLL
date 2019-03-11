@@ -99,13 +99,13 @@
         <DCCReference Include="TestDLLWin.pas">
             <Form>PPLWin</Form>
         </DCCReference>
-        <DCCReference Include="src\extai\ExtAIDataTypes.pas"/>
-        <DCCReference Include="src\extai\ExtAIInterfaceDelphi.pas"/>
         <DCCReference Include="src\extai\ExtAI_DLL.pas"/>
         <DCCReference Include="src\extai\ExtAI_DLLs.pas"/>
         <DCCReference Include="src\extai\ExtAIMaster.pas"/>
         <DCCReference Include="src\extai\Thread\ExtAIQueueActions.pas"/>
         <DCCReference Include="src\extai\Thread\ExtAIQueueStates.pas"/>
+        <DCCReference Include="src\extai\ExtAI_SharedTypes.pas"/>
+        <DCCReference Include="src\extai\ExtAI_SharedInterfaces.pas"/>
         <DCCReference Include="src\extai\ExtAIUtils.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -597,7 +597,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
@@ -605,7 +605,7 @@
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>
