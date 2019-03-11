@@ -3,7 +3,7 @@ unit ExtAIMaster;
 interface
 uses
   Classes, Windows, System.SysUtils, Generics.Collections,
-  Consts, HandAI_Ext, ExtAIQueueStates, ExtAIDLLs, ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
+  Consts, HandAI_Ext, ExtAIQueueStates, ExtAI_DLLs, ExtAI_DLL, ExtAIDataTypes, ExtAIUtils;
 
 type
   // Master of ExtAIs
@@ -11,7 +11,7 @@ type
   TExtAIMaster = class
   private
     fDLLs: TExtAIDLLs;
-    fDLLInstances: TList<TExtAICommDLL>;
+    fDLLInstances: TList<TExtAI_DLL>;
     fQueueStates: TExtAIQueueStates;
 
     fOnLog: TLogEvent;
@@ -38,7 +38,7 @@ begin
 
   fOnLog := aLog;
 
-  fDLLInstances := TList<TExtAICommDLL>.Create;
+  fDLLInstances := TList<TExtAI_DLL>.Create;
   fDLLs := TExtAIDLLs.Create(aDLLPaths, aLog);
   fQueueStates := nil; // States are interface and will be freed automatically
 end;
@@ -67,7 +67,7 @@ end;
 function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
 var
   Idx: Integer;
-  DLL: TExtAICommDLL;
+  DLL: TExtAI_DLL;
 begin
   Result := nil;
 
@@ -82,7 +82,7 @@ begin
     DLL := fDLLInstances[Idx]
   else
   begin // if not, create the DLL
-    DLL := TExtAICommDLL.Create(fOnLog);
+    DLL := TExtAI_DLL.Create(fOnLog);
     DLL.LinkDLL(aDLLPath);
     fDLLInstances.Add(DLL);
   end;

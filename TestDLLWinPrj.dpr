@@ -8,10 +8,10 @@ uses
   Hand in 'src\Hand.pas',
   HandAI_Ext in 'src\HandAI_Ext.pas',
   TestDLLWin in 'TestDLLWin.pas' {PPLWin} ,
-  ExtAICommDLL in 'src\extai\ExtAICommDLL.pas',
   ExtAIDataTypes in 'src\extai\ExtAIDataTypes.pas',
   ExtAIInterfaceDelphi in 'src\extai\ExtAIInterfaceDelphi.pas',
-  ExtAIDLLs in 'src\extai\ExtAIDLLs.pas',
+  ExtAI_DLL in 'src\extai\ExtAI_DLL.pas',
+  ExtAI_DLLs in 'src\extai\ExtAI_DLLs.pas',
   ExtAIMaster in 'src\extai\ExtAIMaster.pas',
   //ExtAIStates in 'src\extai\ExtAIStates.pas',
 

@@ -3,7 +3,7 @@ interface
 uses
   Windows, Classes, Generics.Collections,
   System.Threading, System.Diagnostics, System.SysUtils, Hand,
-  ExtAIMaster, ExtAIDLLs, HandAI_Ext, ExtAIDataTypes, ExtAIUtils;
+  ExtAIMaster, HandAI_Ext, ExtAIDataTypes, ExtAIUtils;
 
 const
   SLEEP_BEFORE_RUN = 50;

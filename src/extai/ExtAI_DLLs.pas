@@ -1,8 +1,8 @@
-unit ExtAIDLLs;
+unit ExtAI_DLLs;
 interface
 uses
   IOUtils, Classes, System.SysUtils, Generics.Collections,
-  ExtAICommDLL, ExtAIDataTypes, ExtAIUtils;
+  ExtAI_DLL, ExtAIDataTypes, ExtAIUtils;
 
   // Expected folder structure:
   // - ExtAI
@@ -71,10 +71,10 @@ end;
 procedure TExtAIDLLs.AddDLL(aPath: wStr);
 var
   dllInfo: TDLLMainCfg;
-  CommDLL: TExtAICommDLL;
+  CommDLL: TExtAI_DLL;
 begin
   // Init DLL and ask it about its details
-  CommDLL := TExtAICommDLL.Create(fOnLog);
+  CommDLL := TExtAI_DLL.Create(fOnLog);
   try
     if CommDLL.LinkDLL(aPath) then
     begin

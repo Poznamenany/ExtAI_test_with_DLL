@@ -1,4 +1,4 @@
-unit ExtAICommDLL;
+unit ExtAI_DLL;
 {$I KM_CompilerDirectives.inc}
 interface
 uses
@@ -17,7 +17,7 @@ type
 
   // Communication with 1 physical DLL with using exported methods.
   // Main targets: initialization of DLL, creation of ExtAIs and termination of DLL and ExtAIs
-  TExtAICommDLL = class
+  TExtAI_DLL = class
   private
     fDLLConfig: TDLLMainCfg;
     fLibHandle: THandle;
@@ -46,8 +46,8 @@ type
 implementation
 
 
-{ TExtAICommDLL }
-constructor TExtAICommDLL.Create(aOnLog: TLogEvent);
+{ TExtAI_DLL }
+constructor TExtAI_DLL.Create(aOnLog: TLogEvent);
 begin
   inherited Create;
 
@@ -55,23 +55,23 @@ begin
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   fExtAIThread := TList.Create();
   {$ENDIF}
-  Log('  TExtAICommDLL-Create');
+  Log('  TExtAI_DLL-Create');
 end;
 
 
-destructor TExtAICommDLL.Destroy;
+destructor TExtAI_DLL.Destroy;
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   K: si32;
 {$ENDIF}
 begin
-  Log('  TExtAICommDLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
+  Log('  TExtAI_DLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   for K := 0 to fExtAIThread.Count-1 do
     if (TExtAIThread(fExtAIThread[K]).State = tsRun) then
     begin
-      Log('  TExtAICommDLL-Destroy: Wait for thread of HandIndex = ' + IntToStr(TExtAIThread(fExtAIThread[K]).HandIndex));
+      Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = ' + IntToStr(TExtAIThread(fExtAIThread[K]).HandIndex));
       TExtAIThread(fExtAIThread[K]).State := tsTerminate;
       TExtAIThread(fExtAIThread[K]).WaitFor;
     end;
@@ -92,7 +92,7 @@ begin
 end;
 
 
-function TExtAICommDLL.LinkDLL(aDLLPath: wStr): b;
+function TExtAI_DLL.LinkDLL(aDLLPath: wStr): b;
 var
   Err: si32;
   Cfg: TDLLpConfig;
@@ -105,7 +105,7 @@ begin
     begin
       Err := GetLastError();
       if (Err <> 0) then
-        Log('  TExtAICommDLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
+        Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
       Result := True;
 
       fOnInitDLL := GetProcAddress(fLibHandle, 'InitDLL');
@@ -128,18 +128,18 @@ begin
         SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
         Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
         fDLLConfig.Version := Cfg.Version;
-        Log('  TExtAICommDLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
+        Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
       end;
     end
     else
-      Log('  TExtAICommDLL-LinkDLL: library was NOT loaded, error: ' + IntToStr( GetLastError() ));
+      Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ' + IntToStr( GetLastError() ));
   end
   else
-    Log('  TExtAICommDLL-LinkDLL: DLL file was NOT found');
+    Log('  TExtAI_DLL-LinkDLL: DLL file was NOT found');
 end;
 
 
-function TExtAICommDLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+function TExtAI_DLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   Thread: TExtAIThread;
@@ -184,14 +184,14 @@ begin
   except
     on E: Exception do
     begin
-      Log('  TExtAICommDLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
+      Log('  TExtAI_DLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
       Readln;
     end;
   end;
 end;
 
 
-procedure TExtAICommDLL.Log(aLog: wStr);
+procedure TExtAI_DLL.Log(aLog: wStr);
 begin
   if Assigned(fOnLog) then
     fOnLog(aLog);
