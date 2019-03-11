@@ -70,19 +70,19 @@ begin
   // Test states
   feedback := States.State1(11);
   if (feedback <> 11) then
-    Log('    TExtAI-OnTick: wrong state feedback = ' + IntToStr(feedback));
+    Log('    TExtAI-OnTick: wrong States.State1 feedback = ' + IntToStr(feedback));
 
   feedback := States.UnitAt(5,5);
   if (feedback <> 11) then
-    Log('    TExtAI-OnTick: wrong state feedback = ' + IntToStr(feedback));
+    Log('    TExtAI-OnTick: wrong States.UnitAt feedback = ' + IntToStr(feedback));
 
   States.TerrainSize(tx, ty);
-  Log(Format('    TExtAI-OnTick: Terrain is %dx%d', [tx, ty]));
+  Log(Format('    TExtAI-OnTick: States.TerrainSize is %dx%d', [tx, ty]));
 
   GetMem(tp, tx*ty);
   States.TerrainPassability(tp);
-  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(ab(tp)[24])]));
-  Log(Format('    TExtAI-OnTick: Terrain is %d', [Ord(ab(tp)[12])]));
+  Log(Format('    TExtAI-OnTick: States.TerrainPassability[24] is %d', [Ord(ab(tp)[24])]));
+  Log(Format('    TExtAI-OnTick: States.TerrainPassability[12] is %d', [Ord(ab(tp)[12])]));
   FreeMem(tp);
 
   {if States.MapTerrain(ID,pFirstElem,Len) then
