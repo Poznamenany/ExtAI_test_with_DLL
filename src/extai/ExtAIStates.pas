@@ -1,125 +1,156 @@
 unit ExtAIStates;
+{$I KM_CompilerDirectives.inc}
 interface
 uses
-  Windows, Classes,
-  System.Threading, System.Diagnostics, System.SysUtils,
-  ExtAIUtils, ExtAIDataTypes;
+  Windows, System.SysUtils, Math,
+  {ExtAIState,} ExtAIUtils, ExtAI_SharedInterfaces, ExtAI_SharedTypes;
 
 type
-  pTExtAIStates = ^TExtAIStates;
-
-  // Store data for ExtAI in 1 tick
-  // There is needed another buffer for arrays which will be send to the DLL
-  // because they are sent like pointers to first value so ExtAI can replace
-  // values in array -> possible trouble
-  TExtAIStates = class
+  // Queue of states for multithreading
+  TExtAIStates = class(TInterfacedObject, IStates)
   private
-    fNext: TExtAIStates;
-    // Thread variables
-    fLock: ui32; // Standard read lock
-    // Data set
-    fTick: ui32; // = ID of this class
-    fMapTerrain: ui32Arr;
-    //fWalkable: bArr;
-    //fTerrain: ui8Arr;
-    //...
+    //fStartStates: TExtAIState;
+    //fEndStates: TExtAIState;
+    //fLiveStatesCnt: si32;
+    //fLastPointer: PTExtAIState;
+    //fClassLock: array [0..12] of TExtAIState;
     fOnLog: TLogEvent;
+    // Queue
+    //procedure FreeUnused(aIgnoreLock: Boolean);
+    // IStates
+    function State1(aID: ui32): ui8; StdCall;
+    function UnitAt(aX: ui16; aY: ui16): ui32; StdCall;
+    function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
+    procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
+    procedure TerrainPassability(var aPassability: pb); StdCall;
     // Log
     procedure Log(aLog: wStr);
   public
-    fSpecLock: ui32; // Special lock which will lock class till it is not unlocked
-    property Next: TExtAIStates read fNext write fNext;
-    property Tick: ui32 read fTick;
-    property Lock: ui32 read fLock;
-    property SpecialLock: ui32 read fSpecLock;
-
     constructor Create(aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
-    procedure DeclareNext();
 
     // Extract states
-    procedure ExtractStates();
-    // Distribute states
-    function State1(aID: ui32): ui8;
-    function MapTerrain(var aLock: TExtAIStates; var aFirstElem: pui32; var aLength: si32): b;
-
-    // Lock
-    function IsLocked(): b;
-    procedure SpecLock(var aLock: TExtAIStates);
-    procedure SpecUnLock();
+    //procedure ExtractStates();
   end;
 
 implementation
-uses
-  Game;
 
 
 { TExtAIStates }
 constructor TExtAIStates.Create(aLog: TLogEvent);
+//var
+//  K: Integer;
 begin
   inherited Create();
-  fNext := nil;
-  fLock := 0;
-  fSpecLock := 0;
   fOnLog := aLog;
+  //fLiveStatesCnt := 0;
+  //fStartStates := TExtAIState.Create(fOnLog);
+  //Inc(fLiveStatesCnt);
+  //fEndStates := fStartStates;
+  //for K := Low(fClassLock) to High(fClassLock) do
+  //  fClassLock[K] := nil;
+  Log('  TExtAIStates-Create');
 end;
 
 destructor TExtAIStates.Destroy();
 begin
+  Log('  TExtAIStates-Destroy');
+  //FreeUnused(True);
+  //fEndStates.Free;
+  //Dec(fLiveStatesCnt);
+  //if (fLiveStatesCnt <> 0) then
+  //  Log('  TExtAIStates-Destroy: States termination error, cnt = ' + IntToStr(fLiveStatesCnt));
   inherited;
 end;
 
-procedure TExtAIStates.DeclareNext();
+
+{procedure TExtAIStates.FreeUnused(aIgnoreLock: Boolean);
+var
+  tmp1, tmp2, tmp3: TExtAIState;
 begin
-  fNext := TExtAIStates.Create(fOnLog);
+  tmp1 := nil;
+  tmp2 := fStartStates;
+  if (tmp2 <> nil) then
+  begin
+    tmp3 := tmp2.Next;
+    while (tmp3 <> nil) do
+    begin
+      if aIgnoreLock OR (NOT tmp2.IsLocked) then
+      begin
+        if (tmp1 <> nil) then // Secure connection
+          tmp1.Next := tmp3
+        else if (tmp2 = fStartStates) then // Actualize first class
+          fStartStates := tmp3;
+        tmp2.Free();
+        Dec(fLiveStatesCnt);
+      end
+      else
+        tmp1 := tmp2;
+      tmp2 := tmp3;
+      tmp3 := tmp3.Next;
+    end;
+  end;
 end;
 
 
-function TExtAIStates.IsLocked(): b;
-begin
-  Result := (fLock + fSpecLock) > 0;
-end;
-
-
-// Extract data which are useful for ExtAI and transform them into usable format
 procedure TExtAIStates.ExtractStates();
 begin
-  fTick := gMainData.Tick;
-  SetLength(fMapTerrain,Length(gMainData.Map));
-  Move(gMainData.Map[0], fMapTerrain[0], Length(fMapTerrain) * SizeOf(fMapTerrain[0]));
-end;
+  fEndStates.DeclareNext();
+  Inc(fLiveStatesCnt);
+  fEndStates.Next.ExtractStates();
+  fEndStates := fEndStates.Next;
+  AtomicExchange(fLastPointer, @fEndStates);
+  FreeUnused(False);
+end;}
 
 
+// States
 function TExtAIStates.State1(aID: ui32): ui8;
 begin
-  AtomicIncrement(fLock);
-  // Get the correct data
+  // Check if request for State1 is correct
+  //...
+  if (aID <> 11) then
+    Log('  TExtAIStates-State1: Wrong ID');
+  // Get State1
+  Result := 0; // Some default case
+  //if (fEndStates <> nil) then
+  //  Result := fLastPointer^.State1(aID);
+end;
+
+
+procedure TExtAIStates.TerrainPassability(var aPassability: pb);
+type
+  TB = array of Boolean;
+var
+  I, K: Integer;
+begin
+  for I := 0 to 15 do
+    for K := 0 to 15 do
+      TB(aPassability)[I * 16 + K] := InRange(I, 1, 14) and InRange(K, 1, 14);
+end;
+
+
+procedure TExtAIStates.TerrainSize(var aX: ui16; var aY: ui16);
+begin
+  aX := 16;
+  aY := 16;
+end;
+
+
+function TExtAIStates.UnitAt(aX, aY: ui16): ui32;
+begin
   Result := 11;
-  AtomicDecrement(fLock);
 end;
 
-function TExtAIStates.MapTerrain(var aLock: TExtAIStates; var aFirstElem: pui32; var aLength: si32): b;
-begin
-  AtomicIncrement(fLock);
-  SpecLock(aLock); // Lock class till Map Terrain (or another function which send array) is not called again by same ID => array was copied
-  aFirstElem := @fMapTerrain[0]; // Maybe arrays have to be copy into special containers
-  aLength := Length(fMapTerrain);
-  Result := True;
-  AtomicDecrement(fLock);
-end;
 
-procedure TExtAIStates.SpecLock(var aLock: TExtAIStates);
+function TExtAIStates.MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b;
 begin
-  AtomicIncrement(fSpecLock);
-  // Unlock old element if it was locked
-  if (aLock <> nil) then
-    aLock.SpecUnLock();
-  aLock := self;
-end;
-
-procedure TExtAIStates.SpecUnLock();
-begin
-  AtomicDecrement(fSpecLock);
+  // Check if request for MapTerrain is correct
+  //...
+  // Get State1
+  Result := False;
+//  if (fLastPointer <> nil) then
+//    Result := fLastPointer^.MapTerrain(fClassLock[aID], aFirstElem, aLength);
 end;
 
 
@@ -128,5 +159,6 @@ begin
   if Assigned(fOnLog) then
     fOnLog(aLog);
 end;
+
 
 end.

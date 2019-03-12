@@ -6,7 +6,7 @@ uses
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   ExtAIQueueActions, ExtAIQueueEvents, ExtAIThread,
   {$ENDIF}
-  ExtAIQueueStates,
+  ExtAIStates,
   Consts, HandAI_Ext, ExtAI_SharedInterfaces, ExtAI_SharedTypes, ExtAIUtils;
 
 type
@@ -41,7 +41,7 @@ type
     destructor Destroy; override;
 
     function LinkDLL(aDLLPath: wStr): Boolean;
-    function CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+    function CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aIStates: TExtAIStates): THandAI_Ext;
   end;
 
 implementation
@@ -147,7 +147,7 @@ begin
 end;
 
 
-function TExtAI_DLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aStates: TExtAIQueueStates): THandAI_Ext;
+function TExtAI_DLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aIStates: TExtAIStates): THandAI_Ext;
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   Thread: TExtAIThread;
@@ -187,7 +187,7 @@ begin
       // Create interface
       Result.AssignEvents(fDLLProc_NewExtAI); // = add reference to TExtAI in DLL
       // Create ExtAI in DLL
-      fDLLProc_InitNewExtAI(aHandIndex, Result, aStates); // = add reference to THandAI_Ext and States
+      fDLLProc_InitNewExtAI(aHandIndex, Result, aIStates); // = add reference to THandAI_Ext and States
     end;
   except
     on E: Exception do

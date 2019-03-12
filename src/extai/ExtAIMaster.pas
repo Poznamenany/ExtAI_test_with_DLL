@@ -3,7 +3,7 @@ unit ExtAIMaster;
 interface
 uses
   Classes, Windows, System.SysUtils, Generics.Collections,
-  Consts, HandAI_Ext, ExtAIQueueStates, ExtAI_DLLs, ExtAI_DLL, ExtAI_SharedTypes, ExtAIUtils;
+  Consts, HandAI_Ext, ExtAIStates, ExtAI_DLLs, ExtAI_DLL, ExtAI_SharedTypes, ExtAIUtils;
 
 type
   // Master of ExtAIs
@@ -12,7 +12,7 @@ type
   private
     fDLLs: TExtAIDLLs;
     fDLLInstances: TList<TExtAI_DLL>;
-    fQueueStates: TExtAIQueueStates;
+    fIStates: TExtAIStates;
 
     fOnLog: TLogEvent;
     procedure Log(aLog: wStr);
@@ -23,7 +23,7 @@ type
     procedure Release;
 
     property DLLs: TExtAIDLLs read fDLLs;
-    property QueueStates: TExtAIQueueStates read fQueueStates;
+    property QueueStates: TExtAIStates read fIStates;
 
     function NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
   end;
@@ -40,7 +40,7 @@ begin
 
   fDLLInstances := TList<TExtAI_DLL>.Create;
   fDLLs := TExtAIDLLs.Create(aDLLPaths, aLog);
-  fQueueStates := nil; // States are interface and will be freed automatically
+  fIStates := nil; // States are interface and will be freed automatically
 end;
 
 
@@ -87,12 +87,12 @@ begin
     fDLLInstances.Add(DLL);
   end;
 
-  // Create States if does not exist
-  if fQueueStates = nil then
-    fQueueStates := TExtAIQueueStates.Create(fOnLog);
+  // Create IStates if it does not exist
+  if fIStates = nil then
+    fIStates := TExtAIStates.Create(fOnLog);
 
   // Create ExtAI in DLL
-  Result := DLL.CreateNewExtAI(aOwnThread, aHandIndex, aLogProgress, fQueueStates);
+  Result := DLL.CreateNewExtAI(aOwnThread, aHandIndex, aLogProgress, fIStates);
 end;
 
 
