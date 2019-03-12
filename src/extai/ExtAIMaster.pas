@@ -25,7 +25,7 @@ type
     property DLLs: TExtAIDLLs read fDLLs;
     property QueueStates: TExtAIStates read fIStates;
 
-    function NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
+    procedure RigNewExtAI(aAI: THandAI_Ext; aOwnThread: Boolean; aDLLPath: wStr; aLogProgress: TLogProgressEvent);
   end;
 
 
@@ -67,14 +67,12 @@ begin
 end;
 
 
-function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aDLLPath: wStr; aLogProgress: TLogProgressEvent): THandAI_Ext;
+procedure TExtAIMaster.RigNewExtAI(aAI: THandAI_Ext; aOwnThread: Boolean; aDLLPath: wStr; aLogProgress: TLogProgressEvent);
 var
   Idx: Integer;
   DLL: TExtAI_DLL;
   e: IEvents;
 begin
-  Result := nil;
-
   // Make sure that DLLs exist - DLL was already refreshed in GUI
   //fDLLs.RefreshDLLs;
   if not fDLLs.DLLExists(aDLLPath) then
@@ -96,11 +94,8 @@ begin
     fIStates := TExtAIStates.Create(fOnLog);
 
   // Create ExtAI in DLL
-  Result := THandAI_Ext.Create(aHandIndex, fOnLog);
-
-  DLL.CreateNewExtAI(aOwnThread, aHandIndex, aLogProgress, Result.IActions, fIStates, e);
-
-  Result.AssignEvents(e);
+  DLL.CreateNewExtAI(aOwnThread, aAI.HandIndex, aLogProgress, aAI.IActions, fIStates, e);
+  aAI.AssignEvents(e);
 end;
 
 

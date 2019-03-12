@@ -21,10 +21,10 @@ type
     constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
     destructor Destroy(); override;
 
-    procedure AssignEvents(aIEvents: IEvents);
+    property HandIndex: TKMHandIndex read fHandIndex;
     property IActions: TExtAIActions read fIActions;
+    procedure AssignEvents(aIEvents: IEvents); // ExtAI DLL gives IEvents to us
 
-    // fEvents: IEvents to directly call events in DLL
     procedure OnMissionStart();
     procedure OnTick(aTick: Cardinal);
     procedure OnPlayerDefeated(aHandIndex: TKMHandIndex);
@@ -42,7 +42,7 @@ begin
   fHandIndex := aHandIndex;
   fOnLog := aLog;
 
-  fIActions := TExtAIActions.Create(aHandIndex, fOnLog);
+  fIActions := TExtAIActions.Create(aHandIndex, Log);
 
   Log('  THandAIExt-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;

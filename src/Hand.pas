@@ -9,7 +9,7 @@ type
   THand = class
   private
     fHandIndex: TKMHandIndex;
-    fExtAIHand: THandAI_Ext;
+    fAIExt: THandAI_Ext;
     fOnLog: TLogEvent;
 
     // Log
@@ -18,10 +18,11 @@ type
     constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
     destructor Destroy; override;
 
+    property AIExt: THandAI_Ext read fAIExt;
     property HandIndex: TKMHandIndex read fHandIndex;
 
     // KP sets AI type after init
-    procedure SetAIType(aExtAIHand: THandAI_Ext);
+    procedure SetAIType;
 
     procedure UpdateState(aTick: Cardinal);
   end;
@@ -37,13 +38,15 @@ begin
   fHandIndex := aHandIndex;
   fOnLog := aLog;
 
+  fAIExt := nil;
+
   Log('  THand-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
 destructor THand.Destroy();
 begin
-  FreeAndNil(fExtAIHand);
+  FreeAndNil(fAIExt);
   Log('  THand-Destroy: HandIndex = ' + IntToStr(fHandIndex));
 
   inherited;
@@ -57,18 +60,18 @@ begin
 end;
 
 
-procedure THand.SetAIType(aExtAIHand: THandAI_Ext);
+procedure THand.SetAIType;
 begin
-  fExtAIHand := aExtAIHand;
+  fAIExt := THandAI_Ext.Create(fHandIndex, fOnLog);
 end;
 
 
 procedure THand.UpdateState(aTick: Cardinal);
 begin
   if aTick = FIRST_TICK then
-    fExtAIHand.OnMissionStart;
+    fAIExt.OnMissionStart;
 
-  fExtAIHand.OnTick(aTick);
+  fAIExt.OnTick(aTick);
 
   {
   //@Martin: todo

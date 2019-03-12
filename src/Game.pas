@@ -92,8 +92,9 @@ begin
   for K := Low(aExtAIs) to High(aExtAIs) do
     if CompareStr(aExtAIs[K], '') <> 0 then
     begin
-      fHands.Add(THand.Create(K, fOnLog));
-      fHands.Last.SetAIType(fExtAIMaster.NewExtAI(aMultithread, K, aExtAIs[K], aLogProgress));
+      fHands.Add(THand.Create(K, Log));
+      fHands.Last.SetAIType({hatExtAI});
+      fExtAIMaster.RigNewExtAI(fHands.Last.AIExt, aMultithread, aExtAIs[K], aLogProgress);
     end;
 end;
 

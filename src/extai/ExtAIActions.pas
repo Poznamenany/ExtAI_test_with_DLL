@@ -5,7 +5,7 @@ uses
   Consts, ExtAI_SharedInterfaces, ExtAIUtils, ExtAI_SharedTypes;
 
 type
-  // ExtAI class for Hands - process flow of events and actions
+  // ExtAI Actions
   TExtAIActions = class(TInterfacedObject, IActions)
   private
     fHandIndex: TKMHandIndex;
@@ -48,7 +48,7 @@ end;
 // IActions - definition of functions in the interface
 function TExtAIActions.GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b;
 begin
-  if LOG_VERBOSE then
+  if DBG_LOG_VERBOSE then
     Log(Format('TExtAIActions(%d).GroupOrderAttackUnit [%d, %d]', [fHandIndex, aGroupID, aUnitID]));
 
   Result := (aGroupID = 11) and (aUnitID = 22);
@@ -62,7 +62,7 @@ end;
 
 function TExtAIActions.GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b;
 begin
-  if LOG_VERBOSE then
+  if DBG_LOG_VERBOSE then
     Log(Format('TExtAIActions(%d).GroupOrderWalk [%d, %d, %d, %d]', [fHandIndex, aGroupID, aX, aY, aDirection]));
 
   Result := (aGroupID = 1) and (aX = 50) and (aY = 50) and (aDirection = 1);
