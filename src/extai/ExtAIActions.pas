@@ -18,26 +18,28 @@ type
 
     // Log
     procedure Log(aLog: wStr);
-  public
-    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
-    destructor Destroy(); override;
+  public const
+    DBG_LOG_VERBOSE: Boolean = True;
+    constructor Create(aHandIndex: TKMHandIndex; aOnLog: TLogEvent);
+    destructor Destroy; override;
   end;
 
 implementation
 
 
 { TExtAIActions }
-constructor TExtAIActions.Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
+constructor TExtAIActions.Create(aHandIndex: TKMHandIndex; aOnLog: TLogEvent);
 begin
   inherited Create;
 
   fHandIndex := aHandIndex;
-  fOnLog := aLog;
+  fOnLog := aOnLog;
+
   Log('  TExtAIActions-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
-destructor TExtAIActions.Destroy();
+destructor TExtAIActions.Destroy;
 begin
   Log('  TExtAIActions-Destroy: HandIndex = ' + IntToStr(fHandIndex));
 

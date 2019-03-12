@@ -18,8 +18,8 @@ type
     // Log
     procedure Log(aLog: wStr);
   public
-    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
-    destructor Destroy(); override;
+    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
+    destructor Destroy; override;
 
     property HandIndex: TKMHandIndex read fHandIndex;
     property IActions: TExtAIActions read fIActions;
@@ -30,6 +30,7 @@ type
     procedure OnPlayerDefeated(aHandIndex: TKMHandIndex);
     procedure OnPlayerVictory(aHandIndex: TKMHandIndex);
   end;
+
 
 implementation
 
@@ -48,7 +49,7 @@ begin
 end;
 
 
-destructor THandAI_Ext.Destroy();
+destructor THandAI_Ext.Destroy;
 begin
   Log('  THandAIExt-Destroy: HandIndex = ' + IntToStr(fHandIndex));
 

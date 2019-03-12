@@ -67,6 +67,9 @@ begin
 end;
 
 
+// -> HandIndex
+// -> Actions
+// <- Events
 procedure TExtAIMaster.RigNewExtAI(aAI: THandAI_Ext; aOwnThread: Boolean; aDLLPath: wStr; aLogProgress: TLogProgressEvent);
 var
   Idx: Integer;
