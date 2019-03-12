@@ -10,12 +10,8 @@ type
   private
     fHandIndex: TKMHandIndex;
     fAIExt: THandAI_Ext;
-    fOnLog: TLogEvent;
-
-    // Log
-    procedure Log(aLog: wStr);
   public
-    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent); reintroduce;
+    constructor Create(aHandIndex: TKMHandIndex); reintroduce;
     destructor Destroy; override;
 
     property AIExt: THandAI_Ext read fAIExt;
@@ -28,41 +24,35 @@ type
   end;
 
 implementation
+uses
+  Log;
 
 
 { THand }
-constructor THand.Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
+constructor THand.Create(aHandIndex: TKMHandIndex);
 begin
   inherited Create;
 
   fHandIndex := aHandIndex;
-  fOnLog := aLog;
 
   fAIExt := nil;
 
-  Log('  THand-Create: HandIndex = ' + IntToStr(fHandIndex));
+  gLog.Log('  THand-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
 destructor THand.Destroy();
 begin
   FreeAndNil(fAIExt);
-  Log('  THand-Destroy: HandIndex = ' + IntToStr(fHandIndex));
+  gLog.Log('  THand-Destroy: HandIndex = ' + IntToStr(fHandIndex));
 
   inherited;
 end;
 
 
-procedure THand.Log(aLog: wStr);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(aLog);
-end;
-
-
 procedure THand.SetAIType;
 begin
-  fAIExt := THandAI_Ext.Create(fHandIndex, fOnLog);
+  fAIExt := THandAI_Ext.Create(fHandIndex);
 end;
 
 

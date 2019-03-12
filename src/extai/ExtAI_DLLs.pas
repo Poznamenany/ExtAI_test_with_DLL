@@ -17,13 +17,11 @@ type
   TExtAIDLLs = class
   private
     fDLLs: TList<TDLLMainCfg>;
-    fOnLog: TLogEvent;
-    procedure Log(aLog: wStr);
     function GetDLL(aIndex: Integer): TDLLMainCfg;
     function GetCount: Integer;
     procedure AddDLL(aPath: wStr);
   public
-    constructor Create(aDLLPaths: TArray<string>; aLog: TLogEvent); reintroduce;
+    constructor Create(aDLLPaths: TArray<string>);
     destructor Destroy; override;
 
     property Count: Integer read GetCount;
@@ -34,14 +32,13 @@ type
   end;
 
 implementation
-
+uses
+  Log;
 
 { TExtAIDLLs }
-constructor TExtAIDLLs.Create(aDLLPaths: TArray<string>; aLog: TLogEvent);
+constructor TExtAIDLLs.Create(aDLLPaths: TArray<string>);
 begin
-  inherited Create();
-
-  fOnLog := aLog;
+  inherited Create;
 
   fDLLs := TList<TDLLMainCfg>.Create;
   RefreshList(aDLLPaths); // Find available DLL (public method for possibility reload DLLs)
@@ -74,7 +71,7 @@ var
   CommDLL: TExtAI_DLL;
 begin
   // Init DLL and ask it about its details
-  CommDLL := TExtAI_DLL.Create(fOnLog);
+  CommDLL := TExtAI_DLL.Create;
   try
     if CommDLL.LinkDLL(aPath) then
     begin
@@ -108,7 +105,7 @@ begin
       for fileDLL in TDirectory.GetFiles(subFolder) do
         if ExtractFileExt(fileDLL) = '.dll' then
         begin
-          Log('  TExtAIDLLs: New DLL - ' + fileDLL);
+          gLog.Log('  TExtAIDLLs: New DLL - ' + fileDLL);
           AddDLL(fileDLL);
         end;
 end;
@@ -125,12 +122,6 @@ begin
       Result := True;
       break;
     end;
-end;
-
-procedure TExtAIDLLs.Log(aLog: wStr);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(aLog);
 end;
 
 

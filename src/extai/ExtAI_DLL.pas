@@ -31,14 +31,11 @@ type
     fDLLProc_Terminate: TTerminDLL;
     fDLLProc_InitNewExtAI: TInitNewExtAI;
     fDLLProc_NewExtAI: TNewExtAI;
-
-    fOnLog: TLogEvent;
-    procedure Log(aLog: wStr);
   public
-    property Config: TDLLMainCfg read fDLLConfig;
-
-    constructor Create(aOnLog: TLogEvent); reintroduce;
+    constructor Create;
     destructor Destroy; override;
+
+    property Config: TDLLMainCfg read fDLLConfig;
 
     function LinkDLL(aDLLPath: wStr): Boolean;
     procedure CreateNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; aIStates: TExtAIStates;
@@ -46,18 +43,18 @@ type
   end;
 
 implementation
-
+uses
+  Log;
 
 { TExtAI_DLL }
-constructor TExtAI_DLL.Create(aOnLog: TLogEvent);
+constructor TExtAI_DLL.Create;
 begin
-  inherited Create;
+  inherited;
 
-  fOnLog := aOnLog;
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
-  fExtAIThread := TList.Create();
+  fExtAIThread := TList.Create;
   {$ENDIF}
-  Log('  TExtAI_DLL-Create');
+  gLog.Log('  TExtAI_DLL-Create');
 end;
 
 
@@ -67,13 +64,13 @@ var
   K: si32;
 {$ENDIF}
 begin
-  Log('  TExtAI_DLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
+  gLog.Log('  TExtAI_DLL-Destroy: ExtAI name = ' + fDLLConfig.ExtAIName);
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   for K := 0 to fExtAIThread.Count-1 do
     if (TExtAIThread(fExtAIThread[K]).State = tsRun) then
     begin
-      Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = ' + IntToStr(TExtAIThread(fExtAIThread[K]).HandIndex));
+      gLog.Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = ' + IntToStr(TExtAIThread(fExtAIThread[K]).HandIndex));
       TExtAIThread(fExtAIThread[K]).State := tsTerminate;
       TExtAIThread(fExtAIThread[K]).WaitFor;
     end;
@@ -103,21 +100,21 @@ begin
 
   if not FileExists(aDLLPath) then
   begin
-    Log('  TExtAI_DLL-LinkDLL: DLL file was NOT found');
+    gLog.Log('  TExtAI_DLL-LinkDLL: DLL file was NOT found');
     Exit;
   end;
 
   fLibHandle := SafeLoadLibrary(aDLLPath);
   if fLibHandle = 0 then
   begin
-    Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ' + IntToStr(GetLastError()));
+    gLog.Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ' + IntToStr(GetLastError()));
     Exit;
   end;
 
   Err := GetLastError();
   if Err <> 0 then
   begin
-    Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
+    gLog.Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
     Exit;
   end;
 
@@ -143,7 +140,7 @@ begin
     SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
     Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
     fDLLConfig.Version := Cfg.Version;
-    Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
+    gLog.Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
   end;
 end;
 
@@ -158,15 +155,15 @@ var
   QueueEvents: TExtAIQueueEvents;
   {$ENDIF}
 begin
-  Log('  TExtAI_DLL-CreateNewExtAI: HandIndex = ' + IntToStr(aHandIndex));
+  gLog.Log('  TExtAI_DLL-CreateNewExtAI: HandIndex = ' + IntToStr(aHandIndex));
 
   if not Assigned(fDLLProc_NewExtAI) then Exit;
 
   Assert(aIActions <> nil);
   Assert(aIStates <> nil);
 
-  Log(Format('aIActions.RefCount = %d', [aIActions.RefCount]));
-  Log(Format('aIStates.RefCount = %d', [aIStates.RefCount]));
+  gLog.Log(Format('aIActions.RefCount = %d', [aIActions.RefCount]));
+  gLog.Log(Format('aIStates.RefCount = %d', [aIStates.RefCount]));
 
   try
     if aOwnThread then
@@ -199,20 +196,13 @@ begin
   except
     on E: Exception do
     begin
-      Log('  TExtAI_DLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
+      gLog.Log('  TExtAI_DLL-CreateNewExtAI: Error ' + E.ClassName + ': ' + E.Message);
       Readln;
     end;
   end;
 
-  Log(Format('aIActions.RefCount = %d', [aIActions.RefCount]));
-  Log(Format('aIStates.RefCount = %d', [aIStates.RefCount]));
-end;
-
-
-procedure TExtAI_DLL.Log(aLog: wStr);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(aLog);
+  gLog.Log(Format('aIActions.RefCount = %d', [aIActions.RefCount]));
+  gLog.Log(Format('aIStates.RefCount = %d', [aIStates.RefCount]));
 end;
 
 

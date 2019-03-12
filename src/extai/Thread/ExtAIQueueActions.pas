@@ -8,7 +8,7 @@ type
   TActType = (atGroupOrderAttackUnit, atGroupOrderWalk);
 
   TRecGroupOrderAttackUnit = record GroupID: ui32; UnitID: ui32; end;
-  TRecGroupOrderWalk = record GroupID: ui32; X: ui16; Y: ui16; Direction: ui16; end;
+  TRecGroupOrderWalk = record GroupID: ui32; X: ui16; Y: ui16; Direction: ui8; end;
 
   pRecGroupOrderAttackUnit = ^TRecGroupOrderAttackUnit;
   pRecGroupOrderWalk = ^TRecGroupOrderWalk;

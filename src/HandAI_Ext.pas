@@ -9,16 +9,12 @@ type
   THandAI_Ext = class
   private
     fHandIndex: TKMHandIndex;
-    fOnLog: TLogEvent;
 
     // Create instances and pass them to DLL for use
     fIActions: TExtAIActions;
     fIEvents: IEvents;
-
-    // Log
-    procedure Log(aLog: wStr);
   public
-    constructor Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
+    constructor Create(aHandIndex: TKMHandIndex);
     destructor Destroy; override;
 
     property HandIndex: TKMHandIndex read fHandIndex;
@@ -33,25 +29,25 @@ type
 
 
 implementation
-
+uses
+  Log;
 
 { THandAI_Ext }
-constructor THandAI_Ext.Create(aHandIndex: TKMHandIndex; aLog: TLogEvent);
+constructor THandAI_Ext.Create(aHandIndex: TKMHandIndex);
 begin
   inherited Create;
 
   fHandIndex := aHandIndex;
-  fOnLog := aLog;
 
-  fIActions := TExtAIActions.Create(aHandIndex, Log);
+  fIActions := TExtAIActions.Create(aHandIndex);
 
-  Log('  THandAIExt-Create: HandIndex = ' + IntToStr(fHandIndex));
+  gLog.Log('  THandAIExt-Create: HandIndex = ' + IntToStr(fHandIndex));
 end;
 
 
 destructor THandAI_Ext.Destroy;
 begin
-  Log('  THandAIExt-Destroy: HandIndex = ' + IntToStr(fHandIndex));
+  gLog.Log('  THandAIExt-Destroy: HandIndex = ' + IntToStr(fHandIndex));
 
   inherited;
 end;
@@ -85,13 +81,6 @@ end;
 procedure THandAI_Ext.OnPlayerVictory(aHandIndex: TKMHandIndex);
 begin
   fIEvents.OnPlayerVictory(aHandIndex);
-end;
-
-
-procedure THandAI_Ext.Log(aLog: wStr);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(aLog);
 end;
 
 

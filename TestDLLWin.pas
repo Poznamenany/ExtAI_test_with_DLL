@@ -106,7 +106,7 @@ type
     procedure RefreshSimButtons;
     // Log
     procedure UpdateSimStatus;
-    procedure Log(aLog: wStr);
+    procedure Log(const aText: string);
     procedure ClearLog;
     procedure LogProgress(aHandIndex: TKMHandIndex; aTick: ui32; aState: TExtAIThreadState);
     procedure Overview;
@@ -114,6 +114,8 @@ type
 
 
 implementation
+uses
+  Log;
 
 {$R *.fmx}
 
@@ -199,7 +201,7 @@ end;
 // Simulation
 procedure TPPLWin.InitSimulation;
 begin
-  fGame := TGame.Create(Log, UpdateSimStatus);
+  fGame := TGame.Create(UpdateSimStatus);
   tbTicksChange(nil);
   RefreshSimButtons;
 end;
@@ -302,6 +304,8 @@ end;
 // Form
 procedure TPPLWin.FormCreate(Sender: TObject);
 begin
+  gLog := TLog.Create(Log);
+
   InitSimulation;
   InitLobby;
   RefreshListDLL;
@@ -330,6 +334,7 @@ end;
 procedure TPPLWin.FormDestroy(Sender: TObject);
 begin
   fGame.Free;
+  gLog.Free;
 end;
 
 
@@ -342,9 +347,9 @@ begin
   Invalidate;
 end;
 
-procedure TPPLWin.Log(aLog: wStr);
+procedure TPPLWin.Log(const aText: string);
 begin
-  lbLog.Items.Add(aLog);
+  lbLog.Items.Add(aText);
   lbLog.ItemIndex := lbLog.Items.Count - 1;
 end;
 

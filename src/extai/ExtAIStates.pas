@@ -14,7 +14,6 @@ type
     //fLiveStatesCnt: si32;
     //fLastPointer: PTExtAIState;
     //fClassLock: array [0..12] of TExtAIState;
-    fOnLog: TLogEvent;
     // Queue
     //procedure FreeUnused(aIgnoreLock: Boolean);
     // IStates
@@ -23,38 +22,36 @@ type
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
     procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
     procedure TerrainPassability(var aPassability: pb); StdCall;
-    // Log
-    procedure Log(aLog: wStr);
   public
-    constructor Create(aLog: TLogEvent); reintroduce;
-    destructor Destroy(); override;
+    constructor Create;
+    destructor Destroy; override;
 
     // Extract states
     //procedure ExtractStates();
   end;
 
 implementation
-
+uses
+  Log;
 
 { TExtAIStates }
-constructor TExtAIStates.Create(aLog: TLogEvent);
+constructor TExtAIStates.Create;
 //var
 //  K: Integer;
 begin
-  inherited Create();
-  fOnLog := aLog;
+  inherited Create;
   //fLiveStatesCnt := 0;
   //fStartStates := TExtAIState.Create(fOnLog);
   //Inc(fLiveStatesCnt);
   //fEndStates := fStartStates;
   //for K := Low(fClassLock) to High(fClassLock) do
   //  fClassLock[K] := nil;
-  Log('  TExtAIStates-Create');
+  gLog.Log('  TExtAIStates-Create');
 end;
 
-destructor TExtAIStates.Destroy();
+destructor TExtAIStates.Destroy;
 begin
-  Log('  TExtAIStates-Destroy');
+  gLog.Log('  TExtAIStates-Destroy');
   //FreeUnused(True);
   //fEndStates.Free;
   //Dec(fLiveStatesCnt);
@@ -110,7 +107,7 @@ begin
   // Check if request for State1 is correct
   //...
   if (aID <> 11) then
-    Log('  TExtAIStates-State1: Wrong ID');
+    gLog.Log('  TExtAIStates-State1: Wrong ID');
   // Get State1
   Result := 0; // Some default case
   //if (fEndStates <> nil) then
@@ -151,13 +148,6 @@ begin
   Result := False;
 //  if (fLastPointer <> nil) then
 //    Result := fLastPointer^.MapTerrain(fClassLock[aID], aFirstElem, aLength);
-end;
-
-
-procedure TExtAIStates.Log(aLog: wStr);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(aLog);
 end;
 
 

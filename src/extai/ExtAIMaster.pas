@@ -14,11 +14,9 @@ type
     fDLLInstances: TList<TExtAI_DLL>;
     fIStates: TExtAIStates;
 
-    fOnLog: TLogEvent;
-    procedure Log(aLog: wStr);
     function IndexOf(aDLLPath: wStr): Integer;
   public
-    constructor Create(aDLLPaths: TArray<string>; aLog: TLogEvent); reintroduce;
+    constructor Create(aDLLPaths: TArray<string>);
     destructor Destroy; override;
     procedure Release;
 
@@ -31,18 +29,16 @@ type
 
 implementation
 uses
-  ExtAI_SharedInterfaces;
+  Log, ExtAI_SharedInterfaces;
 
 
 { TExtAIMaster }
-constructor TExtAIMaster.Create(aDLLPaths: TArray<string>; aLog: TLogEvent);
+constructor TExtAIMaster.Create(aDLLPaths: TArray<string>);
 begin
   inherited Create;
 
-  fOnLog := aLog;
-
   fDLLInstances := TList<TExtAI_DLL>.Create;
-  fDLLs := TExtAIDLLs.Create(aDLLPaths, aLog);
+  fDLLs := TExtAIDLLs.Create(aDLLPaths);
   fIStates := nil; // States are interface and will be freed automatically
 end;
 
@@ -87,14 +83,14 @@ begin
     DLL := fDLLInstances[Idx]
   else
   begin // if not, create the DLL
-    DLL := TExtAI_DLL.Create(fOnLog);
+    DLL := TExtAI_DLL.Create;
     DLL.LinkDLL(aDLLPath);
     fDLLInstances.Add(DLL);
   end;
 
   // Create IStates if it does not exist
   if fIStates = nil then
-    fIStates := TExtAIStates.Create(fOnLog);
+    fIStates := TExtAIStates.Create;
 
   // Create ExtAI in DLL
   DLL.CreateNewExtAI(aAI.HandIndex, aAI.IActions, fIStates, aOwnThread, aLogProgress, e);
@@ -110,13 +106,6 @@ begin
   for K := 0 to fDLLInstances.Count-1 do
     if (fDLLInstances[K] <> nil) and (AnsiCompareStr(fDLLInstances[K].Config.Path, aDLLPath) = 0) then
       Exit(K);
-end;
-
-
-procedure TExtAIMaster.Log(aLog: wStr);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(aLog);
 end;
 
 

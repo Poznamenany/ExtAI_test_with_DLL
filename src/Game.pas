@@ -27,12 +27,10 @@ type
     // Purely testbed things
     fSimState: TSimulationState;
     fOnUpdateSimStatus: TUpdateSimStatEvent;
-    fOnLog: TLogEvent;
-    procedure Log(aLog: wStr);
   protected
     procedure Execute; override;
   public
-    constructor Create(aOnLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent); reintroduce;
+    constructor Create(aOnUpdateSimStatus: TUpdateSimStatEvent); reintroduce;
     destructor Destroy; override;
 
     // Game properties
@@ -49,10 +47,11 @@ type
   end;
 
 implementation
-
+uses
+  Log;
 
 { TGame }
-constructor TGame.Create(aOnLog: TLogEvent; aOnUpdateSimStatus: TUpdateSimStatEvent);
+constructor TGame.Create(aOnUpdateSimStatus: TUpdateSimStatEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -61,19 +60,18 @@ begin
   fTick := 0;
   fMaxTick := 0;
   fSimState := ssCreated;
-  fOnLog := aOnLog;
   fOnUpdateSimStatus := aOnUpdateSimStatus;
 
-  fExtAIMaster := TExtAIMaster.Create(['ExtAI\'], Log);
+  fExtAIMaster := TExtAIMaster.Create(['ExtAI\']);
   fHands := TList<THand>.Create;
 
-  Log('TGame-Create');
+  gLog.Log('TGame-Create');
 end;
 
 
 destructor TGame.Destroy;
 begin
-  Log('TGame-Destroy');
+  gLog.Log('TGame-Destroy');
 
   FreeAndNil(fExtAIMaster);
   FreeAndNil(fHands); // Items of list are Interfaces and will be freed automatically
@@ -86,13 +84,13 @@ procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: TArray<string>; a
 var
   K: Integer;
 begin
-  Log('TGame-InitSimulation');
+  gLog.Log('TGame-InitSimulation');
 
   fSimState := ssInit;
   for K := Low(aExtAIs) to High(aExtAIs) do
     if CompareStr(aExtAIs[K], '') <> 0 then
     begin
-      fHands.Add(THand.Create(K, Log));
+      fHands.Add(THand.Create(K));
       fHands.Last.SetAIType({hatExtAI});
       fExtAIMaster.RigNewExtAI(fHands.Last.AIExt, aMultithread, aExtAIs[K], aLogProgress);
     end;
@@ -101,7 +99,7 @@ end;
 
 procedure TGame.StartSimulation(aTicks: Cardinal);
 begin
-  Log('TGame-StartSimulation');
+  gLog.Log('TGame-StartSimulation');
 
   fMaxTick := aTicks;
 
@@ -113,7 +111,7 @@ procedure TGame.Execute;
 var
   K: Integer;
 begin
-  Log('TGame-Execute: Start');
+  gLog.Log('TGame-Execute: Start');
   fSimState := ssInProgress;
   fTick := 0;
 
@@ -148,7 +146,7 @@ begin
   fSimState := ssTerminated;
   fTick := 0;
   fOnUpdateSimStatus();
-  Log('TGame-Execute: End');
+  gLog.Log('TGame-Execute: End');
 end;
 
 procedure TGame.PauseSimulation();
@@ -161,19 +159,8 @@ end;
 
 procedure TGame.TerminateSimulation();
 begin
-  Log('TGame-TerminateSimulation');
+  gLog.Log('TGame-TerminateSimulation');
   fSimState := ssTerminated;
-end;
-
-
-procedure TGame.Log(aLog: wStr);
-begin
-  Synchronize(
-    procedure
-    begin
-      if Assigned(fOnLog) then
-        fOnLog(aLog);
-    end);
 end;
 
 
