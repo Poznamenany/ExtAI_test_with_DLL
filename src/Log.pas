@@ -1,14 +1,12 @@
 unit Log;
 interface
 uses
-  Windows, Classes,
-  System.Threading, System.Diagnostics, System.SysUtils;
+  Classes;
 
 type
   TLogEvent = procedure (const aText: string) of object;
 
-
-  // The main thread of application (= KP, it contain access to DLL and also Hands and it react to the basic events)
+  // Global logger
   TLog = class
   private
     fOnLog: TLogEvent;
@@ -45,7 +43,7 @@ end;
 
 procedure TLog.Log(const aText: string);
 begin
-  if Assigned(fOnLog) then
+  if (Self <> nil) and Assigned(fOnLog) then
     TThread.Synchronize(nil,
       procedure
       begin

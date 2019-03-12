@@ -5,6 +5,7 @@ uses
   FMX.Forms,
   Consts in 'src\Consts.pas',
   Game in 'src\Game.pas',
+  Log in 'src\Log.pas',
   Hand in 'src\Hand.pas',
   HandAI_Ext in 'src\HandAI_Ext.pas',
   TestDLLWin in 'TestDLLWin.pas' {PPLWin} ,

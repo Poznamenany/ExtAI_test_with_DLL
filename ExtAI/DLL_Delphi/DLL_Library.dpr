@@ -6,9 +6,6 @@ uses
 
 {$R *.res}
 
-type
-  TLog = procedure(aLog: pwStr; aLen: ui32) of object; StdCall;
-
 const
   CONFIG: TDLLConfig = (
     Author: 'Jesus of Nazareth';
@@ -26,7 +23,7 @@ var
 procedure Log(aStr: wStr);
 begin
   if ALLOW_LOG then
-    Writeln(gLogFile,aStr);
+    Writeln(gLogFile, aStr);
 end;
 
 procedure InitDLL(var aConfig: TDLLpConfig); StdCall;
