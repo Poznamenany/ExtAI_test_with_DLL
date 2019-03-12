@@ -30,6 +30,9 @@ type
 
 
 implementation
+uses
+  ExtAI_SharedInterfaces;
+
 
 { TExtAIMaster }
 constructor TExtAIMaster.Create(aDLLPaths: TArray<string>; aLog: TLogEvent);
@@ -68,6 +71,7 @@ function TExtAIMaster.NewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aD
 var
   Idx: Integer;
   DLL: TExtAI_DLL;
+  e: IEvents;
 begin
   Result := nil;
 
@@ -92,7 +96,11 @@ begin
     fIStates := TExtAIStates.Create(fOnLog);
 
   // Create ExtAI in DLL
-  Result := DLL.CreateNewExtAI(aOwnThread, aHandIndex, aLogProgress, fIStates);
+  Result := THandAI_Ext.Create(aHandIndex, fOnLog);
+
+  DLL.CreateNewExtAI(aOwnThread, aHandIndex, aLogProgress, Result.IActions, fIStates, e);
+
+  Result.AssignEvents(e);
 end;
 
 

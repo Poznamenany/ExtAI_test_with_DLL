@@ -7,7 +7,7 @@ uses
   ExtAIQueueActions, ExtAIQueueEvents, ExtAIThread,
   {$ENDIF}
   ExtAIStates,
-  Consts, HandAI_Ext, ExtAI_SharedInterfaces, ExtAI_SharedTypes, ExtAIUtils;
+  Consts, ExtAI_SharedInterfaces, ExtAI_SharedTypes, ExtAIUtils, ExtAIActions;
 
 type
   TInitDLL = procedure(var aConfig: TDLLpConfig); StdCall;
@@ -41,7 +41,8 @@ type
     destructor Destroy; override;
 
     function LinkDLL(aDLLPath: wStr): Boolean;
-    function CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aIStates: TExtAIStates): THandAI_Ext;
+    procedure CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent;
+      aIActions: TExtAIActions; aIStates: TExtAIStates; out aIEvents: IEvents);
   end;
 
 implementation
@@ -147,7 +148,8 @@ begin
 end;
 
 
-function TExtAI_DLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent; var aIStates: TExtAIStates): THandAI_Ext;
+procedure TExtAI_DLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent;
+  aIActions: TExtAIActions; aIStates: TExtAIStates; out aIEvents: IEvents);
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   Thread: TExtAIThread;
@@ -156,11 +158,16 @@ var
   QueueEvents: TExtAIQueueEvents;
   {$ENDIF}
 begin
-  Result := nil;
+  Log('  TExtAI_DLL-CreateNewExtAI: HandIndex = ' + IntToStr(aHandIndex));
+
   if not Assigned(fDLLProc_NewExtAI) then Exit;
 
-  //Log('  CommDLL-CreateNewExtAI: HandIndex = ' + IntToStr(aHandIndex));
-  Result := THandAI_Ext.Create(aHandIndex, fOnLog);
+  Assert(aIActions <> nil);
+  Assert(aIStates <> nil);
+
+  Log(Format('aIActions.RefCount = %d', [aIActions.RefCount]));
+  Log(Format('aIStates.RefCount = %d', [aIStates.RefCount]));
+
   try
     if aOwnThread then
     begin
@@ -185,9 +192,9 @@ begin
     end else
     begin
       // Create interface
-      Result.AssignEvents(fDLLProc_NewExtAI); // = add reference to TExtAI in DLL
+      aIEvents := fDLLProc_NewExtAI;
       // Create ExtAI in DLL
-      fDLLProc_InitNewExtAI(aHandIndex, Result, aIStates); // = add reference to THandAI_Ext and States
+      fDLLProc_InitNewExtAI(aHandIndex, aIActions, aIStates);
     end;
   except
     on E: Exception do
@@ -196,6 +203,9 @@ begin
       Readln;
     end;
   end;
+
+  Log(Format('aIActions.RefCount = %d', [aIActions.RefCount]));
+  Log(Format('aIStates.RefCount = %d', [aIStates.RefCount]));
 end;
 
 

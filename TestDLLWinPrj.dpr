@@ -10,6 +10,7 @@ uses
   TestDLLWin in 'TestDLLWin.pas' {PPLWin} ,
   ExtAI_DLL in 'src\extai\ExtAI_DLL.pas',
   ExtAI_DLLs in 'src\extai\ExtAI_DLLs.pas',
+  ExtAIActions in 'src\extai\ExtAIActions.pas',
   ExtAIMaster in 'src\extai\ExtAIMaster.pas',
   //ExtAIState in 'src\extai\ExtAIState.pas',
 
