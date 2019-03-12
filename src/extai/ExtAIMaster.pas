@@ -97,7 +97,7 @@ begin
     fIStates := TExtAIStates.Create(fOnLog);
 
   // Create ExtAI in DLL
-  DLL.CreateNewExtAI(aOwnThread, aAI.HandIndex, aLogProgress, aAI.IActions, fIStates, e);
+  DLL.CreateNewExtAI(aAI.HandIndex, aAI.IActions, fIStates, aOwnThread, aLogProgress, e);
   aAI.AssignEvents(e);
 end;
 

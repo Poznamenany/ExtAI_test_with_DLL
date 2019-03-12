@@ -41,8 +41,8 @@ type
     destructor Destroy; override;
 
     function LinkDLL(aDLLPath: wStr): Boolean;
-    procedure CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent;
-      aIActions: TExtAIActions; aIStates: TExtAIStates; out aIEvents: IEvents);
+    procedure CreateNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; aIStates: TExtAIStates;
+      aOwnThread: Boolean; aLogProgress: TLogProgressEvent; out aIEvents: IEvents);
   end;
 
 implementation
@@ -148,8 +148,8 @@ begin
 end;
 
 
-procedure TExtAI_DLL.CreateNewExtAI(aOwnThread: Boolean; aHandIndex: TKMHandIndex; aLogProgress: TLogProgressEvent;
-  aIActions: TExtAIActions; aIStates: TExtAIStates; out aIEvents: IEvents);
+procedure TExtAI_DLL.CreateNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; aIStates: TExtAIStates;
+  aOwnThread: Boolean; aLogProgress: TLogProgressEvent; out aIEvents: IEvents);
 {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
 var
   Thread: TExtAIThread;
