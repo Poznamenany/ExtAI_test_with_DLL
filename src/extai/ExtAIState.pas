@@ -3,10 +3,10 @@ interface
 uses
   Windows, Classes,
   System.Threading, System.Diagnostics, System.SysUtils,
-  ExtAIUtils, ExtAIDataTypes;
+  ExtAIUtils, ExtAI_SharedTypes;
 
 type
-  pTExtAIStates = ^TExtAIStates;
+  pTExtAIState = ^TExtAIState;
 
   // Store data for ExtAI in 1 tick
   // There is needed another buffer for arrays which will be send to the DLL
@@ -14,7 +14,7 @@ type
   // values in array -> possible trouble
   TExtAIState = class
   private
-    fNext: TExtAIStates;
+    fNext: TExtAIState;
     // Thread variables
     fLock: ui32; // Standard read lock
     // Data set
@@ -28,7 +28,7 @@ type
     procedure Log(aLog: wStr);
   public
     fSpecLock: ui32; // Special lock which will lock class till it is not unlocked
-    property Next: TExtAIStates read fNext write fNext;
+    property Next: TExtAIState read fNext write fNext;
     property Tick: ui32 read fTick;
     property Lock: ui32 read fLock;
     property SpecialLock: ui32 read fSpecLock;
@@ -41,11 +41,11 @@ type
     procedure ExtractStates();
     // Distribute states
     function State1(aID: ui32): ui8;
-    function MapTerrain(var aLock: TExtAIStates; var aFirstElem: pui32; var aLength: si32): b;
+    function MapTerrain(var aLock: TExtAIState; var aFirstElem: pui32; var aLength: si32): b;
 
     // Lock
     function IsLocked(): b;
-    procedure SpecLock(var aLock: TExtAIStates);
+    procedure SpecLock(var aLock: TExtAIState);
     procedure SpecUnLock();
   end;
 
@@ -54,8 +54,8 @@ uses
   Game;
 
 
-{ TExtAIStates }
-constructor TExtAIStates.Create(aLog: TLogEvent);
+{ TExtAIState }
+constructor TExtAIState.Create(aLog: TLogEvent);
 begin
   inherited Create();
   fNext := nil;
@@ -64,33 +64,33 @@ begin
   fOnLog := aLog;
 end;
 
-destructor TExtAIStates.Destroy();
+destructor TExtAIState.Destroy();
 begin
   inherited;
 end;
 
-procedure TExtAIStates.DeclareNext();
+procedure TExtAIState.DeclareNext();
 begin
-  fNext := TExtAIStates.Create(fOnLog);
+  fNext := TExtAIState.Create(fOnLog);
 end;
 
 
-function TExtAIStates.IsLocked(): b;
+function TExtAIState.IsLocked(): b;
 begin
   Result := (fLock + fSpecLock) > 0;
 end;
 
 
 // Extract data which are useful for ExtAI and transform them into usable format
-procedure TExtAIStates.ExtractStates();
+procedure TExtAIState.ExtractStates();
 begin
-  fTick := gMainData.Tick;
-  SetLength(fMapTerrain,Length(gMainData.Map));
-  Move(gMainData.Map[0], fMapTerrain[0], Length(fMapTerrain) * SizeOf(fMapTerrain[0]));
+//  fTick := gMainData.Tick;
+//  SetLength(fMapTerrain,Length(gMainData.Map));
+//  Move(gMainData.Map[0], fMapTerrain[0], Length(fMapTerrain) * SizeOf(fMapTerrain[0]));
 end;
 
 
-function TExtAIStates.State1(aID: ui32): ui8;
+function TExtAIState.State1(aID: ui32): ui8;
 begin
   AtomicIncrement(fLock);
   // Get the correct data
@@ -98,7 +98,7 @@ begin
   AtomicDecrement(fLock);
 end;
 
-function TExtAIStates.MapTerrain(var aLock: TExtAIStates; var aFirstElem: pui32; var aLength: si32): b;
+function TExtAIState.MapTerrain(var aLock: TExtAIState; var aFirstElem: pui32; var aLength: si32): b;
 begin
   AtomicIncrement(fLock);
   SpecLock(aLock); // Lock class till Map Terrain (or another function which send array) is not called again by same ID => array was copied
@@ -108,7 +108,7 @@ begin
   AtomicDecrement(fLock);
 end;
 
-procedure TExtAIStates.SpecLock(var aLock: TExtAIStates);
+procedure TExtAIState.SpecLock(var aLock: TExtAIState);
 begin
   AtomicIncrement(fSpecLock);
   // Unlock old element if it was locked
@@ -117,13 +117,13 @@ begin
   aLock := self;
 end;
 
-procedure TExtAIStates.SpecUnLock();
+procedure TExtAIState.SpecUnLock();
 begin
   AtomicDecrement(fSpecLock);
 end;
 
 
-procedure TExtAIStates.Log(aLog: wStr);
+procedure TExtAIState.Log(aLog: wStr);
 begin
   if Assigned(fOnLog) then
     fOnLog(aLog);
