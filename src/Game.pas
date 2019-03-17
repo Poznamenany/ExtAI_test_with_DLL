@@ -83,7 +83,6 @@ end;
 procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIIndex: TArray<Integer>; aLogProgress: TLogProgressEvent);
 var
   K: Integer;
-  e: IEvents;
 begin
   gLog.Log('TGame-InitSimulation');
 
