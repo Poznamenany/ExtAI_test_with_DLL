@@ -3,6 +3,15 @@ interface
 uses
   ExtAI_SharedTypes;
 
+// @Krom: is in Delphi DEFINE like in C?
+// #define ADDCALL __stdcall   = #define name_of_variable code_which_will_be_inserted
+// void ADDCALL fcn1();
+// void ADDCALL fcn2();
+// ...
+// So you can change StdCall to different calling convention in 1 place?
+// So far I see only 1 solution
+// {$DEFINE DelphiConvention}
+// procedure fcn1(); {$IFDEF DelphiConvention} StdCall; {$ELSE} cdecl; {$ENDIF}
 type
   // Interface for Actions (when ExtAI wants the Game to do something, e.g. move soldiers)
   // ExtAI -> Game
@@ -34,11 +43,11 @@ type
     // DLL should allocate TerrainSize.X * TerrainSize.Y elements
     procedure TerrainPassability(var aPassability: pb); StdCall;
 
-    function GetGroupCount(aHandIndex: ui8): ui32;
-    procedure GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32);
-    function UnitIsAlive(aUnitUID: ui32): b;
-    function GetUnitCount(aHandIndex: ui8): ui32;
-    procedure GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32);
+    function GetGroupCount(aHandIndex: ui8): ui32; StdCall;
+    procedure GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32); StdCall;
+    function UnitIsAlive(aUnitUID: ui32): b; StdCall;
+    function GetUnitCount(aHandIndex: ui8): ui32; StdCall;
+    procedure GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32); StdCall;
   end;
 
 

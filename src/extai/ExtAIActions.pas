@@ -50,11 +50,10 @@ begin
   if DBG_LOG_VERBOSE then
     gLog.Log(Format('TExtAIActions(%d).GroupOrderAttackUnit [%d, %d]', [fHandIndex, aGroupID, aUnitID]));
 
-  Result := (aGroupID = 11) and (aUnitID = 22);
-
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
-  if (aGroupID <> 11) or (aUnitID <> 22) then
+  Result := (aGroupID = 11) and (aUnitID = 22);
+  if not Result then
     gLog.Log('  TExtAIActions-GroupOrderAttackUnit: wrong parameters, HandIndex = ' + IntToStr(fHandIndex));
 end;
 
@@ -64,11 +63,10 @@ begin
   if DBG_LOG_VERBOSE then
     gLog.Log(Format('TExtAIActions(%d).GroupOrderWalk [%d, %d, %d, %d]', [fHandIndex, aGroupID, aX, aY, aDir]));
 
-  Result := (aGroupID = 1) and (aX = 50) and (aY = 50) and (aDir = 1);
-
   // Check if parameters are correct and call action...
   // For test check only if parameters are correct
-  if (aGroupID <> 1) or (aX <> 50) or (aY <> 50) or (aDir <> 1) then
+  Result := (aGroupID = 1) and (aX = 50) and (aY = 50) and (aDir = 1);
+  if not Result then
     gLog.Log('  TExtAIActions-GroupOrderWalk: wrong parameters, HandIndex = ' + IntToStr(fHandIndex));
 end;
 

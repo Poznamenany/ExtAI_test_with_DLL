@@ -23,11 +23,11 @@ type
     procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
     procedure TerrainPassability(var aPassability: pb); StdCall;
 
-    function GetGroupCount(aHandIndex: ui8): ui32;
-    procedure GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32);
-    function UnitIsAlive(aUnitUID: ui32): b;
-    function GetUnitCount(aHandIndex: ui8): ui32;
-    procedure GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32);
+    function GetGroupCount(aHandIndex: ui8): ui32; StdCall;
+    procedure GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32); StdCall;
+    function UnitIsAlive(aUnitUID: ui32): b; StdCall;
+    function GetUnitCount(aHandIndex: ui8): ui32; StdCall;
+    procedure GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32); StdCall;
   public
     constructor Create;
     destructor Destroy; override;

@@ -23,7 +23,7 @@ type
     fLibHandle: THandle;
 
     {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
-    fExtAIThread: TList;
+    fExtAIThread: TObjectList<TExtAIThread>;
     {$ENDIF}
 
     // DLL Procedures
@@ -52,7 +52,7 @@ begin
   inherited;
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
-  fExtAIThread := TList.Create;
+  fExtAIThread := TObjectList<TExtAIThread>.Create;
   {$ENDIF}
   gLog.Log('  TExtAI_DLL-Create');
 end;
@@ -68,11 +68,11 @@ begin
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
   for K := 0 to fExtAIThread.Count-1 do
-    if (TExtAIThread(fExtAIThread[K]).State = tsRun) then
+    if (fExtAIThread[K].State = tsRun) then
     begin
-      gLog.Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = %d', [TExtAIThread(fExtAIThread[K]).HandIndex]);
-      TExtAIThread(fExtAIThread[K]).State := tsTerminate;
-      TExtAIThread(fExtAIThread[K]).WaitFor;
+      gLog.Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = %d', [fExtAIThread[K].HandIndex]);
+      fExtAIThread[K].State := tsTerminate;
+      fExtAIThread[K].WaitFor;
     end;
   {$ENDIF}
 
@@ -80,8 +80,6 @@ begin
     fDLLProc_Terminate(); // = remove reference from ExtAIAPI
 
   {$IFDEF ALLOW_EXT_AI_MULTITHREADING}
-  for K := 0 to fExtAIThread.Count-1 do
-    TExtAIThread(fExtAIThread[K]).Free();
   FreeAndNil(fExtAIThread);
   {$ENDIF}
 

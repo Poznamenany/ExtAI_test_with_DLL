@@ -18,7 +18,7 @@ type
   public
     constructor Create(aDLLPaths: TArray<string>);
     destructor Destroy; override;
-    procedure Release;
+    procedure ReleaseDLLs;
 
     property DLLs: TExtAIDLLs read fDLLs;
     property IStates: TExtAIStates read fIStates;
@@ -48,7 +48,8 @@ end;
 
 destructor TExtAIMaster.Destroy;
 begin
-  Release; // Make sure that DLLs are released
+  // @Krom: are you 100% sure that name "Release" have not special meaning in your code? Please use ReleaseDLLs instead
+  ReleaseDLLs; // Make sure that DLLs are released
   fDLLInstances.Free;
   fDLLs.Free;
 
@@ -56,7 +57,7 @@ begin
 end;
 
 
-procedure TExtAIMaster.Release;
+procedure TExtAIMaster.ReleaseDLLs;
 var
   K: Integer;
 begin
@@ -67,8 +68,9 @@ end;
 
 
 // -> HandIndex
-// -> Actions
-// <- Events
+// -> IActions
+// -> IStates
+// <- IEvents
 procedure TExtAIMaster.RigNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; out aIEvents: IEvents;
   aOwnThread: Boolean; aDLLIndex: Integer; aLogProgress: TLogProgressEvent);
 var
