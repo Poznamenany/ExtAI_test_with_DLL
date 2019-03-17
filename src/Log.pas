@@ -1,7 +1,7 @@
 unit Log;
 interface
 uses
-  Classes;
+  Classes, SysUtils;
 
 type
   TLogEvent = procedure (const aText: string) of object;
@@ -13,9 +13,10 @@ type
   public
     constructor Create(aOnLog: TLogEvent);
     destructor Destroy; override;
-    procedure Log(const aText: string);
+    procedure Log(const aText: string); overload;
+    procedure Log(const aText: string; aArgs: array of const); overload;
   end;
-  
+
  var
    gLog: TLog;
 
@@ -50,6 +51,12 @@ begin
         fOnLog(aText);
       end
     );
+end;
+
+
+procedure TLog.Log(const aText: string; aArgs: array of const);
+begin
+  Log(Format(aText, aArgs));
 end;
 
 

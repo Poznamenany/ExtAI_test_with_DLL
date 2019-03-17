@@ -22,6 +22,12 @@ type
     function MapTerrain(aID: ui8; var aFirstElem: pui32; var aLength: si32): b; StdCall;
     procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
     procedure TerrainPassability(var aPassability: pb); StdCall;
+
+    function GetGroupCount(aHandIndex: ui8): ui32;
+    procedure GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32);
+    function UnitIsAlive(aUnitUID: ui32): b;
+    function GetUnitCount(aHandIndex: ui8): ui32;
+    procedure GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32);
   public
     constructor Create;
     destructor Destroy; override;
@@ -148,6 +154,49 @@ begin
   Result := False;
 //  if (fLastPointer <> nil) then
 //    Result := fLastPointer^.MapTerrain(fClassLock[aID], aFirstElem, aLength);
+end;
+
+
+function TExtAIStates.GetGroupCount(aHandIndex: ui8): ui32;
+begin
+  Result := 1;
+end;
+
+
+procedure TExtAIStates.GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32);
+var
+  I: Integer;
+begin
+  for I := 0 to aCount - 1 do
+  begin
+    TGroupInfoArray(aFirst)[1].UID := 12345;
+    TGroupInfoArray(aFirst)[1].UnitCount := 1;
+  end;
+end;
+
+
+function TExtAIStates.GetUnitCount(aHandIndex: ui8): ui32;
+begin
+  Result := 1;
+end;
+
+
+procedure TExtAIStates.GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32);
+var
+  I: Integer;
+begin
+  for I := 0 to aCount - 1 do
+  begin
+    TUnitInfoArray(aFirst)[I].UID := 123;
+    TUnitInfoArray(aFirst)[I].PosX := 4;
+    TUnitInfoArray(aFirst)[I].PosY := 4;
+  end;
+end;
+
+
+function TExtAIStates.UnitIsAlive(aUnitUID: ui32): b;
+begin
+  Result := True;
 end;
 
 

@@ -37,7 +37,7 @@ type
 
     property Config: TDLLMainCfg read fDLLConfig;
 
-    function LinkDLL(aDLLPath: wStr): Boolean;
+    function LinkDLL(aDLLPath: string): Boolean;
     procedure CreateNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; aIStates: TExtAIStates;
       aOwnThread: Boolean; aLogProgress: TLogProgressEvent; out aIEvents: IEvents);
   end;
@@ -70,7 +70,7 @@ begin
   for K := 0 to fExtAIThread.Count-1 do
     if (TExtAIThread(fExtAIThread[K]).State = tsRun) then
     begin
-      gLog.Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = ' + IntToStr(TExtAIThread(fExtAIThread[K]).HandIndex));
+      gLog.Log('  TExtAI_DLL-Destroy: Wait for thread of HandIndex = %d', [TExtAIThread(fExtAIThread[K]).HandIndex]);
       TExtAIThread(fExtAIThread[K]).State := tsTerminate;
       TExtAIThread(fExtAIThread[K]).WaitFor;
     end;
@@ -91,45 +91,48 @@ begin
 end;
 
 
-function TExtAI_DLL.LinkDLL(aDLLPath: wStr): Boolean;
+function TExtAI_DLL.LinkDLL(aDLLPath: string): Boolean;
 var
   Err: si32;
   Cfg: TDLLpConfig;
 begin
   Result := False;
+  try
+    if not FileExists(aDLLPath) then
+    begin
+      gLog.Log('  TExtAI_DLL-LinkDLL: DLL file was NOT found');
+      Exit;
+    end;
 
-  if not FileExists(aDLLPath) then
-  begin
-    gLog.Log('  TExtAI_DLL-LinkDLL: DLL file was NOT found');
-    Exit;
-  end;
+    // Load without displaying any pop up error messages
+    fLibHandle := SafeLoadLibrary(aDLLPath, $FFFF);
+    if fLibHandle = 0 then
+    begin
+      gLog.Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ', [GetLastError]);
+      Exit;
+    end;
 
-  fLibHandle := SafeLoadLibrary(aDLLPath);
-  if fLibHandle = 0 then
-  begin
-    gLog.Log('  TExtAI_DLL-LinkDLL: library was NOT loaded, error: ' + IntToStr(GetLastError()));
-    Exit;
-  end;
+    Err := GetLastError();
+    if Err <> 0 then
+    begin
+      gLog.Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ', [Err]);
+      Exit;
+    end;
 
-  Err := GetLastError();
-  if Err <> 0 then
-  begin
-    gLog.Log('  TExtAI_DLL-LinkDLL: ERROR in the DLL file detected = ' + IntToStr(Err));
-    Exit;
-  end;
+    fDLLProc_Init := GetProcAddress(fLibHandle, 'InitDLL');
+    fDLLProc_Terminate := GetProcAddress(fLibHandle, 'TerminDLL');
+    fDLLProc_NewExtAI := GetProcAddress(fLibHandle, 'NewExtAI');
+    fDLLProc_InitNewExtAI := GetProcAddress(fLibHandle, 'InitNewExtAI');
 
-  Result := True;
+    if not Assigned(fDLLProc_Init)
+    or not Assigned(fDLLProc_Terminate)
+    or not Assigned(fDLLProc_NewExtAI)
+    or not Assigned(fDLLProc_InitNewExtAI) then
+    begin
+      gLog.Log('  TExtAI_DLL-LinkDLL: Exported methods not found');
+      Exit;
+    end;
 
-  fDLLProc_Init := GetProcAddress(fLibHandle, 'InitDLL');
-  fDLLProc_Terminate := GetProcAddress(fLibHandle, 'TerminDLL');
-  fDLLProc_NewExtAI := GetProcAddress(fLibHandle, 'NewExtAI');
-  fDLLProc_InitNewExtAI := GetProcAddress(fLibHandle, 'InitNewExtAI');
-
-  if Assigned(fDLLProc_Init)
-  AND Assigned(fDLLProc_Terminate)
-  AND Assigned(fDLLProc_NewExtAI)
-  AND Assigned(fDLLProc_InitNewExtAI) then
-  begin
     Result := True;
     fDLLConfig.Path := aDLLPath;
     fDLLProc_Init(Cfg);
@@ -140,7 +143,16 @@ begin
     SetLength(fDLLConfig.ExtAIName, Cfg.ExtAINameLen);
     Move(Cfg.ExtAIName^, fDLLConfig.ExtAIName[1], Cfg.ExtAINameLen * SizeOf(fDLLConfig.ExtAIName[1]));
     fDLLConfig.Version := Cfg.Version;
-    gLog.Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: ' + fDLLConfig.ExtAIName + '; Version: ' + IntToStr(fDLLConfig.Version));
+    gLog.Log('  TExtAI_DLL-LinkDLL: DLL detected, Name: %s; Version: %d', [fDLLConfig.ExtAIName, fDLLConfig.Version]);
+  except
+    // We failed for whatever unknown reason
+    on E: Exception do
+    begin
+      Result := False;
+
+      // We are not really interested in the Exception message in runtime. Just log it
+      gLog.Log('  TExtAI_DLL-LinkDLL: Failed with exception "%s"', [E.Message]);
+    end;
   end;
 end;
 

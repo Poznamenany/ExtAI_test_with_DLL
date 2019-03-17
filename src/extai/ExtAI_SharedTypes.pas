@@ -34,6 +34,22 @@ type
 
   pwStr = PWideChar;
 
+  // Unit description
+  TUnitInfo = packed record
+    UID: ui32;
+    PosX, PosY: si16;
+  end;
+  PUnitInfo = ^TUnitInfo;
+  TUnitInfoArray = array of TUnitInfo;
+
+  // Group description
+  TGroupInfo = packed record
+    UID: ui32;
+    UnitCount: ui16;
+  end;
+  PGroupInfo = ^TGroupInfo;
+  TGroupInfoArray = array of TGroupInfo;
+
   // Structures
   TDLLConfig = record
     Author: wStr;

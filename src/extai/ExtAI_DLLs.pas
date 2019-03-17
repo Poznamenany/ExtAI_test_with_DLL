@@ -19,12 +19,13 @@ type
     fDLLs: TList<TDLLMainCfg>;
     function GetDLL(aIndex: Integer): TDLLMainCfg;
     function GetCount: Integer;
-    procedure AddDLL(aPath: wStr);
+    procedure AddDLL(aPath: string);
   public
     constructor Create(aDLLPaths: TArray<string>);
     destructor Destroy; override;
 
     property Count: Integer read GetCount;
+    function GetList(const aPrefix: string): string;
     property DLL[aIndex: Integer]: TDLLMainCfg read GetDLL; default;
 
     procedure RefreshList(aPaths: TArray<string>);
@@ -53,7 +54,7 @@ begin
 end;
 
 
-function TExtAIDLLs.GetCount: si32;
+function TExtAIDLLs.GetCount: Integer;
 begin
   Result := fDLLs.Count;
 end;
@@ -65,7 +66,17 @@ begin
 end;
 
 
-procedure TExtAIDLLs.AddDLL(aPath: wStr);
+function TExtAIDLLs.GetList(const aPrefix: string): string;
+var
+  I: Integer;
+begin
+  Result := '';
+  for I := 0 to fDLLs.Count-1 do
+    Result := Result + aPrefix + fDLLs[I].ExtAIName + '|';
+end;
+
+
+procedure TExtAIDLLs.AddDLL(aPath: string);
 var
   dllInfo: TDLLMainCfg;
   CommDLL: TExtAI_DLL;
@@ -118,10 +129,7 @@ begin
   Result := False;
   for K := 0 to fDLLs.Count-1 do
     if CompareStr(fDLLs[K].Path, aDLLPath) = 0 then
-    begin
-      Result := True;
-      break;
-    end;
+      Exit(True);
 end;
 
 

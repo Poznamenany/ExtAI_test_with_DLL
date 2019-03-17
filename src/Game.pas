@@ -3,7 +3,7 @@ interface
 uses
   Windows, Classes, Generics.Collections,
   System.Threading, System.Diagnostics, System.SysUtils, Hand,
-  ExtAIMaster, HandAI_Ext, ExtAI_SharedTypes, ExtAIUtils;
+  ExtAIMaster, HandAI_Ext, ExtAI_SharedTypes, ExtAI_SharedInterfaces, ExtAIUtils;
 
 const
   SLEEP_BEFORE_RUN = 50;
@@ -40,7 +40,7 @@ type
 
     // Game controls
     property SimulationState: TSimulationState read fSimState;
-    procedure InitSimulation(aMultithread: Boolean; aExtAIs: TArray<string>; aLogProgress: TLogProgressEvent);
+    procedure InitSimulation(aMultithread: Boolean; aExtAIIndex: TArray<Integer>; aLogProgress: TLogProgressEvent);
     procedure StartSimulation(aTicks: Cardinal);
     procedure PauseSimulation();
     procedure TerminateSimulation();
@@ -80,20 +80,21 @@ begin
 end;
 
 
-procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIs: TArray<string>; aLogProgress: TLogProgressEvent);
+procedure TGame.InitSimulation(aMultithread: Boolean; aExtAIIndex: TArray<Integer>; aLogProgress: TLogProgressEvent);
 var
   K: Integer;
+  e: IEvents;
 begin
   gLog.Log('TGame-InitSimulation');
 
   fSimState := ssInit;
-  for K := Low(aExtAIs) to High(aExtAIs) do
-    if CompareStr(aExtAIs[K], '') <> 0 then
-    begin
-      fHands.Add(THand.Create(K));
-      fHands.Last.SetAIType({hatExtAI});
-      fExtAIMaster.RigNewExtAI(fHands.Last.AIExt, aMultithread, aExtAIs[K], aLogProgress);
-    end;
+  for K := Low(aExtAIIndex) to High(aExtAIIndex) do
+  if aExtAIIndex[K] >= 0 then
+  begin
+    fHands.Add(THand.Create(K));
+    fHands.Last.SetAIType({hatExtAI});
+    fHands.Last.AIExt.SetIndex(aExtAIIndex[K], fExtAIMaster, aMultithread, aLogProgress);
+  end;
 end;
 
 

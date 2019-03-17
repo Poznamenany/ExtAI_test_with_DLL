@@ -9,7 +9,7 @@ type
   IActions = interface(IInterface)
     ['{66FDB631-E3DC-4B8E-A745-4337C487ED69}']
     function GroupOrderAttackUnit(aGroupID: ui32; aUnitID: ui32): b; StdCall;
-    function GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDirection: ui8): b; StdCall;
+    function GroupOrderWalk(aGroupID: ui32; aX: ui16; aY: ui16; aDir: ui8): b; StdCall;
     procedure LogDLL(apLog: pwStr; aLen: ui32); StdCall;
   end;
 
@@ -33,6 +33,12 @@ type
     procedure TerrainSize(var aX: ui16; var aY: ui16); StdCall;
     // DLL should allocate TerrainSize.X * TerrainSize.Y elements
     procedure TerrainPassability(var aPassability: pb); StdCall;
+
+    function GetGroupCount(aHandIndex: ui8): ui32;
+    procedure GetGroups(aHandIndex: ui8; aFirst: PGroupInfo; aCount: ui32);
+    function UnitIsAlive(aUnitUID: ui32): b;
+    function GetUnitCount(aHandIndex: ui8): ui32;
+    procedure GetUnits(aHandIndex: ui8; aFirst: PUnitInfo; aCount: ui32);
   end;
 
 

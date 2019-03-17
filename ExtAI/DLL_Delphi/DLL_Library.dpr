@@ -8,10 +8,10 @@ uses
 
 const
   CONFIG: TDLLConfig = (
-    Author: 'Jesus of Nazareth';
+    Author: 'JoN';
     Description: 'Test example for DLL with External AI (Delphi DLL)';
-    ExtAIName: 'TestingExtAI Delphi';
-    Version: 20190127
+    ExtAIName: 'DelphiTest2';
+    Version: 20190317
   );
   ALLOW_LOG = FALSE; // Only for debug and 1 thread
 

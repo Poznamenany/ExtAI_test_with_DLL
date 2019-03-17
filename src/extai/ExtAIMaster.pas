@@ -3,7 +3,7 @@ unit ExtAIMaster;
 interface
 uses
   Classes, Windows, System.SysUtils, Generics.Collections,
-  Consts, HandAI_Ext, ExtAIStates, ExtAI_DLLs, ExtAI_DLL, ExtAI_SharedTypes, ExtAIUtils;
+  Consts, ExtAIActions, ExtAIStates, ExtAI_DLLs, ExtAI_DLL, ExtAI_SharedTypes, ExtAI_SharedInterfaces, ExtAIUtils;
 
 type
   // Master of ExtAIs
@@ -14,25 +14,28 @@ type
     fDLLInstances: TList<TExtAI_DLL>;
     fIStates: TExtAIStates;
 
-    function IndexOf(aDLLPath: wStr): Integer;
+    function IndexOf(aDLLPath: string): Integer;
   public
     constructor Create(aDLLPaths: TArray<string>);
     destructor Destroy; override;
     procedure Release;
 
     property DLLs: TExtAIDLLs read fDLLs;
-    property QueueStates: TExtAIStates read fIStates;
+    property IStates: TExtAIStates read fIStates;
 
-    procedure RigNewExtAI(aAI: THandAI_Ext; aOwnThread: Boolean; aDLLPath: wStr; aLogProgress: TLogProgressEvent);
+    procedure RigNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; out aIEvents: IEvents;
+      aOwnThread: Boolean; aDLLIndex: Integer; aLogProgress: TLogProgressEvent);
   end;
 
 
 implementation
 uses
-  Log, ExtAI_SharedInterfaces;
+  Log;
 
 
 { TExtAIMaster }
+// aDLLPaths should be like 'ExeDir\ExtAI\'.
+// We will scan 1 folder deep, since it'a handy to have each ExtAI DLL in it's own folder
 constructor TExtAIMaster.Create(aDLLPaths: TArray<string>);
 begin
   inherited Create;
@@ -66,25 +69,23 @@ end;
 // -> HandIndex
 // -> Actions
 // <- Events
-procedure TExtAIMaster.RigNewExtAI(aAI: THandAI_Ext; aOwnThread: Boolean; aDLLPath: wStr; aLogProgress: TLogProgressEvent);
+procedure TExtAIMaster.RigNewExtAI(aHandIndex: TKMHandIndex; aIActions: TExtAIActions; out aIEvents: IEvents;
+  aOwnThread: Boolean; aDLLIndex: Integer; aLogProgress: TLogProgressEvent);
 var
   Idx: Integer;
   DLL: TExtAI_DLL;
-  e: IEvents;
+  dllPath: string;
 begin
-  // Make sure that DLLs exist - DLL was already refreshed in GUI
-  //fDLLs.RefreshDLLs;
-  if not fDLLs.DLLExists(aDLLPath) then
-    Exit;
+  dllPath := fDLLs[aDLLIndex].Path;
 
   // Check if we already have this DLL loaded
-  Idx := IndexOf(aDLLPath);
+  Idx := IndexOf(dllPath);
   if Idx <> -1 then
     DLL := fDLLInstances[Idx]
   else
   begin // if not, create the DLL
     DLL := TExtAI_DLL.Create;
-    DLL.LinkDLL(aDLLPath);
+    DLL.LinkDLL(dllPath);
     fDLLInstances.Add(DLL);
   end;
 
@@ -93,12 +94,11 @@ begin
     fIStates := TExtAIStates.Create;
 
   // Create ExtAI in DLL
-  DLL.CreateNewExtAI(aAI.HandIndex, aAI.IActions, fIStates, aOwnThread, aLogProgress, e);
-  aAI.AssignEvents(e);
+  DLL.CreateNewExtAI(aHandIndex, aIActions, fIStates, aOwnThread, aLogProgress, aIEvents);
 end;
 
 
-function TExtAIMaster.IndexOf(aDLLPath: wStr): Integer;
+function TExtAIMaster.IndexOf(aDLLPath: string): Integer;
 var
   K: Integer;
 begin

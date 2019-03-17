@@ -2,14 +2,20 @@ unit HandAI_Ext;
 interface
 uses
   Windows, System.SysUtils,
-  Consts, ExtAI_SharedInterfaces, ExtAI_SharedTypes, ExtAIActions, ExtAIUtils;
+  Consts,
+  ExtAIMaster, ExtAI_SharedInterfaces, ExtAI_SharedTypes, ExtAIActions, ExtAIUtils;
 
 type
-  // ExtAI class for Hands - process flow of events and actions
-  THandAI_Ext = class
-  private
+  TKMHandAI = class
+  protected
     fHandIndex: TKMHandIndex;
+  public
+    constructor Create(aHandIndex: TKMHandIndex);
+    property HandIndex: TKMHandIndex read fHandIndex;
+  end;
 
+  THandAI_Ext = class(TKMHandAI)
+  private
     // Create instances and pass them to DLL for use
     fIActions: TExtAIActions;
     fIEvents: IEvents;
@@ -17,9 +23,8 @@ type
     constructor Create(aHandIndex: TKMHandIndex);
     destructor Destroy; override;
 
-    property HandIndex: TKMHandIndex read fHandIndex;
-    property IActions: TExtAIActions read fIActions;
-    procedure AssignEvents(aIEvents: IEvents); // ExtAI DLL gives IEvents to us
+    // This is where we choose the DLL this ExtAI will use
+    procedure SetIndex(aExtAIIndex: Integer; aExtAIMaster: TExtAIMaster; aMultithread: Boolean; aLogProgress: TLogProgressEvent);
 
     procedure OnMissionStart();
     procedure OnTick(aTick: Cardinal);
@@ -32,12 +37,19 @@ implementation
 uses
   Log;
 
-{ THandAI_Ext }
-constructor THandAI_Ext.Create(aHandIndex: TKMHandIndex);
+{ TKMHandAI }
+constructor TKMHandAI.Create(aHandIndex: TKMHandIndex);
 begin
   inherited Create;
 
   fHandIndex := aHandIndex;
+end;
+
+
+{ THandAI_Ext }
+constructor THandAI_Ext.Create(aHandIndex: TKMHandIndex);
+begin
+  inherited;
 
   fIActions := TExtAIActions.Create(aHandIndex);
 
@@ -53,9 +65,9 @@ begin
 end;
 
 
-procedure THandAI_Ext.AssignEvents(aIEvents: IEvents);
+procedure THandAI_Ext.SetIndex(aExtAIIndex: Integer; aExtAIMaster: TExtAIMaster; aMultithread: Boolean; aLogProgress: TLogProgressEvent);
 begin
-  fIEvents := aIEvents;
+  aExtAIMaster.RigNewExtAI(fHandIndex, fIActions, fIEvents, aMultithread, aExtAIIndex, aLogProgress);
 end;
 
 

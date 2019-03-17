@@ -213,9 +213,8 @@ end;
 
 procedure TPPLWin.btnInitSimClick(Sender: TObject);
 var
-  K,L,cnt: si32;
-  SelectedName: wStr;
-  ExtAIs: TArray<string>;
+  K,cnt: Integer;
+  ExtAIs: TArray<Integer>;
 begin
   RefreshListDLL; // Make sure that all DLLs are available
   ClearLog;
@@ -225,22 +224,14 @@ begin
   cnt := 0;
   for K := Low(fcbAI) to High(fcbAI) do
   begin
-    ExtAIs[K] := '';
-    if fcbAI[K].ItemIndex > 0 then
-    begin
-      SelectedName := fcbAI[K].Items[fcbAI[K].ItemIndex];
-      for L := 0 to fGame.ExtAIMaster.DLLs.Count-1 do
-        if CompareStr(fGame.ExtAIMaster.DLLs[L].ExtAIName, SelectedName) = 0 then
-        begin
-          Inc(cnt);
-          ExtAIs[K] := fGame.ExtAIMaster.DLLs[L].Path;
-          break;
-        end;
-    end;
+    ExtAIs[K] := fcbAI[K].ItemIndex - 1;
+
+    if ExtAIs[K] >= 0 {not 'Closed'} then
+      Inc(cnt);
   end;
 
   // Init ExtAI
-  if (cnt > 0) then
+  if cnt > 0 then
     fGame.InitSimulation(cbMultithread.IsChecked, ExtAIs, LogProgress);
 
   RefreshSimButtons;
