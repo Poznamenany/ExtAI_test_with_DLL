@@ -60,7 +60,6 @@ end;
 destructor THandAI_Ext.Destroy;
 begin
   gLog.Log('  THandAIExt-Destroy: HandIndex = ' + IntToStr(fHandIndex));
-
   inherited;
 end;
 

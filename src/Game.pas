@@ -18,7 +18,7 @@ type
   private
     // Game assets
     fExtAIMaster: TExtAIMaster;
-    fHands: TList<THand>; // ExtAI hand entry point
+    fHands: TObjectList<THand>; // ExtAI hand entry point
 
     // Game properties (kind of testbed)
     fTick: Cardinal;
@@ -63,7 +63,7 @@ begin
   fOnUpdateSimStatus := aOnUpdateSimStatus;
 
   fExtAIMaster := TExtAIMaster.Create(['ExtAI\']);
-  fHands := TList<THand>.Create;
+  fHands := TObjectList<THand>.Create;
 
   gLog.Log('TGame-Create');
 end;
@@ -71,11 +71,16 @@ end;
 
 destructor TGame.Destroy;
 begin
+
+  FreeAndNil(fHands);
+  // @Krom:
+  // The main class of KP is an equivalent of form TPPLWin and TGame is in the KP main class of mission
+  // It means that fExtAIMaster should be declared in TPPLWin and should not be terminated till app ends
+  // DLLs must be released after mission end while fExtAIMaster lives in the main class of KP
+  fExtAIMaster.ReleaseDLLs; // In KP call just this part
+  FreeAndNil(fExtAIMaster); // fExtAIMaster lives in main KP class
+
   gLog.Log('TGame-Destroy');
-
-  FreeAndNil(fExtAIMaster);
-  FreeAndNil(fHands); // Items of list are Interfaces and will be freed automatically
-
   inherited;
 end;
 
