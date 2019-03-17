@@ -147,7 +147,7 @@ object PPLWin: TPPLWin
       Text = '8.'
     end
     object Label13: TLabel
-      Position.X = 8.000000000000000000
+      Position.X = 16.000000000000000000
       Position.Y = 256.000000000000000000
       Size.Width = 17.000000000000000000
       Size.Height = 17.000000000000000000

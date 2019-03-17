@@ -12,6 +12,7 @@ uses
 
 type
   TPPLWin = class(TForm)
+    btnAutoFill: TButton;
     btnInitSim: TButton;
     btdRefreshDLLs: TButton;
     btnStartSim: TButton;
@@ -29,9 +30,25 @@ type
     cbAI11: TComboBox;
     cbAI12: TComboBox;
     cbMultithread: TCheckBox;
+    chckbClosed: TCheckBox;
+    edAI1: TEdit;
+    edAI2: TEdit;
+    edAI3: TEdit;
+    edAI4: TEdit;
+    edAI5: TEdit;
+    edAI6: TEdit;
+    edAI7: TEdit;
+    edAI8: TEdit;
+    edAI9: TEdit;
+    edAI10: TEdit;
+    edAI11: TEdit;
+    edAI12: TEdit;
+    edDLLPath1: TEdit;
+    edDLLPath2: TEdit;
     edTickCnt: TEdit;
-    gbSetup: TGroupBox;
     gbLobby: TGroupBox;
+    gbMultithread: TGroupBox;
+    gbSetup: TGroupBox;
     gbSimulation: TGroupBox;
     Label3: TLabel;
     Label4: TLabel;
@@ -47,25 +64,10 @@ type
     Label14: TLabel;
     Label15: TLabel;
     Label16: TLabel;
-    listBoxDLLs: TListBox;
     lbLog: TListBox;
+    lbProgress: TLabel;
+    listBoxDLLs: TListBox;
     pbSimulation: TProgressBar;
-    tbTicks: TTrackBar;
-    gbMultithread: TGroupBox;
-    btnAutoFill: TButton;
-    chckbClosed: TCheckBox;
-    edAI1: TEdit;
-    edAI2: TEdit;
-    edAI3: TEdit;
-    edAI4: TEdit;
-    edAI5: TEdit;
-    edAI6: TEdit;
-    edAI7: TEdit;
-    edAI8: TEdit;
-    edAI9: TEdit;
-    edAI10: TEdit;
-    edAI11: TEdit;
-    edAI12: TEdit;
     pbAI12: TProgressBar;
     pbAI11: TProgressBar;
     pbAI10: TProgressBar;
@@ -78,9 +80,7 @@ type
     pbAI3: TProgressBar;
     pbAI2: TProgressBar;
     pbAI1: TProgressBar;
-    edDLLPath1: TEdit;
-    edDLLPath2: TEdit;
-    lbProgress: TLabel;
+    tbTicks: TTrackBar;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var aAction: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -376,16 +376,16 @@ begin
   for K := lbLog.Count-1 downto 0 do
   begin
     str := lbLog.Items[K];
-    if      AnsiPos('TExtAIThread-Create: ID =', str) > 0 then        Threads[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIThread-Destroy: ID =', str) > 0 then       Threads[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('TExtAIQueueActions-Create: ID =', str) > 0 then  Actions[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIQueueActions-Destroy: ID =', str) > 0 then Actions[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('TExtAIQueueEvents-Create: ID =', str) > 0 then   Events[  StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('TExtAIQueueEvents-Destroy: ID =', str) > 0 then  Events[  StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('THandAIExt-Create: ID =', str) > 0 then          Hands[   StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
-    else if AnsiPos('THandAIExt-Destroy: ID =', str) > 0 then         Hands[   StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
-    else if AnsiPos('TExtAIQueueStates-Create', str) > 0 then         Stats.Init := True
-    else if AnsiPos('TExtAIQueueStates-Destroy', str) > 0 then        Stats.Termin := True;
+    if      AnsiPos('TExtAIThread-Create: ID =', str) > 0 then          Threads[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIThread-Destroy: ID =', str) > 0 then         Threads[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueActions-Create: ID =', str) > 0 then    Actions[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIQueueActions-Destroy: ID =', str) > 0 then   Actions[ StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueEvents-Create: ID =', str) > 0 then     Events[  StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIQueueEvents-Destroy: ID =', str) > 0 then    Events[  StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIActions-Create: HandIndex = ', str) > 0 then Hands[   StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Init := True
+    else if AnsiPos('TExtAIActions-Destroy: HandIndex =', str) > 0 then Hands[   StrToInt( AnsiMidStr(str, Length(str)-1,2) ) ].Termin := True
+    else if AnsiPos('TExtAIQueueStates-Create', str) > 0 then           Stats.Init := True
+    else if AnsiPos('TExtAIQueueStates-Destroy', str) > 0 then          Stats.Termin := True;
   end;
 
   for K := Low(Actions) to High(Actions) do
@@ -397,7 +397,7 @@ begin
     if (Events[K].Init OR Events[K].Termin) <> (Events[K].Init AND Events[K].Termin) then
       Log('WARNING: Init/Termin EVENT: ' + IntToStr(K));
     if (Hands[K].Init OR Hands[K].Termin) <> (Hands[K].Init AND Hands[K].Termin) then
-      Log('WARNING: Init/Termin HANS: ' + IntToStr(K));
+      Log('WARNING: Init/Termin HANDS: ' + IntToStr(K));
   end;
 
   if (Stats.Init OR Stats.Termin) <> (Stats.Init AND Stats.Termin) then
