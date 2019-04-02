@@ -71,12 +71,12 @@ end;
 
 destructor TGame.Destroy;
 begin
-
   FreeAndNil(fHands);
-  // @Krom:
+  //@Krom:
   // The main class of KP is an equivalent of form TPPLWin and TGame is in the KP main class of mission
   // It means that fExtAIMaster should be declared in TPPLWin and should not be terminated till app ends
   // DLLs must be released after mission end while fExtAIMaster lives in the main class of KP
+  //@Martin: Done
   fExtAIMaster.ReleaseDLLs; // In KP call just this part
   FreeAndNil(fExtAIMaster); // fExtAIMaster lives in main KP class
 

@@ -49,6 +49,7 @@ end;
 destructor TExtAIMaster.Destroy;
 begin
   // @Krom: are you 100% sure that name "Release" have not special meaning in your code? Please use ReleaseDLLs instead
+  //@Martin: Okay. Thanks
   ReleaseDLLs; // Make sure that DLLs are released
   fDLLInstances.Free;
   fDLLs.Free;
